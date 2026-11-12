@@ -5,25 +5,32 @@ import Avatar from './Avatar.astro';
 import RelativeTime from './RelativeTime.astro';
 import Visual from './Visual.astro';
 
+/**
+ * Trois variantes, une seule structure :
+ * - `default` : visuel 16:9 au-dessus, texte dessous (grilles).
+ * - `lead`    : grand bloc d’ouverture de « À la une », texte posé sur le visuel.
+ * - `compact` : vignette à gauche, texte à droite (colonne latérale de l’une).
+ */
 interface Props {
   item: FeedItem;
-  spotlight?: boolean;
+  variant?: 'default' | 'lead' | 'compact';
   deferred?: boolean;
 }
 
-const { item, spotlight = false, deferred = false } = Astro.props;
-const overlay = spotlight || item.tile !== 'landscape';
+const { item, variant = 'default', deferred = false } = Astro.props;
+const compact = variant === 'compact';
 const summary = excerpt(item.category, item.description);
-const initials = item.athletes[0]?.name
-  .split(/\s+/)
-  .slice(0, 2)
-  .map((part) => part[0] ?? '')
-  .join('')
-  .toUpperCase() || item.org.initials;
+const initials =
+  item.athletes[0]?.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] ?? '')
+    .join('')
+    .toUpperCase() || item.org.initials;
 ---
 
 <article
-  class:list={['card', `tile-${item.tile}`, { spotlight, overlay }]}
+  class:list={['card', `card-${variant}`]}
   data-card
   data-category={item.category}
   data-org={item.org.id}
@@ -32,87 +39,48 @@ const initials = item.athletes[0]?.name
   data-section={item.section}
   data-deferred={deferred ? 'true' : undefined}
 >
-  <div class="media">
-    <a class="thumb" href={item.href} tabindex="-1" aria-hidden="true">
-      <Visual seed={item.id} uid={`${item.id}-card`} initials={initials} label={overlay ? `Visuel d’exemple : ${item.title}` : ''} />
-      <span class="badge cat">{item.category}</span>
-      {item.example && <span class="badge ex">Contenu d’exemple</span>}
-      {item.duration && (
+  <a class="thumb" href={item.href} tabindex="-1" aria-hidden="true">
+    <Visual seed={item.id} uid={`${item.id}-${variant}`} initials={initials} label="" hideInitials={variant === 'lead'} />
+    {!compact && <span class="badge cat">{item.category}</span>}
+    {item.example && !compact && <span class="badge ex">Contenu d’exemple</span>}
+    {
+      item.duration && (
         <span class="duration">
-          <span class="sr-only">Vidéo, durée </span>
+          <span class="play" aria-hidden="true" />
           {item.duration}
         </span>
-      )}
-    </a>
+      )
+    }
+  </a>
+  <div class="body">
+    <p class="channel-line">
+      <a class="name" href={item.org.href}>
+        {!compact && <Avatar seed={item.org.id} initials={item.org.initials} />}
+        {item.org.name}
+      </a>
+      <span aria-hidden="true">·</span>
+      <RelativeTime date={item.pubDate} />
+    </p>
+    <h3>
+      <a href={item.href}>
+        {item.example && <span class="sr-only">Contenu d’exemple. </span>}
+        {item.hasVideo && <span class="sr-only">Vidéo, {item.duration}. </span>}
+        {item.title}
+      </a>
+    </h3>
+    {!compact && <p class="excerpt">{summary}</p>}
     {
-      overlay && (
-        <div class="splash-copy">
-          <p class="channel-line">
-            <a class="name" href={item.org.href}>
-              <Avatar seed={item.org.id} initials={item.org.initials} />
-              {item.org.name}
-            </a>
-            <span aria-hidden="true">·</span>
-            <RelativeTime date={item.pubDate} />
-          </p>
-          <h3>
-            <a href={item.href}>
-              {item.example && <span class="sr-only">Contenu d’exemple. </span>}
-              {item.hasVideo && <span class="sr-only">Vidéo. </span>}
-              {item.title}
-            </a>
-          </h3>
-          <p class="excerpt">{summary}</p>
-          {
-            item.athletes.length > 0 && (
-              <ul class="who">
-                {item.athletes.map((athlete) => (
-                  <li>
-                    <a href={athlete.href}>
-                      {athlete.name} ({athlete.record})
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            )
-          }
-        </div>
+      !compact && item.athletes.length > 0 && (
+        <ul class="who">
+          {item.athletes.map((athlete) => (
+            <li>
+              <a href={athlete.href}>
+                {athlete.name} ({athlete.record})
+              </a>
+            </li>
+          ))}
+        </ul>
       )
     }
   </div>
-  {
-    !overlay && (
-      <div class="body">
-        <p class="channel-line">
-          <a class="name" href={item.org.href}>
-            <Avatar seed={item.org.id} initials={item.org.initials} />
-            {item.org.name}
-          </a>
-          <span aria-hidden="true">·</span>
-          <RelativeTime date={item.pubDate} />
-        </p>
-        <h3>
-          <a href={item.href}>
-            {item.example && <span class="sr-only">Contenu d’exemple. </span>}
-            {item.hasVideo && <span class="sr-only">Vidéo. </span>}
-            {item.title}
-          </a>
-        </h3>
-        <p class="excerpt">{summary}</p>
-        {
-          item.athletes.length > 0 && (
-            <ul class="who">
-              {item.athletes.map((athlete) => (
-                <li>
-                  <a href={athlete.href}>
-                    {athlete.name} ({athlete.record})
-                  </a>
-                </li>
-              ))}
-            </ul>
-          )
-        }
-      </div>
-    )
-  }
 </article>

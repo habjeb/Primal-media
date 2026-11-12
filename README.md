@@ -51,8 +51,8 @@ author: Rédaction
 category: MMA            # MMA ou Grappling
 format: breve           # breve | diffusion | resultats | decryptage
 section: fight          # une (À la une) ou fight (L’actu fight)
-tile: landscape         # landscape (16:9) | square | portrait
-spotlight: false        # true = grand bloc en tête de l’une
+tile: landscape         # sans effet sur l’affichage (toutes les cartes sont en 16:9), gardé pour compatibilité
+spotlight: false        # true = grand bloc d’ouverture de l’une (sinon : l’article « une » le plus récent)
 organisation: hexagone-mma
 athletes:
   - camille-belvane

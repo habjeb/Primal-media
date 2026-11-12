@@ -68,10 +68,10 @@ const { Content } = await render(entry);
     <ol class="bouts">
       {
         event.bouts.map((bout) => (
-          <li class="bout">
+          <li class:list={['bout', { main: bout.main, decided: Boolean(bout.winner) }]}>
             <p class="wc">
+              {bout.main && <span class="main-tag">Combat principal</span>}
               {bout.weightClass}
-              {bout.main ? ' · combat principal' : ''}
             </p>
             <div class="corners">
               <Corner name={bout.redName} record={bout.redRecord} href={bout.redHref} side="red" win={bout.winner === 'red'} />
@@ -82,7 +82,7 @@ const { Content } = await render(entry);
               {bout.winner === 'draw'
                 ? `Nul${bout.method ? ` · ${bout.method}` : ''}`
                 : bout.winner
-                  ? `${bout.winner === 'red' ? bout.redName : bout.blueName}${bout.method ? ` · ${bout.method}` : ''}${bout.round ? ` · R${bout.round}` : ''}`
+                  ? [bout.method, bout.round && `Round ${bout.round}`].filter(Boolean).join(' · ') || 'Résultat officiel'
                   : 'Pas encore disputé'}
             </p>
           </li>
