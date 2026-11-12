@@ -1,0 +1,150 @@
+---
+import { render } from 'astro:content';
+import ChannelHero from '../../components/ChannelHero.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { getSite, itemsForAthlete } from '../../lib/content';
+import { formatDay } from '../../lib/dates';
+import { initials } from '../../lib/text';
+import { withBase } from '../../lib/paths';
+import Base from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const site = await getSite();
+  return site.athletes.map(({ profile }) => ({ params: { id: profile.id } }));
+}
+
+const id = Astro.params.id;
+const site = await getSite();
+const found = site.athletes.find((athlete) => athlete.profile.id === id);
+if (!found || !id) throw new Error('Athlète introuvable');
+
+const { profile, fights, entry } = found;
+const { Content } = await render(entry);
+const posts = itemsForAthlete(profile.id, site.items);
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+<Base
+  title={`${profile.name} (${profile.record})`}
+  description={`${profile.name}, ${profile.weightClass}, ${profile.team}. Fiche d’exemple fictive.`}
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: profile.name,
+    description: `Contenu d’exemple fictif. ${profile.weightClass}, ${profile.org.name}.`,
+    url: pageUrl,
+  }}
+>
+  <nav aria-label="Fil d’Ariane">
+    <ol class="crumbs">
+      <li><a href={withBase('/')}>Fil</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href={withBase('/athletes/')}>Athlètes</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{profile.name}</li>
+    </ol>
+  </nav>
+  <ChannelHero
+    seed={profile.id}
+    initials={initials(profile.name)}
+    kicker={`${profile.discipline} · ${profile.org.name}`}
+    title={profile.name}
+    subtitle={profile.nickname ? `« ${profile.nickname} »` : undefined}
+    example={profile.example}
+    stats={[
+      { value: String(profile.wins), label: 'victoires' },
+      { value: String(profile.losses), label: 'défaites' },
+      { value: String(profile.draws), label: 'nuls' },
+    ]}
+  />
+  {profile.example && <ExampleNote />}
+  <dl class="facts">
+    <div>
+      <dt>Palmarès</dt>
+      <dd>{profile.record}</dd>
+    </div>
+    <div>
+      <dt>Catégorie</dt>
+      <dd>{profile.weightClass}</dd>
+    </div>
+    <div>
+      <dt>Club</dt>
+      <dd>{profile.team}</dd>
+    </div>
+    <div>
+      <dt>Organisation</dt>
+      <dd><a href={profile.org.href}>{profile.org.name}</a></dd>
+    </div>
+    <div>
+      <dt>Pays</dt>
+      <dd>{profile.country}</dd>
+    </div>
+  </dl>
+  <div class="prose">
+    <Content />
+  </div>
+  <section aria-labelledby="posts-title">
+    <h2 class="section-title" id="posts-title">Publications</h2>
+    {
+      posts.length === 0 ? (
+        <p class="empty">Aucune publication liée.</p>
+      ) : (
+        <div class="mosaic">
+          {posts.map((item) => (
+            <NewsCard item={item} />
+          ))}
+        </div>
+      )
+    }
+  </section>
+  <section aria-labelledby="fights-title">
+    <h2 class="section-title" id="fights-title">Combats récents</h2>
+    <p class="meta-line">Extrait fictif, pas un palmarès complet. Le record annoncé est {profile.record}.</p>
+    <div class="table-wrap">
+      <table class="fights">
+        <thead>
+          <tr>
+            <th scope="col">Date</th>
+            <th scope="col">Adversaire</th>
+            <th scope="col">Résultat</th>
+            <th scope="col">Méthode</th>
+            <th scope="col">Événement</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            fights
+              .slice()
+              .sort((a, b) => b.date.getTime() - a.date.getTime())
+              .map((fight) => (
+                <tr>
+                  <td>{formatDay(fight.date)}</td>
+                  <td>
+                    {fight.opponent}
+                    {fight.opponentRecord && ` (${fight.opponentRecord})`}
+                  </td>
+                  <td
+                    class:list={{
+                      'result-w': fight.result === 'Victoire',
+                      'result-l': fight.result === 'Défaite',
+                      'result-d': fight.result === 'Nul',
+                    }}
+                  >
+                    {fight.result}
+                  </td>
+                  <td>
+                    {fight.method}
+                    {fight.round ? ` · R${fight.round}` : ''}
+                  </td>
+                  <td>
+                    {fight.eventHref ? <a href={fight.eventHref}>{fight.eventName}</a> : fight.eventName}
+                  </td>
+                </tr>
+              ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+</Base>

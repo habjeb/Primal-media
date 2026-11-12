@@ -1,0 +1,35 @@
+---
+import Avatar from '../../components/Avatar.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import { getSite } from '../../lib/content';
+import { initials } from '../../lib/text';
+import Base from '../../layouts/BaseLayout.astro';
+
+const site = await getSite();
+---
+
+<Base
+  title="Athlètes"
+  description="Fiches d’athlètes du MMA et du grappling suivis par Primal Média. Les profils d’exemple sont fictifs."
+>
+  <header class="page-intro">
+    <h1>Athlètes</h1>
+    <p class="lede">Des fiches chaîne : palmarès, club, organisation et publications liées.</p>
+  </header>
+  <ExampleNote />
+  <ul class="roster">
+    {
+      site.athletes.map(({ profile }) => (
+        <li>
+          <a href={profile.href}>
+            <Avatar seed={profile.id} initials={initials(profile.name)} large />
+            <strong>{profile.name}</strong>
+            {profile.nickname && <span class="meta-line">« {profile.nickname} »</span>}
+            <span>{profile.record} · {profile.weightClass}</span>
+            <span class="meta-line">{profile.org.name}</span>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

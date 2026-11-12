@@ -1,0 +1,18 @@
+---
+import Feed from '../../components/Feed.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import { getSite } from '../../lib/content';
+import Base from '../../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const description = 'Toutes les actualités du fil Primal Média, des plus récentes aux plus anciennes.';
+---
+
+<Base title="Actualités" description={description}>
+  <header class="page-intro">
+    <h1>Actualités</h1>
+    <p class="lede">Le même fil, sans découpage. Les plus récentes d’abord.</p>
+  </header>
+  <ExampleNote />
+  <Feed mode="archive" items={site.items} active="tout" />
+</Base>

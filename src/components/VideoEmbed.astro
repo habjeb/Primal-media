@@ -1,0 +1,52 @@
+---
+import { safeVideoId } from '../lib/text';
+import type { FeedItem } from '../lib/types';
+import Visual from './Visual.astro';
+
+interface Props {
+  item: FeedItem;
+  initials: string;
+}
+
+const { item, initials } = Astro.props;
+const provider = item.video?.provider;
+const videoId = provider ? safeVideoId(provider, item.video?.id) : null;
+const placeholder = provider === 'instagram' && item.video?.id?.toUpperCase() === 'EXEMPLE';
+---
+
+<div class="stage">
+  {
+    provider === 'youtube' && videoId ? (
+      <div class="embed">
+        <iframe
+          src={`https://www.youtube-nocookie.com/embed/${videoId}`}
+          title="Lecteur YouTube d’exemple, sans rapport avec l’athlète"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+          loading="lazy"
+        />
+      </div>
+    ) : provider === 'instagram' && videoId ? (
+      <div class="embed">
+        <iframe
+          src={`https://www.instagram.com/p/${videoId}/embed`}
+          title="Publication Instagram intégrée"
+          allowtransparency="true"
+          loading="lazy"
+          referrerpolicy="strict-origin-when-cross-origin"
+        />
+      </div>
+    ) : placeholder ? (
+      <div class="embed-mock">
+        <p><strong>Intégration Instagram prête.</strong></p>
+        <p>
+          Remplacez <code>EXEMPLE</code> dans le frontmatter par le code court d’un post pour charger
+          <code>instagram.com/p/…/embed</code>. Aucun compte réel n’est affiché ici.
+        </p>
+      </div>
+    ) : (
+      <Visual seed={item.id} uid={`${item.id}-stage`} initials={initials} label={`Visuel d’exemple : ${item.title}`} />
+    )
+  }
+</div>

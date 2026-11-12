@@ -1,0 +1,20 @@
+---
+interface Props {
+  kind?: 'entry' | 'org';
+}
+
+const { kind = 'entry' } = Astro.props;
+---
+
+{
+  kind === 'org' ? (
+    <p class="disclaimer" role="note">
+      Fiche neutre. Hexagone MMA et Duel sont cités comme organisations réelles, sans résultat inventé.
+      Les athlètes, cartes et articles liés marqués « Contenu d’exemple » sont fictifs.
+    </p>
+  ) : (
+    <p class="disclaimer" role="note">
+      Contenu d’exemple — personnes, citations, résultats, horaires et chaînes sont fictifs.
+    </p>
+  )
+}

@@ -1,0 +1,69 @@
+---
+import ArticleView from '../../components/ArticleView.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import Feed from '../../components/Feed.astro';
+import { filterItems, getSite } from '../../lib/content';
+import { ARCHIVE_FILTERS } from '../../lib/filters';
+import { excerpt } from '../../lib/text';
+import Base from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const site = await getSite();
+  return [
+    ...ARCHIVE_FILTERS.map((filter) => ({
+      params: { id: filter.slug },
+      props: { kind: 'filter' as const },
+    })),
+    ...site.articles.map(({ item }) => ({
+      params: { id: item.id },
+      props: { kind: 'article' as const },
+    })),
+  ];
+}
+
+const { kind } = Astro.props;
+const site = await getSite();
+const filter = ARCHIVE_FILTERS.find((entry) => entry.slug === Astro.params.id);
+const found = site.articles.find((article) => article.item.id === Astro.params.id);
+const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+---
+
+{
+  kind === 'filter' && filter ? (
+    <Base title={filter.title} description={filter.description}>
+      <header class="page-intro">
+        <h1>{filter.title}</h1>
+        <p class="lede">{filter.description}</p>
+      </header>
+      <ExampleNote />
+      <Feed mode="archive" items={filterItems(site.items, filter.id)} active={filter.id} />
+    </Base>
+  ) : (
+    found && (
+      <Base
+        title={found.item.title}
+        description={excerpt(found.item.category, found.item.description)}
+        ogType="article"
+        published={found.item.pubDate}
+        author={found.item.author}
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'NewsArticle',
+          headline: found.item.title,
+          description: found.item.example
+            ? `Contenu d’exemple fictif. ${found.item.description}`
+            : found.item.description,
+          datePublished: found.item.pubDate.toISOString(),
+          inLanguage: 'fr-FR',
+          author: { '@type': 'Organization', name: found.item.author },
+          publisher: { '@type': 'Organization', name: 'Primal Média' },
+          mainEntityOfPage: pageUrl,
+          articleSection: found.item.category,
+          keywords: found.item.tags.join(', '),
+        }}
+      >
+        <ArticleView site={site} item={found.item} entry={found.entry} pageUrl={pageUrl} />
+      </Base>
+    )
+  )
+}

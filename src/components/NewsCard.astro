@@ -1,0 +1,118 @@
+---
+import { excerpt } from '../lib/text';
+import type { FeedItem } from '../lib/types';
+import Avatar from './Avatar.astro';
+import RelativeTime from './RelativeTime.astro';
+import Visual from './Visual.astro';
+
+interface Props {
+  item: FeedItem;
+  spotlight?: boolean;
+  deferred?: boolean;
+}
+
+const { item, spotlight = false, deferred = false } = Astro.props;
+const overlay = spotlight || item.tile !== 'landscape';
+const summary = excerpt(item.category, item.description);
+const initials = item.athletes[0]?.name
+  .split(/\s+/)
+  .slice(0, 2)
+  .map((part) => part[0] ?? '')
+  .join('')
+  .toUpperCase() || item.org.initials;
+---
+
+<article
+  class:list={['card', `tile-${item.tile}`, { spotlight, overlay }]}
+  data-card
+  data-category={item.category}
+  data-org={item.org.id}
+  data-format={item.format}
+  data-video={item.hasVideo ? 'true' : 'false'}
+  data-section={item.section}
+  data-deferred={deferred ? 'true' : undefined}
+>
+  <div class="media">
+    <a class="thumb" href={item.href} tabindex="-1" aria-hidden="true">
+      <Visual seed={item.id} uid={`${item.id}-card`} initials={initials} label={overlay ? `Visuel d’exemple : ${item.title}` : ''} />
+      <span class="badge cat">{item.category}</span>
+      {item.example && <span class="badge ex">Contenu d’exemple</span>}
+      {item.duration && (
+        <span class="duration">
+          <span class="sr-only">Vidéo, durée </span>
+          {item.duration}
+        </span>
+      )}
+    </a>
+    {
+      overlay && (
+        <div class="splash-copy">
+          <p class="channel-line">
+            <a class="name" href={item.org.href}>
+              <Avatar seed={item.org.id} initials={item.org.initials} />
+              {item.org.name}
+            </a>
+            <span aria-hidden="true">·</span>
+            <RelativeTime date={item.pubDate} />
+          </p>
+          <h3>
+            <a href={item.href}>
+              {item.example && <span class="sr-only">Contenu d’exemple. </span>}
+              {item.hasVideo && <span class="sr-only">Vidéo. </span>}
+              {item.title}
+            </a>
+          </h3>
+          <p class="excerpt">{summary}</p>
+          {
+            item.athletes.length > 0 && (
+              <ul class="who">
+                {item.athletes.map((athlete) => (
+                  <li>
+                    <a href={athlete.href}>
+                      {athlete.name} ({athlete.record})
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+        </div>
+      )
+    }
+  </div>
+  {
+    !overlay && (
+      <div class="body">
+        <p class="channel-line">
+          <a class="name" href={item.org.href}>
+            <Avatar seed={item.org.id} initials={item.org.initials} />
+            {item.org.name}
+          </a>
+          <span aria-hidden="true">·</span>
+          <RelativeTime date={item.pubDate} />
+        </p>
+        <h3>
+          <a href={item.href}>
+            {item.example && <span class="sr-only">Contenu d’exemple. </span>}
+            {item.hasVideo && <span class="sr-only">Vidéo. </span>}
+            {item.title}
+          </a>
+        </h3>
+        <p class="excerpt">{summary}</p>
+        {
+          item.athletes.length > 0 && (
+            <ul class="who">
+              {item.athletes.map((athlete) => (
+                <li>
+                  <a href={athlete.href}>
+                    {athlete.name} ({athlete.record})
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    )
+  }
+</article>

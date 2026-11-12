@@ -1,0 +1,12 @@
+---
+import { withBase } from '../lib/paths';
+import Base from '../layouts/BaseLayout.astro';
+---
+
+<Base title="Page introuvable" description="Cette adresse ne correspond à aucune page de Primal Média." noindex>
+  <header class="page-intro">
+    <h1>Page introuvable</h1>
+    <p class="lede">Ce lien ne mène nulle part sur le fil.</p>
+  </header>
+  <p><a class="mail-btn" href={withBase('/')}>Retour au fil</a></p>
+</Base>

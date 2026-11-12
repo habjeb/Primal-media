@@ -1,0 +1,35 @@
+---
+import ExampleNote from '../../components/ExampleNote.astro';
+import { athletesForOrg, eventsForOrg, getSite, itemsForOrg } from '../../lib/content';
+import Base from '../../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const kindLabel = { professionnelle: 'Professionnelle', amateur: 'Amateur' };
+---
+
+<Base
+  title="Organisations"
+  description="Organisations suivies par Primal Média. Les fiches restent neutres : les résultats d’exemple ne sont pas des résultats réels."
+>
+  <header class="page-intro">
+    <h1>Organisations</h1>
+    <p class="lede">Deux repères pour cette première version : une organisation pro, une organisation amateur.</p>
+  </header>
+  <ExampleNote kind="org" />
+  <ul class="org-grid">
+    {
+      site.organisations.map(({ org }) => (
+        <li>
+          <a class="org-card" href={org.href}>
+            <p class="kicker">{kindLabel[org.kind]} · {org.place}</p>
+            <h2>{org.name}</h2>
+            <p>{org.description}</p>
+            <p class="meta-line">
+              {itemsForOrg(org.id, site.items).length} articles · {athletesForOrg(org.id, site.athletes).length} athlètes · {eventsForOrg(org.id, site.events).length} cartes
+            </p>
+          </a>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

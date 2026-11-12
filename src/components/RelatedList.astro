@@ -1,0 +1,45 @@
+---
+import type { FeedItem } from '../lib/types';
+import RelativeTime from './RelativeTime.astro';
+import Visual from './Visual.astro';
+
+interface Props {
+  items: FeedItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<aside class="related" aria-labelledby="related-title">
+  <h2 class="section-title" id="related-title">Dans le même fil</h2>
+  <ol class="related-list">
+    {
+      items.map((item) => {
+        const initials =
+          item.athletes[0]?.name
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((part) => part[0] ?? '')
+            .join('')
+            .toUpperCase() || item.org.initials;
+        return (
+          <li>
+            <a class="related-item" href={item.href}>
+              <span class="related-thumb">
+                <Visual seed={item.id} uid={`${item.id}-rel`} initials={initials} label="" />
+              </span>
+              <span>
+                <h3>{item.title}</h3>
+                <p class="related-meta">
+                  {item.org.name}
+                  <span aria-hidden="true"> · </span>
+                  <RelativeTime date={item.pubDate} />
+                </p>
+              </span>
+            </a>
+          </li>
+        );
+      })
+    }
+  </ol>
+</aside>

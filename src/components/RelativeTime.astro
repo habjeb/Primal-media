@@ -1,0 +1,14 @@
+---
+import { formatFull, formatRelative } from '../lib/dates';
+
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+---
+
+<time datetime={date.toISOString()} title={formatFull(date)}>
+  <span data-rel>{formatRelative(date)}</span>
+  <span class="sr-only">, {formatFull(date)}</span>
+</time>

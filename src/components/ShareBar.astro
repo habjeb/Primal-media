@@ -1,0 +1,41 @@
+---
+interface Props {
+  url: string;
+  title: string;
+}
+
+const { url, title } = Astro.props;
+const text = encodeURIComponent(`${title} ${url}`);
+const encodedUrl = encodeURIComponent(url);
+---
+
+<ul class="share">
+  <li>
+    <a href={`https://twitter.com/intent/tweet?text=${text}`} target="_blank" rel="noopener noreferrer">Partager sur X</a>
+  </li>
+  <li>
+    <a href={`https://www.facebook.com/sharer/sharer.php?u=${encodedUrl}`} target="_blank" rel="noopener noreferrer">Facebook</a>
+  </li>
+  <li>
+    <a href={`https://wa.me/?text=${text}`} target="_blank" rel="noopener noreferrer">WhatsApp</a>
+  </li>
+  <li>
+    <button type="button" data-copy data-url={url}>Copier le lien</button>
+  </li>
+</ul>
+
+<script>
+  document.querySelectorAll<HTMLButtonElement>('[data-copy]').forEach((button) => {
+    if (button.dataset.bound === 'true') return;
+    button.dataset.bound = 'true';
+    button.addEventListener('click', async () => {
+      const value = button.dataset.url || location.href;
+      try {
+        await navigator.clipboard.writeText(value);
+        button.textContent = 'Lien copié';
+      } catch {
+        button.textContent = 'Copie impossible';
+      }
+    });
+  });
+</script>

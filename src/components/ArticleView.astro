@@ -1,0 +1,108 @@
+---
+import { render, type CollectionEntry } from 'astro:content';
+import { relatedItems, type SiteData } from '../lib/content';
+import { formatFull } from '../lib/dates';
+import { withBase } from '../lib/paths';
+import { withRecord } from '../lib/text';
+import type { FeedItem } from '../lib/types';
+import ExampleNote from './ExampleNote.astro';
+import RelatedList from './RelatedList.astro';
+import RelativeTime from './RelativeTime.astro';
+import ShareBar from './ShareBar.astro';
+import VideoEmbed from './VideoEmbed.astro';
+
+interface Props {
+  site: SiteData;
+  item: FeedItem;
+  entry: CollectionEntry<'articles'>;
+  pageUrl: string;
+}
+
+const { site, item, entry, pageUrl } = Astro.props;
+const { Content } = await render(entry);
+const related = relatedItems(item, site.items);
+const event = item.eventId ? site.events.find((record) => record.event.id === item.eventId)?.event : undefined;
+const initials =
+  item.athletes[0]?.name
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0] ?? '')
+    .join('')
+    .toUpperCase() || item.org.initials;
+---
+
+<nav aria-label="Fil d’Ariane">
+  <ol class="crumbs">
+    <li><a href={withBase('/')}>Fil</a></li>
+    <li aria-hidden="true">/</li>
+    <li><a href={withBase('/actualites/')}>Actualités</a></li>
+    <li aria-hidden="true">/</li>
+    <li aria-current="page">{item.title}</li>
+  </ol>
+</nav>
+
+<div class="watch">
+  <article>
+    <VideoEmbed item={item} initials={initials} />
+    {item.example && <ExampleNote />}
+    <p class="kicker">{item.category} · {item.org.name}</p>
+    <h1 class="article-title">{item.title}</h1>
+    <p class="byline">
+      {item.author}
+      <span aria-hidden="true"> · </span>
+      <time datetime={item.pubDate.toISOString()}>{formatFull(item.pubDate)}</time>
+      <span aria-hidden="true"> · </span>
+      <RelativeTime date={item.pubDate} />
+    </p>
+    <p class="chapo"><span class="prefix">{item.category} – </span>{item.description}</p>
+
+    <dl class="facts">
+      <div>
+        <dt>Organisation</dt>
+        <dd><a href={item.org.href}>{item.org.name}</a></dd>
+      </div>
+      {
+        item.athletes.length > 0 && (
+          <div>
+            <dt>Athlètes</dt>
+            <dd>
+              {item.athletes.map((athlete, index) => (
+                <>
+                  {index > 0 && ', '}
+                  <a href={athlete.href}>{withRecord(athlete.name, athlete.record)}</a>
+                </>
+              ))}
+            </dd>
+          </div>
+        )
+      }
+      {
+        item.tags.length > 0 && (
+          <div>
+            <dt>Tags</dt>
+            <dd>{item.tags.map((tag) => `#${tag}`).join(' · ')}</dd>
+          </div>
+        )
+      }
+    </dl>
+
+    {
+      event?.broadcast && (
+        <aside class="broadcast">
+          <h2>Quelle heure, quelle chaîne ?</h2>
+          <p><strong>{event.broadcast.when}</strong></p>
+          <p>{event.broadcast.channel}</p>
+          <p>
+            <a href={event.href}>Voir la carte</a>
+          </p>
+        </aside>
+      )
+    }
+
+    <ShareBar url={pageUrl} title={item.title} />
+    <div class="prose">
+      <Content />
+    </div>
+  </article>
+  {related.length > 0 && <RelatedList items={related} />}
+</div>
