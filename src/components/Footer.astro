@@ -1,0 +1,35 @@
+---
+import { withBase } from '../lib/paths';
+
+const links = [
+  { href: '/', label: 'Fil' },
+  { href: '/actualites/', label: 'Actualités' },
+  { href: '/athletes/', label: 'Athlètes' },
+  { href: '/evenements/', label: 'Événements' },
+  { href: '/organisations/', label: 'Organisations' },
+  { href: '/a-propos/', label: 'À propos' },
+  { href: '/contact/', label: 'Contact' },
+  { href: '/rss.xml', label: 'RSS' },
+];
+---
+
+<footer class="site-footer">
+  <div class="wrap footer-grid">
+    <div>
+      <p class="logo-text">PRIMAL <span>MÉDIA</span></p>
+      <p>
+        Le fil du MMA et du grappling francophone, côté athlètes des petites organisations.
+        Les entrées marquées « Contenu d’exemple » sont fictives.
+      </p>
+    </div>
+    <ul class="footer-links">
+      {
+        links.map((link) => (
+          <li>
+            <a href={withBase(link.href)}>{link.label}</a>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</footer>

@@ -1,0 +1,97 @@
+---
+import '@fontsource/barlow-condensed/latin-700.css';
+import '@fontsource/barlow-condensed/latin-800.css';
+import '@fontsource/barlow-condensed/latin-ext-700.css';
+import '@fontsource/barlow-condensed/latin-ext-800.css';
+import '@fontsource/source-sans-3/latin-400.css';
+import '@fontsource/source-sans-3/latin-600.css';
+import '@fontsource/source-sans-3/latin-700.css';
+import '@fontsource/source-sans-3/latin-ext-400.css';
+import '@fontsource/source-sans-3/latin-ext-600.css';
+import '@fontsource/source-sans-3/latin-ext-700.css';
+import '../styles/global.css';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { withBase } from '../lib/paths';
+
+interface Props {
+  title: string;
+  description: string;
+  ogType?: 'website' | 'article';
+  published?: Date;
+  author?: string;
+  noindex?: boolean;
+  jsonLd?: unknown;
+}
+
+const {
+  title,
+  description,
+  ogType = 'website',
+  published,
+  author,
+  noindex = false,
+  jsonLd,
+} = Astro.props;
+
+const fullTitle = title.includes('Primal') ? title : `${title} · Primal Média`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const image = new URL(withBase('/og.png'), Astro.site);
+const rss = new URL(withBase('/rss.xml'), Astro.site);
+const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : undefined;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={withBase('/favicon.svg')} type="image/svg+xml" />
+    <meta name="theme-color" content="#0b0c0f" />
+    {noindex && <meta name="robots" content="noindex" />}
+    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:site_name" content="Primal Média" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:alt" content="Primal Média, fil d’actualité MMA et grappling" />
+    {published && <meta property="article:published_time" content={published.toISOString()} />}
+    {author && <meta property="article:author" content={author} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    <link rel="alternate" type="application/rss+xml" title="Primal Média — fil" href={rss} />
+    {json && <script type="application/ld+json" set:html={json} />}
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+  </head>
+  <body>
+    <a class="skip" href="#contenu">Aller au contenu</a>
+    <Header />
+    <main id="contenu" class="wrap">
+      <slot />
+    </main>
+    <Footer />
+    <script>
+      import { formatRelative } from '../lib/dates';
+
+      const refresh = () => {
+        document.querySelectorAll<HTMLTimeElement>('time[datetime]').forEach((node) => {
+          const slot = node.querySelector('[data-rel]');
+          if (!slot || !node.dateTime) return;
+          slot.textContent = formatRelative(new Date(node.dateTime));
+        });
+      };
+      refresh();
+      window.setInterval(refresh, 60000);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+---
+import { palette } from '../lib/text';
+
+interface Props {
+  seed: string;
+  initials: string;
+  large?: boolean;
+}
+
+const { seed, initials, large = false } = Astro.props;
+const colors = palette(seed);
+---
+
+<span
+  class:list={['avatar', { lg: large }]}
+  style={`background:${colors.mid};color:${colors.ink}`}
+  aria-hidden="true"
+>{initials}</span>

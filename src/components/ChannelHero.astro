@@ -1,0 +1,46 @@
+---
+import Avatar from './Avatar.astro';
+import Visual from './Visual.astro';
+
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Props {
+  seed: string;
+  initials: string;
+  kicker: string;
+  title: string;
+  subtitle?: string;
+  example?: boolean;
+  stats: Stat[];
+}
+
+const { seed, initials, kicker, title, subtitle, example = false, stats } = Astro.props;
+---
+
+<header class="channel">
+  <div class="channel-banner">
+    <Visual seed={seed} uid={`${seed}-banner`} initials={initials} label="" hideInitials />
+  </div>
+  <div class="channel-row">
+    <Avatar seed={seed} initials={initials} large />
+    <div class="channel-id">
+      <p class="kicker">{kicker}</p>
+      <h1>{title}</h1>
+      {subtitle && <p class="nick">{subtitle}</p>}
+      {example && <p class="ex-inline">Contenu d’exemple</p>}
+    </div>
+    <ul class="statline">
+      {
+        stats.map((stat) => (
+          <li>
+            <strong>{stat.value}</strong>
+            <span>{stat.label}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</header>

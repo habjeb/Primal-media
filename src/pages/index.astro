@@ -1,0 +1,46 @@
+---
+import ExampleNote from '../components/ExampleNote.astro';
+import Feed from '../components/Feed.astro';
+import { getSite } from '../lib/content';
+import { formatDay } from '../lib/dates';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const next = site.events
+  .map((record) => record.event)
+  .filter((event) => event.upcoming)
+  .sort((a, b) => a.date.getTime() - b.date.getTime())[0];
+const description =
+  'Fil d’actualité du MMA et du grappling francophone, centré sur les athlètes. Les contenus d’exemple sont fictifs.';
+const siteUrl = new URL(import.meta.env.BASE_URL, Astro.site).toString();
+---
+
+<Base
+  title="Primal Média — le fil du MMA et du grappling"
+  description={description}
+  jsonLd={{
+    '@context': 'https://schema.org',
+    '@type': 'WebSite',
+    name: 'Primal Média',
+    url: siteUrl,
+    inLanguage: 'fr-FR',
+    description,
+  }}
+>
+  <header class="feed-head">
+    <h1>Fil d’actualité</h1>
+    <p>Le MMA et le grappling des organisations francophones, au rythme d’un fil.</p>
+  </header>
+  <ExampleNote />
+  <Feed
+    mode="home"
+    items={site.items}
+    stories={site.stories}
+    nextEvent={next && {
+      href: next.href,
+      title: next.title,
+      when: formatDay(next.date),
+      detail: `${next.org.name} · ${next.city}${next.broadcast ? ` · ${next.broadcast.channel}` : ''}`,
+    }}
+  />
+</Base>

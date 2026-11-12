@@ -1,0 +1,93 @@
+---
+import { render } from 'astro:content';
+import Corner from '../../components/Corner.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import { getSite } from '../../lib/content';
+import { formatFull } from '../../lib/dates';
+import { withBase } from '../../lib/paths';
+import Base from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const site = await getSite();
+  return site.events.map(({ event }) => ({ params: { id: event.id } }));
+}
+
+const id = Astro.params.id;
+const site = await getSite();
+const found = site.events.find((record) => record.event.id === id);
+if (!found || !id) throw new Error('Événement introuvable');
+const { event, entry } = found;
+const { Content } = await render(entry);
+---
+
+<Base title={event.title} description={event.description}>
+  <nav aria-label="Fil d’Ariane">
+    <ol class="crumbs">
+      <li><a href={withBase('/')}>Fil</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href={withBase('/evenements/')}>Événements</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{event.title}</li>
+    </ol>
+  </nav>
+  <header class="page-intro">
+    <p class="kicker">{event.upcoming ? 'À venir' : 'Carte passée'} · {event.discipline}</p>
+    <h1 class="event-title">{event.title}</h1>
+    <p class="lede">{event.description}</p>
+  </header>
+  {event.example && <ExampleNote />}
+  <dl class="facts">
+    <div>
+      <dt>Date</dt>
+      <dd><time datetime={event.date.toISOString()}>{formatFull(event.date)}</time></dd>
+    </div>
+    <div>
+      <dt>Lieu</dt>
+      <dd>{event.venue}, {event.city}</dd>
+    </div>
+    <div>
+      <dt>Organisation</dt>
+      <dd><a href={event.org.href}>{event.org.name}</a></dd>
+    </div>
+    {
+      event.broadcast && (
+        <div>
+          <dt>Quelle heure, quelle chaîne ?</dt>
+          <dd>
+            {event.broadcast.when}. {event.broadcast.channel}
+          </dd>
+        </div>
+      )
+    }
+  </dl>
+  <div class="prose">
+    <Content />
+  </div>
+  <section aria-labelledby="card-title">
+    <h2 class="section-title" id="card-title">{event.upcoming ? 'Carte annoncée' : 'Résultats'}</h2>
+    <ol class="bouts">
+      {
+        event.bouts.map((bout) => (
+          <li class="bout">
+            <p class="wc">
+              {bout.weightClass}
+              {bout.main ? ' · combat principal' : ''}
+            </p>
+            <div class="corners">
+              <Corner name={bout.redName} record={bout.redRecord} href={bout.redHref} side="red" win={bout.winner === 'red'} />
+              <span class="vs">vs</span>
+              <Corner name={bout.blueName} record={bout.blueRecord} href={bout.blueHref} side="blue" win={bout.winner === 'blue'} />
+            </div>
+            <p class="method">
+              {bout.winner === 'draw'
+                ? `Nul${bout.method ? ` · ${bout.method}` : ''}`
+                : bout.winner
+                  ? `${bout.winner === 'red' ? bout.redName : bout.blueName}${bout.method ? ` · ${bout.method}` : ''}${bout.round ? ` · R${bout.round}` : ''}`
+                  : 'Pas encore disputé'}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+</Base>

@@ -1,0 +1,114 @@
+---
+import { FILTERS, PAGE_SIZE } from '../lib/filters';
+import { withBase } from '../lib/paths';
+import type { FeedItem, NextEvent, Story } from '../lib/types';
+import Avatar from './Avatar.astro';
+import NewsCard from './NewsCard.astro';
+
+interface Props {
+  items: FeedItem[];
+  mode: 'home' | 'archive';
+  active?: string;
+  stories?: Story[];
+  nextEvent?: NextEvent;
+}
+
+const { items, mode, active = 'tout', stories = [], nextEvent } = Astro.props;
+const une = items.filter((item) => item.section === 'une');
+const fight = items.filter((item) => item.section !== 'une');
+const archiveOverflow = items.length > PAGE_SIZE;
+const fightOverflow = fight.length > PAGE_SIZE;
+---
+
+<div data-feed data-mode={mode} data-active={active} data-page-size={PAGE_SIZE}>
+  {
+    mode === 'home' && stories.length > 0 && (
+      <nav class="stories" aria-label="Athlètes et organisations">
+        {stories.map((story) => (
+          <a class="story" href={story.href}>
+            <span class="story-ring">
+              <Avatar seed={story.seed} initials={story.initials} />
+            </span>
+            <span class="story-name">{story.label}</span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+
+  <div class="chips-wrap">
+    <div class="chips" role="navigation" aria-label="Filtrer le fil">
+      {
+        FILTERS.map((filter) => (
+          <a
+            class="chip"
+            href={withBase(filter.href)}
+            data-filter={filter.id}
+            aria-current={filter.id === active ? 'page' : undefined}
+          >
+            {filter.label}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    mode === 'home' && nextEvent && (
+      <aside class="next-event">
+        <span class="label">Prochain rendez-vous</span>
+        <a href={nextEvent.href}>{nextEvent.title}</a>
+        <span>{nextEvent.when}</span>
+        <span>{nextEvent.detail}</span>
+      </aside>
+    )
+  }
+
+  {
+    mode === 'home' ? (
+      <>
+        <section class="feed-block" data-block="une" aria-labelledby="une-title">
+          <h2 id="une-title">À la une</h2>
+          <div class="mosaic">
+            {une.map((item) => (
+              <NewsCard item={item} spotlight={item.spotlight} />
+            ))}
+          </div>
+        </section>
+        <section class="feed-block" data-block="fight" aria-labelledby="fight-title">
+          <h2 id="fight-title">L’actu fight</h2>
+          <div class="mosaic">
+            {fight.map((item, index) => (
+              <NewsCard item={item} deferred={index >= PAGE_SIZE} />
+            ))}
+          </div>
+        </section>
+      </>
+    ) : (
+      <div class="mosaic" data-block="flat">
+        {items.map((item, index) => (
+          <NewsCard item={item} deferred={index >= PAGE_SIZE} />
+        ))}
+      </div>
+    )
+  }
+
+  <p class="empty" data-empty hidden>Aucun contenu pour ce filtre.</p>
+  <div class="more">
+    <button type="button" data-more hidden={mode === 'home' ? !fightOverflow : !archiveOverflow}>
+      Voir plus
+    </button>
+  </div>
+  <p class="status" data-status aria-live="polite"></p>
+</div>
+
+<noscript>
+  <style>
+    [data-deferred] { display: flex !important; }
+  </style>
+</noscript>
+
+<script>
+  import { setupFeed } from '../scripts/feed';
+  setupFeed();
+</script>

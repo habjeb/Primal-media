@@ -1,0 +1,23 @@
+---
+import Base from '../layouts/BaseLayout.astro';
+
+const email = 'redaction@primalmedia.example';
+const subject = encodeURIComponent('Contact Primal Média');
+---
+
+<Base
+  title="Contact"
+  description="Écrire à la rédaction de Primal Média. Le lien ouvre votre messagerie : aucun formulaire n’est envoyé à un serveur."
+>
+  <header class="page-intro">
+    <h1>Contact</h1>
+    <p class="lede">
+      Une question, une correction, une carte à signaler : écrivez à la rédaction. Le bouton ouvre
+      votre propre messagerie. Rien n’est stocké ici.
+    </p>
+  </header>
+  <p>
+    <a class="mail-btn" href={`mailto:${email}?subject=${subject}`}>Écrire à {email}</a>
+  </p>
+  <p class="meta-line">Adresse d’exemple, en attendant une boîte réelle.</p>
+</Base>

@@ -1,0 +1,26 @@
+---
+interface Props {
+  name: string;
+  record?: string;
+  href?: string;
+  side: 'red' | 'blue';
+  win?: boolean;
+}
+
+const { name, record, href, side, win = false } = Astro.props;
+const className = ['corner', side, win ? 'is-winner' : ''].filter(Boolean).join(' ');
+---
+
+{
+  href ? (
+    <a class={className} href={href}>
+      <strong>{name}</strong>
+      {record && <span>({record})</span>}
+    </a>
+  ) : (
+    <span class={className}>
+      <strong>{name}</strong>
+      {record && <span>({record})</span>}
+    </span>
+  )
+}

@@ -1,0 +1,66 @@
+---
+import ExampleNote from '../../components/ExampleNote.astro';
+import { getSite } from '../../lib/content';
+import { formatFull } from '../../lib/dates';
+import Base from '../../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const upcoming = site.events
+  .map((record) => record.event)
+  .filter((event) => event.upcoming)
+  .sort((a, b) => a.date.getTime() - b.date.getTime());
+const past = site.events
+  .map((record) => record.event)
+  .filter((event) => !event.upcoming)
+  .sort((a, b) => b.date.getTime() - a.date.getTime());
+---
+
+<Base
+  title="Événements"
+  description="Cartes à venir et cartes passées. Les événements d’exemple et leurs résultats sont fictifs."
+>
+  <header class="page-intro">
+    <h1>Événements</h1>
+    <p class="lede">Les rendez-vous liés au fil. Chaque carte d’exemple est signalée.</p>
+  </header>
+  <ExampleNote />
+  <section aria-labelledby="upcoming-title">
+    <h2 class="section-title" id="upcoming-title">À venir</h2>
+    <div class="event-list">
+      {
+        upcoming.map((event) => (
+          <article class="event-card">
+            <p class="kicker">À venir · {formatFull(event.date)}</p>
+            <h2><a href={event.href}>{event.title}</a></h2>
+            <p class="meta-line">
+              <a href={event.org.href}>{event.org.name}</a>
+              {' · '}
+              {event.city} · {event.venue}
+            </p>
+            {event.broadcast && <p>{event.broadcast.channel}</p>}
+            {event.example && <p class="ex-inline">Contenu d’exemple</p>}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+  <section aria-labelledby="past-title">
+    <h2 class="section-title" id="past-title">Cartes passées</h2>
+    <div class="event-list">
+      {
+        past.map((event) => (
+          <article class="event-card">
+            <p class="kicker">Passé · {formatFull(event.date)}</p>
+            <h2><a href={event.href}>{event.title}</a></h2>
+            <p class="meta-line">
+              <a href={event.org.href}>{event.org.name}</a>
+              {' · '}
+              {event.city} · {event.venue}
+            </p>
+            {event.example && <p class="ex-inline">Contenu d’exemple</p>}
+          </article>
+        ))
+      }
+    </div>
+  </section>
+</Base>

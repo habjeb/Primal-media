@@ -1,0 +1,45 @@
+---
+import { isCurrent, withBase } from '../lib/paths';
+
+const pathname = Astro.url.pathname;
+const links = [
+  { href: '/', label: 'Fil' },
+  { href: '/actualites/', label: 'Actualités' },
+  { href: '/athletes/', label: 'Athlètes' },
+  { href: '/evenements/', label: 'Événements' },
+  { href: '/organisations/', label: 'Organisations' },
+  { href: '/a-propos/', label: 'À propos' },
+  { href: '/contact/', label: 'Contact' },
+];
+---
+
+<header class="site-header">
+  <div class="wrap header-row">
+    <a class="logo" href={withBase('/')}>
+      <svg class="logo-mark" viewBox="0 0 36 36" aria-hidden="true">
+        <rect width="36" height="36" rx="8" fill="#c1121f"></rect>
+        <path d="M7 29 L16 7 H20 L11 29 Z" fill="#fff"></path>
+        <path d="M16 29 L24 9 H28 L20 29 Z" fill="#ffb020"></path>
+      </svg>
+      <span class="logo-text">PRIMAL <span>MÉDIA</span></span>
+    </a>
+    <div class="header-tools">
+      <a class="rss" href={withBase('/rss.xml')}>RSS</a>
+    </div>
+  </div>
+  <div class="wrap">
+    <nav aria-label="Principal">
+      <ul class="nav-links">
+        {
+          links.map((link) => (
+            <li>
+              <a href={withBase(link.href)} aria-current={isCurrent(pathname, link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>

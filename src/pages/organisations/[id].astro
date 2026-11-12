@@ -1,0 +1,96 @@
+---
+import { render } from 'astro:content';
+import Avatar from '../../components/Avatar.astro';
+import ChannelHero from '../../components/ChannelHero.astro';
+import ExampleNote from '../../components/ExampleNote.astro';
+import NewsCard from '../../components/NewsCard.astro';
+import { athletesForOrg, eventsForOrg, getSite, itemsForOrg } from '../../lib/content';
+import { formatDay } from '../../lib/dates';
+import { initials } from '../../lib/text';
+import { withBase } from '../../lib/paths';
+import Base from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const site = await getSite();
+  return site.organisations.map(({ org }) => ({ params: { id: org.id } }));
+}
+
+const id = Astro.params.id;
+const site = await getSite();
+const found = site.organisations.find((record) => record.org.id === id);
+if (!found || !id) throw new Error('Organisation introuvable');
+
+const { org, entry } = found;
+const { Content } = await render(entry);
+const posts = itemsForOrg(org.id, site.items);
+const people = athletesForOrg(org.id, site.athletes);
+const events = eventsForOrg(org.id, site.events);
+const kindLabel = org.kind === 'professionnelle' ? 'Organisation professionnelle' : 'Organisation amateur';
+---
+
+<Base title={org.name} description={org.description}>
+  <nav aria-label="Fil d’Ariane">
+    <ol class="crumbs">
+      <li><a href={withBase('/')}>Fil</a></li>
+      <li aria-hidden="true">/</li>
+      <li><a href={withBase('/organisations/')}>Organisations</a></li>
+      <li aria-hidden="true">/</li>
+      <li aria-current="page">{org.name}</li>
+    </ol>
+  </nav>
+  <ChannelHero
+    seed={org.id}
+    initials={org.initials}
+    kicker={`${kindLabel} · ${org.place}`}
+    title={org.name}
+    stats={[
+      { value: String(posts.length), label: 'articles' },
+      { value: String(people.length), label: 'athlètes' },
+      { value: String(events.length), label: 'cartes' },
+    ]}
+  />
+  <ExampleNote kind="org" />
+  <div class="prose">
+    <Content />
+  </div>
+  <section aria-labelledby="people-title">
+    <h2 class="section-title" id="people-title">Athlètes</h2>
+    <ul class="roster">
+      {
+        people.map(({ profile }) => (
+          <li>
+            <a href={profile.href}>
+              <Avatar seed={profile.id} initials={initials(profile.name)} large />
+              <strong>{profile.name} ({profile.record})</strong>
+              <span class="meta-line">{profile.weightClass}</span>
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+  <section id="publications" aria-labelledby="posts-title">
+    <h2 class="section-title" id="posts-title">Publications</h2>
+    <div class="mosaic">
+      {posts.map((item) => <NewsCard item={item} />)}
+    </div>
+  </section>
+  <section aria-labelledby="events-title">
+    <h2 class="section-title" id="events-title">Cartes</h2>
+    <div class="event-list">
+      {
+        events
+          .slice()
+          .sort((a, b) => b.event.date.getTime() - a.event.date.getTime())
+          .map(({ event }) => (
+            <article class="event-card">
+              <p class="kicker">{event.upcoming ? 'À venir' : 'Passé'} · {formatDay(event.date)}</p>
+              <h2><a href={event.href}>{event.title}</a></h2>
+              <p class="meta-line">{event.city} · {event.venue}</p>
+              {event.example && <p class="ex-inline">Contenu d’exemple</p>}
+            </article>
+          ))
+      }
+    </div>
+  </section>
+</Base>
