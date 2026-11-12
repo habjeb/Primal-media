@@ -1,5 +1,19 @@
 # Primal Média
 
+## Le projet
+
+**Mission.** Apporter aux athlètes des petites organisations francophones de MMA et de grappling une couverture du niveau de celle que l’UFC ou ONE réservent aux leurs : des actus centrées sur le combattant. Cela vise les promotions professionnelles modestes (Hexagone MMA), les structures amateurs (Duel, à Albertville et Chambéry) et les autres organisations françaises plus petites.
+
+**Pourquoi.** Chez l’UFC et ONE, profils, avant-combats et comptes rendus partent de l’athlète. Ce traitement reste rare pour les organisations francophones de taille modeste.
+
+**Public.** Fans, athlètes, clubs et organisateurs.
+
+**Ligne éditoriale.** Inspirée de [La Sueur](https://lasueur.com/) : titres construits autour du nom de l’athlète avec le record entre parenthèses, chapô court, et formats récurrents — « quelle heure, quelle chaîne ? », « tous les résultats », « tout ce qu’il faut savoir sur ».
+
+**Format.** Un fil d’actualité façon réseau social : mosaïque type Instagram / YouTube, pastilles de filtre, avatars façon stories, pages athlète et organisation façon chaîne.
+
+**Suite.** Remplacer les contenus d’exemple par de vrais sujets, alimenter les articles par une veille média quotidienne, ajouter des organisations, et développer la vidéo.
+
 Fil d’actualité en français pour le MMA et le grappling des organisations francophones — promotions professionnelles modestes et clubs amateurs. Le site est statique (Astro), sans base de données, et se publie gratuitement sur GitHub Pages.
 
 Les articles, athlètes, records et cartes livrés avec le dépôt portent la mention **Contenu d’exemple**. Ce sont des fictions, pour voir la mise en page. Hexagone MMA et Duel (Albertville) ont une fiche neutre : aucun résultat réel n’y est inventé.
