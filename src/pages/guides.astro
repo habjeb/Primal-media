@@ -1,0 +1,39 @@
+---
+import ExampleNote from '../components/ExampleNote.astro';
+import { getSite } from '../lib/content';
+import { readingTime } from '../lib/text';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const guides = site.articles.filter(({ item }) => item.format === 'guide');
+const description =
+  'Comprendre le circuit amateur : règles, palmarès, premier gala, passage pro. Des explications de fond, mises à jour et sourcées.';
+---
+
+<Base title="Guides" description={description}>
+  <header class="rubric-head">
+    <h1>Gui<span class="outline">des</span></h1>
+    <p class="lede">{description}</p>
+  </header>
+  <ExampleNote />
+  <ol class="guide-list">
+    {
+      guides.map(({ item, entry }, index) => (
+        <li class="guide">
+          <span class="guide-num" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
+          <div>
+            <p class="cal-meta">
+              <span class="cal-disc">{item.category}</span>
+              <span>{readingTime(entry.body)} min de lecture</span>
+              {item.example && <span class="ex-inline">Contenu d’exemple</span>}
+            </p>
+            <h2>
+              <a href={item.href}>{item.title}</a>
+            </h2>
+            <p class="excerpt">{item.description}</p>
+          </div>
+        </li>
+      ))
+    }
+  </ol>
+</Base>

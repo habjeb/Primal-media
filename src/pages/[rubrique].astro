@@ -1,0 +1,71 @@
+---
+import Avatar from '../components/Avatar.astro';
+import EventRow from '../components/EventRow.astro';
+import ExampleNote from '../components/ExampleNote.astro';
+import Feed from '../components/Feed.astro';
+import { filterItems, getSite } from '../lib/content';
+import { DISCIPLINES } from '../lib/filters';
+import { withBase } from '../lib/paths';
+import { initials } from '../lib/text';
+import Base from '../layouts/BaseLayout.astro';
+
+// Une rubrique par discipline : /mma/, /grappling/, /kick-boxe/
+export function getStaticPaths() {
+  return DISCIPLINES.map((discipline) => ({ params: { rubrique: discipline.id }, props: { discipline } }));
+}
+
+const { discipline } = Astro.props;
+const site = await getSite();
+const items = filterItems(site.items, discipline.id);
+const events = site.events
+  .map((record) => record.event)
+  .filter((event) => event.upcoming)
+  .filter((event) => event.discipline === discipline.category || (event.discipline === 'Mixte' && discipline.category !== 'Kick/Boxe'))
+  .slice(0, 3);
+const fighters = site.athletes.filter(({ profile }) => profile.discipline === discipline.category);
+const [first, ...rest] = discipline.title.split(' ');
+---
+
+<Base title={discipline.title} description={discipline.lede}>
+  <header class="rubric-head">
+    <h1>{first} <span class="outline">{rest.join(' ')}</span></h1>
+    <p class="lede">{discipline.lede}</p>
+  </header>
+  <ExampleNote />
+
+  {
+    fighters.length > 0 && (
+      <nav class="stories" aria-label={`Combattants ${discipline.label}`}>
+        {fighters.map(({ profile }) => (
+          <a class="story" href={profile.href}>
+            <span class="story-ring">
+              <Avatar seed={profile.id} initials={initials(profile.name)} />
+            </span>
+            <span class="story-name">{profile.name}</span>
+          </a>
+        ))}
+      </nav>
+    )
+  }
+
+  {
+    events.length > 0 && (
+      <section class="rubric-block" aria-labelledby="dates-title">
+        <div class="block-head">
+          <h2 class="section-title" id="dates-title">Prochaines dates</h2>
+          <a href={withBase('/calendrier/')}>Tout le calendrier →</a>
+        </div>
+        <ol class="cal-rows">
+          {events.map((event) => (
+            <EventRow event={event} />
+          ))}
+        </ol>
+      </section>
+    )
+  }
+
+  <section class="rubric-block" aria-labelledby="fil-title">
+    <h2 class="section-title" id="fil-title">Le fil {discipline.label}</h2>
+    {items.length > 0 ? <Feed mode="archive" items={items} active={discipline.id} /> : <p class="empty">Pas encore d’article dans cette rubrique.</p>}
+  </section>
+</Base>

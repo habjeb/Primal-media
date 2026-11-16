@@ -1,0 +1,134 @@
+---
+import Countdown from '../components/Countdown.astro';
+import EventRow from '../components/EventRow.astro';
+import ExampleNote from '../components/ExampleNote.astro';
+import { getSite } from '../lib/content';
+import { dateParts, formatFull } from '../lib/dates';
+import type { FeedEvent } from '../lib/types';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const all = site.events.map((record) => record.event);
+const upcoming = all.filter((event) => event.upcoming).sort((a, b) => a.date.getTime() - b.date.getTime());
+const past = all.filter((event) => !event.upcoming).sort((a, b) => b.date.getTime() - a.date.getTime());
+const next = upcoming[0];
+
+// Regroupement par mois pour la liste.
+const months = new Map<string, { label: string; events: FeedEvent[] }>();
+for (const event of upcoming) {
+  const { monthKey, monthLabel } = dateParts(event.date);
+  if (!months.has(monthKey)) months.set(monthKey, { label: monthLabel, events: [] });
+  months.get(monthKey)!.events.push(event);
+}
+
+const chips = [
+  { id: 'tout', label: 'Tout' },
+  { id: 'MMA', label: 'MMA' },
+  { id: 'Grappling', label: 'Grappling' },
+  { id: 'Kick/Boxe', label: 'Kick/Boxe' },
+  ...site.organisations
+    .filter(({ org }) => all.some((event) => event.org.id === org.id))
+    .map(({ org }) => ({ id: `org:${org.id}`, label: org.name })),
+];
+---
+
+<Base
+  title="Calendrier"
+  description="Les prochains galas amateurs et des petites organisations : MMA, grappling, kick et boxe. Dates, horaires, diffusion et billetterie."
+>
+  <header class="rubric-head">
+    <p class="kicker"><span class="live-dot" aria-hidden="true"></span> Live</p>
+    <h1>Calendrier</h1>
+    <p class="lede">
+      Tous les prochains galas, opens et championnats suivis par Primal Média, avec l’horaire en heure de Paris,
+      la diffusion et la billetterie quand elles existent.
+    </p>
+  </header>
+  <ExampleNote />
+
+  <div class="chips" role="group" aria-label="Filtrer le calendrier" data-cal-chips>
+    {
+      chips.map((chip, index) => (
+        <button type="button" class="chip" data-cal-filter={chip.id} aria-pressed={index === 0 ? 'true' : 'false'}>
+          {chip.label}
+        </button>
+      ))
+    }
+  </div>
+
+  <div class="cal-layout">
+    {
+      next && (
+        <aside class="next-card" aria-labelledby="next-title">
+          <p class="kicker">Prochain événement · {next.org.name}</p>
+          <h2 id="next-title">
+            <a href={next.href}>{next.title}</a>
+          </h2>
+          <p class="next-place">{next.city}</p>
+          <p class="meta-line">{formatFull(next.date)}, heure de Paris</p>
+          <Countdown date={next.date} />
+          <div class="next-actions">
+            <a class="btn-light" href={next.href}>Carte complète</a>
+            {next.tickets && (
+              <a class="btn-ghost" href={next.tickets} rel="noopener noreferrer" target="_blank">Billetterie</a>
+            )}
+          </div>
+        </aside>
+      )
+    }
+
+    <div class="cal-list">
+      {upcoming.length === 0 && <p class="empty">Aucun événement annoncé pour le moment.</p>}
+      {
+        [...months.values()].map((month) => (
+          <section class="cal-month" data-cal-month>
+            <h2 class="cal-month-title">{month.label}</h2>
+            <ol class="cal-rows">
+              {month.events.map((event) => (
+                <EventRow event={event} />
+              ))}
+            </ol>
+          </section>
+        ))
+      }
+      <p class="empty" data-cal-empty hidden>Aucun événement à venir pour ce filtre.</p>
+
+      {
+        past.length > 0 && (
+          <section class="cal-month cal-past" data-cal-month>
+            <h2 class="cal-month-title">Cartes passées</h2>
+            <ol class="cal-rows">
+              {past.map((event) => (
+                <EventRow event={event} past />
+              ))}
+            </ol>
+          </section>
+        )
+      }
+    </div>
+  </div>
+</Base>
+
+<script>
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('[data-cal-filter]')];
+  const rows = [...document.querySelectorAll<HTMLElement>('[data-cal]')];
+  const months = [...document.querySelectorAll<HTMLElement>('[data-cal-month]')];
+  const empty = document.querySelector<HTMLElement>('[data-cal-empty]');
+
+  const apply = (filter: string) => {
+    for (const row of rows) {
+      const show =
+        filter === 'tout' ||
+        (filter.startsWith('org:')
+          ? row.dataset.org === filter.slice(4)
+          : (row.dataset.disciplines ?? '').split(' ').includes(filter));
+      row.hidden = !show;
+    }
+    for (const month of months) month.hidden = !month.querySelector('[data-cal]:not([hidden])');
+    const anyUpcoming = rows.some((row) => !row.hidden && !row.classList.contains('past'));
+    if (empty) empty.hidden = anyUpcoming;
+    for (const chip of chips) chip.setAttribute('aria-pressed', String(chip.dataset.calFilter === filter));
+  };
+
+  for (const chip of chips) chip.addEventListener('click', () => apply(chip.dataset.calFilter ?? 'tout'));
+</script>

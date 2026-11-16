@@ -34,3 +34,18 @@ export function formatFull(date: Date): string {
     minute: '2-digit',
   }).format(date);
 }
+
+const part = (date: Date, options: Intl.DateTimeFormatOptions) =>
+  new Intl.DateTimeFormat('fr-FR', { ...paris, ...options }).format(date);
+
+/** Morceaux d’une date pour les blocs du calendrier (heure de Paris). */
+export function dateParts(date: Date) {
+  return {
+    weekday: part(date, { weekday: 'short' }).replace('.', ''),
+    day: part(date, { day: 'numeric' }),
+    month: part(date, { month: 'short' }).replace('.', ''),
+    time: part(date, { hour: 'numeric', minute: '2-digit' }).replace(':', ' h '),
+    monthLabel: part(date, { month: 'long', year: 'numeric' }),
+    monthKey: part(date, { year: 'numeric', month: '2-digit' }),
+  };
+}

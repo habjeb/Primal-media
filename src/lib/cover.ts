@@ -1,4 +1,4 @@
-import type { FeedItem } from './types';
+import type { Discipline, FeedItem } from './types';
 
 /** Format 1,91:1 courant pour les grandes vignettes de partage (Open Graph, cartes X). */
 export const OG_SIZE = { width: 1200, height: 630 } as const;
@@ -8,7 +8,7 @@ export type Cover = {
   name: string;
   record?: string;
   kicker?: string;
-  discipline: 'MMA' | 'Grappling' | 'Mixte';
+  discipline: Discipline;
 };
 
 const FORMAT_KICKER: Record<FeedItem['format'], string> = {
@@ -16,12 +16,17 @@ const FORMAT_KICKER: Record<FeedItem['format'], string> = {
   diffusion: 'Quelle heure, quelle chaîne ?',
   resultats: 'Tous les résultats',
   decryptage: 'Tout savoir',
+  portrait: 'Portrait',
+  guide: 'Guide',
 };
 
 export function coverFor(item: FeedItem): Cover {
   const athlete = item.athletes[0];
+  // Sans athlète (guides, dossiers) : le début du titre, avant les deux-points.
+  const topic = item.title.split(/\s:\s|\s—\s/)[0]!.trim();
+  const fallback = topic.length <= 30 ? topic : item.org.name;
   return {
-    name: athlete?.name ?? item.org.name,
+    name: athlete?.name ?? fallback,
     record: athlete?.record,
     kicker: item.hasVideo ? 'Vidéo' : FORMAT_KICKER[item.format],
     discipline: item.category,

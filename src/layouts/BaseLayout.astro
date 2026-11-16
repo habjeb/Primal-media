@@ -40,7 +40,7 @@ const {
 const fullTitle = title.includes('Primal') ? title : `${title} · Primal Média`;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const image = new URL(withBase(pageImage?.path ?? '/og.png'), Astro.site);
-const imageAlt = pageImage?.alt ?? 'Primal Média, fil d’actualité MMA et grappling';
+const imageAlt = pageImage?.alt ?? 'Primal Média, l’actu fight amateur : MMA, grappling, kick et boxe';
 const rss = new URL(withBase('/rss.xml'), Astro.site);
 const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : undefined;
 ---

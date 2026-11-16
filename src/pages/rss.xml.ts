@@ -11,7 +11,7 @@ export async function GET(context: APIContext) {
   return rss({
     title: 'Primal Média',
     description:
-      'Fil d’actualité du MMA et du grappling francophone. Les entrées d’exemple sont fictives.',
+      'Fil d’actualité fight francophone : MMA, grappling, kick et boxe, côté combattants. Les entrées d’exemple sont fictives.',
     site: new URL(import.meta.env.BASE_URL, context.site ?? 'https://habjeb.github.io').toString(),
     trailingSlash: true,
     customData: '<language>fr-fr</language>',

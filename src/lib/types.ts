@@ -1,5 +1,6 @@
-export type Category = 'MMA' | 'Grappling';
-export type Format = 'breve' | 'diffusion' | 'resultats' | 'decryptage';
+export type Category = 'MMA' | 'Grappling' | 'Kick/Boxe';
+export type Discipline = Category | 'Mixte';
+export type Format = 'breve' | 'diffusion' | 'resultats' | 'decryptage' | 'portrait' | 'guide';
 export type Section = 'une' | 'fight';
 export type Tile = 'landscape' | 'square' | 'portrait';
 export type VideoProvider = 'youtube' | 'instagram' | 'fichier';
@@ -95,10 +96,11 @@ export type FeedEvent = {
   date: Date;
   city: string;
   venue: string;
-  discipline: 'MMA' | 'Grappling' | 'Mixte';
+  discipline: Discipline;
   example: boolean;
   org: FeedOrg;
-  broadcast?: { when: string; channel: string };
+  broadcast?: { when: string; channel: string; url?: string };
+  tickets?: string;
   bouts: ResolvedBout[];
   upcoming: boolean;
 };
@@ -106,6 +108,7 @@ export type FeedEvent = {
 export type NextEvent = {
   href: string;
   title: string;
+  date: Date;
   when: string;
   detail: string;
 };
