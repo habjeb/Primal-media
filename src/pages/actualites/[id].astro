@@ -4,6 +4,7 @@ import ExampleNote from '../../components/ExampleNote.astro';
 import Feed from '../../components/Feed.astro';
 import { filterItems, getSite } from '../../lib/content';
 import { ARCHIVE_FILTERS } from '../../lib/filters';
+import { OG_SIZE } from '../../lib/cover';
 import { excerpt } from '../../lib/text';
 import Base from '../../layouts/BaseLayout.astro';
 
@@ -46,6 +47,11 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
         ogType="article"
         published={found.item.pubDate}
         author={found.item.author}
+        image={{
+          path: `/og/${found.item.id}.jpg`,
+          alt: `${found.item.example ? 'Contenu d’exemple. ' : ''}${found.item.title}`,
+          ...OG_SIZE,
+        }}
         jsonLd={{
           '@context': 'https://schema.org',
           '@type': 'NewsArticle',

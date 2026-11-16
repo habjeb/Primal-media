@@ -1,5 +1,8 @@
 import type { FeedItem } from './types';
 
+/** Format 1,91:1 courant pour les grandes vignettes de partage (Open Graph, cartes X). */
+export const OG_SIZE = { width: 1200, height: 630 } as const;
+
 /** Ce qu’un visuel généré affiche : un nom, un record, une ligne de contexte. */
 export type Cover = {
   name: string;
