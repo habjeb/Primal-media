@@ -76,6 +76,8 @@ Formats récurrents :
 
 Un fichier `.mdx` peut importer un composant Astro (voir `ines-drelin-savoir.mdx`).
 
+Image de partage : chaque article reçoit automatiquement une image 1200×630 (`/og/<identifiant>.jpg`), générée au build dans le même style que les visuels du fil (nom et record du premier athlète, format de l’article, mention « Contenu d’exemple » si `example: true`). Rien à faire : elle est déclarée dans les balises `og:image` et `twitter:image` de la page.
+
 Vidéo :
 
 - YouTube : `provider: youtube` et `id` (11 caractères). Le lecteur passe par `youtube-nocookie.com`.

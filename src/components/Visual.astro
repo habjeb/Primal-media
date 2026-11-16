@@ -1,15 +1,10 @@
 ---
-import { octagon, seeded, surname, type Cover } from '../lib/cover';
-import { palette } from '../lib/text';
+import type { Cover } from '../lib/cover';
+import { coverSvg } from '../lib/cover-svg';
 
 /**
  * Visuel généré façon affiche de combat, sans photo.
- * Tout est dérivé de `seed` : un même article garde le même visuel d’un build à l’autre.
- *
- * `text` :
- * - `full`    : grand nom en fond + nom, record et contexte en bas à gauche ;
- * - `texture` : seulement le grand nom en fond (quand la page pose déjà son titre dessus) ;
- * - `none`    : aucun texte.
+ * La composition vit dans `src/lib/cover-svg.ts`, partagée avec les images de partage.
  */
 interface Props {
   seed: string;
@@ -22,148 +17,9 @@ interface Props {
   hideInitials?: boolean;
 }
 
-const { seed, initials, uid = seed, label = '', cover, hideInitials = false } = Astro.props;
+const { seed, initials, uid, label, cover, hideInitials = false } = Astro.props;
 const text = Astro.props.text ?? (hideInitials ? 'texture' : 'full');
-const colors = palette(seed);
-const rand = seeded(seed);
-const id = `v${uid.replace(/[^a-zA-Z0-9]/g, '')}`;
-
-const discipline = cover?.discipline ?? 'MMA';
-const name = cover?.name ?? initials;
-const big = cover ? surname(cover.name) : initials;
-const nameSize = name.length > 16 ? 118 : name.length > 12 ? 134 : 150;
-
-// Composition : la cage (ou le tapis) à droite, les barres « // » à gauche.
-const cx = 880 + rand() * 380;
-const cy = 360 + rand() * 160;
-const r = 300 + rand() * 120;
-const slashX = 260 + rand() * 360;
-const angle = rand() > 0.5 ? { x1: 0, y1: 0, x2: 1, y2: 1 } : { x1: 1, y1: 0, x2: 0, y2: 1 };
-const bigX = 30 + rand() * 160;
-const bigSize = big.length > 7 ? 470 : 560;
-const outer = octagon(cx, cy, r);
-const inner = octagon(cx, cy, r * 0.86);
-const slash = (x: number, w: number) => `${x},0 ${x + w},0 ${x + w - 330},900 ${x - 330},900`;
+const svg = coverSvg({ seed, initials, uid, label, cover, text });
 ---
 
-<div class="visual">
-  <svg
-    viewBox="0 0 1600 900"
-    preserveAspectRatio="xMidYMid slice"
-    role={label ? 'img' : undefined}
-    aria-label={label || undefined}
-    aria-hidden={label ? undefined : 'true'}
-  >
-    <defs>
-      <linearGradient id={`${id}-bg`} {...angle}>
-        <stop offset="0%" stop-color={colors.bg}></stop>
-        <stop offset="100%" stop-color={colors.mid}></stop>
-      </linearGradient>
-      <radialGradient id={`${id}-spot`} cx={cx / 1600} cy={(cy - 260) / 900} r="0.55">
-        <stop offset="0%" stop-color="#fff" stop-opacity="0.28"></stop>
-        <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
-      </radialGradient>
-      <radialGradient id={`${id}-vig`} cx="0.5" cy="0.5" r="0.75">
-        <stop offset="55%" stop-color="#000" stop-opacity="0"></stop>
-        <stop offset="100%" stop-color="#000" stop-opacity="0.6"></stop>
-      </radialGradient>
-      <linearGradient id={`${id}-shade`} x1="0" y1="0" x2="0" y2="1">
-        <stop offset="45%" stop-color="#000" stop-opacity="0"></stop>
-        <stop offset="100%" stop-color="#000" stop-opacity="0.6"></stop>
-      </linearGradient>
-      <pattern id={`${id}-dots`} width="22" height="22" patternUnits="userSpaceOnUse">
-        <circle cx="11" cy="11" r="4" fill={colors.ink}></circle>
-      </pattern>
-      <linearGradient id={`${id}-fade`} x1="1" y1="1" x2="0.3" y2="0">
-        <stop offset="0%" stop-color="#fff"></stop>
-        <stop offset="100%" stop-color="#fff" stop-opacity="0"></stop>
-      </linearGradient>
-      <mask id={`${id}-mask`}>
-        <rect width="1600" height="900" fill={`url(#${id}-fade)`}></rect>
-      </mask>
-      {
-        discipline === 'Grappling' ? (
-          <pattern id={`${id}-mat`} width="200" height="100" patternUnits="userSpaceOnUse">
-            <path d="M0 0 H200 M0 0 V100 M100 50 V100" stroke={colors.ink} stroke-width="3" fill="none" />
-          </pattern>
-        ) : (
-          <>
-            <pattern id={`${id}-mesh`} width="46" height="46" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
-              <path d="M0 0 H46 M0 0 V46" stroke={colors.ink} stroke-width="3" fill="none" />
-            </pattern>
-            <clipPath id={`${id}-cage`}>
-              <polygon points={outer} />
-            </clipPath>
-          </>
-        )
-      }
-    </defs>
-
-    <rect width="1600" height="900" fill={`url(#${id}-bg)`}></rect>
-    <rect width="1600" height="900" fill={`url(#${id}-spot)`}></rect>
-
-    {
-      discipline === 'Grappling' ? (
-        <g opacity="0.9">
-          <rect width="1600" height="900" fill={`url(#${id}-mat)`} opacity="0.1" />
-          <circle cx={cx} cy={cy} r={r} fill="none" stroke={colors.ink} stroke-width="12" opacity="0.45" />
-          <circle cx={cx} cy={cy} r={r * 0.3} fill="none" stroke={colors.ink} stroke-width="6" opacity="0.3" />
-        </g>
-      ) : (
-        <g>
-          <rect width="1600" height="900" fill={`url(#${id}-mesh)`} clip-path={`url(#${id}-cage)`} opacity="0.12" />
-          <polygon points={outer} fill="none" stroke={colors.ink} stroke-width="12" opacity="0.5" />
-          <polygon points={inner} fill="none" stroke={colors.ink} stroke-width="4" opacity="0.25" />
-        </g>
-      )
-    }
-
-    <rect width="1600" height="900" fill={`url(#${id}-dots)`} mask={`url(#${id}-mask)`} opacity="0.16"></rect>
-
-    <g opacity="0.75">
-      <polygon points={slash(slashX, 110)} fill="#c1121f" opacity="0.7"></polygon>
-      <polygon points={slash(slashX + 150, 44)} fill="#ffb020" opacity="0.45"></polygon>
-    </g>
-
-    {
-      text !== 'none' && (
-        <text
-          x={bigX}
-          y="560"
-          font-size={bigSize}
-          font-family="Barlow Condensed, Impact, sans-serif"
-          font-weight="800"
-          fill="none"
-          stroke={colors.ink}
-          stroke-width="3"
-          opacity="0.22"
-        >
-          {big}
-        </text>
-      )
-    }
-
-    <rect width="1600" height="900" fill={`url(#${id}-shade)`}></rect>
-    <rect width="1600" height="900" fill={`url(#${id}-vig)`}></rect>
-
-    {
-      text === 'full' && (
-        <g font-family="Barlow Condensed, Impact, sans-serif" font-weight="800">
-          {cover?.kicker && (
-            <text x="70" y="640" font-size="64" letter-spacing="4" fill="#ffb020">
-              {cover.kicker.toUpperCase()}
-            </text>
-          )}
-          <text x="66" y="770" font-size={nameSize} fill={colors.ink}>
-            {name.toUpperCase()}
-            {cover?.record && (
-              <tspan dx="28" fill="#ffffff" opacity="0.85">
-                {cover.record}
-              </tspan>
-            )}
-          </text>
-        </g>
-      )
-    }
-  </svg>
-</div>
+<div class="visual" set:html={svg} />
