@@ -51,3 +51,11 @@ export function safeVideoId(provider: string, id: string | undefined): string | 
   if (provider === 'instagram' && INSTAGRAM_ID.test(id)) return id;
   return null;
 }
+
+/** Découpe un titre pour qu’un record « (14-2) » ne soit jamais coupé en fin de ligne. */
+export function titleParts(title: string): { text: string; record: boolean }[] {
+  return title
+    .split(/(\(\d+-\d+(?:-\d+)?\))/)
+    .filter(Boolean)
+    .map((text) => ({ text, record: /^\(\d+-\d+(?:-\d+)?\)$/.test(text) }));
+}

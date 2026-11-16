@@ -1,8 +1,10 @@
 ---
+import { coverFor } from '../lib/cover';
 import { excerpt } from '../lib/text';
 import type { FeedItem } from '../lib/types';
 import Avatar from './Avatar.astro';
 import RelativeTime from './RelativeTime.astro';
+import Title from './Title.astro';
 import Visual from './Visual.astro';
 
 /**
@@ -40,7 +42,13 @@ const initials =
   data-deferred={deferred ? 'true' : undefined}
 >
   <a class="thumb" href={item.href} tabindex="-1" aria-hidden="true">
-    <Visual seed={item.id} uid={`${item.id}-${variant}`} initials={initials} label="" hideInitials={variant === 'lead'} />
+    <Visual
+      seed={item.id}
+      uid={`${item.id}-${variant}`}
+      initials={initials}
+      cover={coverFor(item)}
+      text={variant === 'default' ? 'full' : 'texture'}
+    />
     {!compact && <span class="badge cat">{item.category}</span>}
     {item.example && !compact && <span class="badge ex">Contenu d’exemple</span>}
     {
@@ -65,7 +73,7 @@ const initials =
       <a href={item.href}>
         {item.example && <span class="sr-only">Contenu d’exemple. </span>}
         {item.hasVideo && <span class="sr-only">Vidéo, {item.duration}. </span>}
-        {item.title}
+        <Title text={item.title} />
       </a>
     </h3>
     {!compact && <p class="excerpt">{summary}</p>}

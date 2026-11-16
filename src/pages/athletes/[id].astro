@@ -50,6 +50,7 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
     initials={initials(profile.name)}
     kicker={`${profile.discipline} · ${profile.org.name}`}
     title={profile.name}
+    discipline={profile.discipline}
     subtitle={profile.nickname ? `« ${profile.nickname} »` : undefined}
     example={profile.example}
     stats={[

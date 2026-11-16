@@ -9,6 +9,7 @@ import ExampleNote from './ExampleNote.astro';
 import RelatedList from './RelatedList.astro';
 import RelativeTime from './RelativeTime.astro';
 import ShareBar from './ShareBar.astro';
+import Title from './Title.astro';
 import VideoEmbed from './VideoEmbed.astro';
 
 interface Props {
@@ -46,7 +47,7 @@ const initials =
     <VideoEmbed item={item} initials={initials} />
     {item.example && <ExampleNote />}
     <p class="kicker">{item.category} · {item.org.name}</p>
-    <h1 class="article-title">{item.title}</h1>
+    <h1 class="article-title"><Title text={item.title} /></h1>
     <p class="byline">
       {item.author}
       <span aria-hidden="true"> · </span>

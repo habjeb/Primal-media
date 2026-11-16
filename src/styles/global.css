@@ -56,6 +56,8 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 
 .skip:focus { top: 0.75rem; }
 
+.nowrap { white-space: nowrap; }
+
 .sr-only {
   position: absolute;
   width: 1px;
