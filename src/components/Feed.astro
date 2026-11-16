@@ -16,6 +16,9 @@ interface Props {
 const { items, mode, active = 'tout', stories = [], nextEvent } = Astro.props;
 const une = items.filter((item) => item.section === 'une');
 const fight = items.filter((item) => item.section !== 'une');
+// Le bloc d’ouverture : l’article marqué `spotlight`, sinon le plus récent de l’une.
+const uneLead = une.find((item) => item.spotlight) ?? une[0];
+const uneSide = une.filter((item) => item !== uneLead);
 const archiveOverflow = items.length > PAGE_SIZE;
 const fightOverflow = fight.length > PAGE_SIZE;
 ---
@@ -69,10 +72,19 @@ const fightOverflow = fight.length > PAGE_SIZE;
       <>
         <section class="feed-block" data-block="une" aria-labelledby="une-title">
           <h2 id="une-title">À la une</h2>
-          <div class="mosaic">
-            {une.map((item) => (
-              <NewsCard item={item} spotlight={item.spotlight} />
-            ))}
+          <div class:list={['une-grid', { solo: uneSide.length === 0 }]}>
+            {uneLead && (
+              <div class="une-lead">
+                <NewsCard item={uneLead} variant="lead" />
+              </div>
+            )}
+            {uneSide.length > 0 && (
+              <div class="une-side">
+                {uneSide.map((item) => (
+                  <NewsCard item={item} variant="compact" />
+                ))}
+              </div>
+            )}
           </div>
         </section>
         <section class="feed-block" data-block="fight" aria-labelledby="fight-title">

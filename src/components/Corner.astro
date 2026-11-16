@@ -15,12 +15,14 @@ const className = ['corner', side, win ? 'is-winner' : ''].filter(Boolean).join(
   href ? (
     <a class={className} href={href}>
       <strong>{name}</strong>
-      {record && <span>({record})</span>}
+      {record && <span class="rec">{record}</span>}
+      {win && <span class="win-tag">Victoire</span>}
     </a>
   ) : (
     <span class={className}>
       <strong>{name}</strong>
-      {record && <span>({record})</span>}
+      {record && <span class="rec">{record}</span>}
+      {win && <span class="win-tag">Victoire</span>}
     </span>
   )
 }
