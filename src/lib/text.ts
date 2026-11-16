@@ -55,9 +55,9 @@ export function safeVideoId(provider: string, id: string | undefined): string | 
 /** Découpe un titre pour qu’un record « (14-2) » ne soit jamais coupé en fin de ligne. */
 export function titleParts(title: string): { text: string; record: boolean }[] {
   return title
-    .split(/(\(\d+-\d+(?:-\d+)?\))/)
+    .split(/(\(\d+-\d+(?:-\d+)?(?: en amateur| am\.)?\))/)
     .filter(Boolean)
-    .map((text) => ({ text, record: /^\(\d+-\d+(?:-\d+)?\)$/.test(text) }));
+    .map((text) => ({ text, record: /^\(\d+-\d+(?:-\d+)?(?: en amateur| am\.)?\)$/.test(text) }));
 }
 
 /** Temps de lecture estimé (≈ 200 mots par minute), au moins 1 min. */

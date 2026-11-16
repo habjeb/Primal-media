@@ -25,7 +25,7 @@ const { Content } = await render(entry);
 const posts = itemsForOrg(org.id, site.items);
 const people = athletesForOrg(org.id, site.athletes);
 const events = eventsForOrg(org.id, site.events);
-const kindLabel = org.kind === 'professionnelle' ? 'Organisation professionnelle' : 'Organisation amateur';
+const kindLabel = { professionnelle: 'Organisation professionnelle', amateur: 'Organisation amateur', mixte: 'Organisation pro et amateur' }[org.kind];
 ---
 
 <Base title={org.name} description={org.description}>
@@ -49,7 +49,7 @@ const kindLabel = org.kind === 'professionnelle' ? 'Organisation professionnelle
       { value: String(events.length), label: 'cartes' },
     ]}
   />
-  <ExampleNote kind="org" />
+  <ExampleNote kind={org.example ? 'entry' : 'org'} />
   <div class="prose">
     <Content />
   </div>

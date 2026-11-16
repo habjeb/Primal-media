@@ -1,6 +1,11 @@
 ---
+/**
+ * - `entry` : sur un contenu fictif (article, fiche, carte marqués `example: true`).
+ * - `list`  : en tête des listes, qui mélangent contenus réels et contenus d’exemple.
+ * - `org`   : sur une organisation réelle à laquelle des contenus d’exemple sont rattachés.
+ */
 interface Props {
-  kind?: 'entry' | 'org';
+  kind?: 'entry' | 'list' | 'org';
 }
 
 const { kind = 'entry' } = Astro.props;
@@ -9,8 +14,13 @@ const { kind = 'entry' } = Astro.props;
 {
   kind === 'org' ? (
     <p class="disclaimer" role="note">
-      Fiche neutre. Hexagone MMA et Duel sont cités comme organisations réelles, sans résultat inventé.
-      Les athlètes, cartes et articles liés marqués « Contenu d’exemple » sont fictifs.
+      Organisation réelle. Les combattants, cartes et articles liés marqués « Contenu d’exemple » sont fictifs ; les
+      autres sont réels et sourcés.
+    </p>
+  ) : kind === 'list' ? (
+    <p class="disclaimer" role="note">
+      Le site mélange contenus réels et contenus d’exemple. Ceux marqués « Contenu d’exemple » sont fictifs :
+      personnes, citations, résultats, horaires et chaînes.
     </p>
   ) : (
     <p class="disclaimer" role="note">

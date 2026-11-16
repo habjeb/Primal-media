@@ -7,7 +7,7 @@ category: Grappling
 format: breve
 section: fight
 tile: landscape
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - yanis-hordel
 tags:

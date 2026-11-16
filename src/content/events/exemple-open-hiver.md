@@ -4,7 +4,7 @@ description: Open de grappling fictif, gi et no-gi, ouvert aux débutants. Aucun
 date: 2027-01-16T09:30:00+01:00
 city: Albertville
 venue: Gymnase Exemple
-organisation: duel-albertville
+organisation: exemple-club-savoie
 discipline: Grappling
 example: true
 ---

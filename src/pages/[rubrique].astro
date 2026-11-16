@@ -31,7 +31,7 @@ const [first, ...rest] = discipline.title.split(' ');
     <h1>{first} <span class="outline">{rest.join(' ')}</span></h1>
     <p class="lede">{discipline.lede}</p>
   </header>
-  <ExampleNote />
+  <ExampleNote kind="list" />
 
   {
     fighters.length > 0 && (

@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: une
 tile: landscape
-spotlight: true
+spotlight: false
 organisation: hexagone-mma
 athletes:
   - karim-ostel

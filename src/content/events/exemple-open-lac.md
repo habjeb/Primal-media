@@ -4,7 +4,7 @@ description: Open amateur fictif mêlant grappling et un combat de MMA. Aucune b
 date: 2026-12-06T14:00:00+01:00
 city: Albertville
 venue: Gymnase Exemple
-organisation: duel-albertville
+organisation: exemple-club-savoie
 discipline: Mixte
 example: true
 broadcast:
@@ -40,4 +40,4 @@ fights:
 
 L’open du lac n’a pas de date réelle. Il montre comment une carte amateur, sans retransmission, s’affiche à côté d’une soirée qui prétend passer à la télévision.
 
-Duel n’organise pas cet événement. Albertville n’est ici qu’un lieu d’exemple.
+Aucune organisation réelle n’organise cet événement. Albertville n’est ici qu’un lieu d’exemple.

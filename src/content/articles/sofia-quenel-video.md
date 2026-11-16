@@ -7,7 +7,7 @@ category: Grappling
 format: breve
 section: fight
 tile: portrait
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - sofia-quenel
 tags:

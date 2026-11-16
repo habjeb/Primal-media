@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: fight
 tile: landscape
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - noah-siltor
 tags:

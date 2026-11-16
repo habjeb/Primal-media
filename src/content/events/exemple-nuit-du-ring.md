@@ -3,7 +3,7 @@ title: "EXEMPLE — Nuit du ring"
 description: Gala amateur fictif de K1 et de boxe. La billetterie pointe vers example.com, une adresse réservée aux exemples.
 date: 2026-12-12T19:30:00+01:00
 city: Chambéry
-venue: Salle Exemple du Phare
+venue: Salle Exemple des Sommets
 organisation: exemple-ring-des-alpes
 discipline: Kick/Boxe
 example: true
