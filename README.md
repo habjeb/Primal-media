@@ -2,7 +2,7 @@
 
 ## Le projet
 
-**Mission.** Apporter aux athlètes des petites organisations francophones de MMA et de grappling une couverture du niveau de celle que l’UFC ou ONE réservent aux leurs : des actus centrées sur le combattant. Cela vise les promotions professionnelles modestes (Hexagone MMA), les structures amateurs (Duel, à Albertville et Chambéry) et les autres organisations françaises plus petites.
+**Mission.** Apporter aux athlètes des circuits amateurs et des petites organisations francophones — MMA, grappling, kick et boxe — une couverture du niveau de celle que l’UFC ou ONE réservent aux leurs : des actus centrées sur le combattant. Cela vise les promotions professionnelles modestes (Hexagone MMA), les structures amateurs (Duel, à Albertville et Chambéry) et les autres organisations françaises plus petites.
 
 **Pourquoi.** Chez l’UFC et ONE, profils, avant-combats et comptes rendus partent de l’athlète. Ce traitement reste rare pour les organisations francophones de taille modeste.
 
@@ -12,9 +12,11 @@
 
 **Format.** Un fil d’actualité façon réseau social : mosaïque type Instagram / YouTube, pastilles de filtre, avatars façon stories, pages athlète et organisation façon chaîne.
 
+**Rubriques.** Accueil · Calendrier (point rouge quand un événement a lieu dans les 7 jours) · MMA · Grappling · Kick/Boxe · Portraits · Combattants · Guides · Vidéos. La structure s’inspire des rubriques d’un média fight généraliste, appliquée aux circuits amateurs et aux petites organisations.
+
 **Suite.** Remplacer les contenus d’exemple par de vrais sujets, alimenter les articles par une veille média quotidienne, ajouter des organisations, et développer la vidéo.
 
-Fil d’actualité en français pour le MMA et le grappling des organisations francophones — promotions professionnelles modestes et clubs amateurs. Le site est statique (Astro), sans base de données, et se publie gratuitement sur GitHub Pages.
+Fil d’actualité en français pour le MMA, le grappling, le kick et la boxe des organisations francophones — circuits amateurs et promotions professionnelles modestes. Le site est statique (Astro), sans base de données, et se publie gratuitement sur GitHub Pages.
 
 Les articles, athlètes, records et cartes livrés avec le dépôt portent la mention **Contenu d’exemple**. Ce sont des fictions, pour voir la mise en page. Hexagone MMA et Duel (Albertville) ont une fiche neutre : aucun résultat réel n’y est inventé.
 
@@ -48,12 +50,12 @@ title: "Camille Belvane (7-2) accepte un combat en poids paille"
 description: "Chapô court, deux lignes dans le fil. Le préfixe « MMA – » est ajouté par le site."
 pubDate: 2026-11-12T18:30:00+01:00
 author: Rédaction
-category: MMA            # MMA ou Grappling
-format: breve           # breve | diffusion | resultats | decryptage
+category: MMA            # MMA | Grappling | Kick/Boxe
+format: breve           # breve | diffusion | resultats | decryptage | portrait | guide
 section: fight          # une (À la une) ou fight (L’actu fight)
 tile: landscape         # sans effet sur l’affichage (toutes les cartes sont en 16:9), gardé pour compatibilité
 spotlight: false        # true = grand bloc d’ouverture de l’une (sinon : l’article « une » le plus récent)
-organisation: hexagone-mma
+organisation: hexagone-mma   # optionnel : sans organisation, l’article est signé « Rédaction Primal Média »
 athletes:
   - camille-belvane
 event: exemple-soiree-cage   # optionnel
@@ -73,6 +75,10 @@ Formats récurrents :
 - `diffusion` — « quelle heure, quelle chaîne ? ». Lier un `event` qui a un bloc `broadcast`.
 - `resultats` — « tous les résultats ». Un tableau Markdown dans le corps suffit.
 - `decryptage` — « tout ce qu’il faut savoir sur … ». Le titre reste centré sur l’athlète et son record, par exemple `Nom (14-2)`.
+- `portrait` — grand format sur le parcours d’un combattant. Apparaît dans la rubrique **Portraits** (`/portraits/`).
+- `guide` — explication de fond (règles, palmarès, premier gala…). Apparaît dans **Guides** (`/guides/`) avec un temps de lecture. Pas besoin d’`organisation`. Citer ses sources (règlement fédéral, organisateur) et dater la mise à jour : les règles varient selon la fédération.
+
+La `category` range l’article dans la rubrique de sa discipline (`/mma/`, `/grappling/`, `/kick-boxe/`). Un article avec `video` remonte dans **Vidéos** (`/videos/`).
 
 Un fichier `.mdx` peut importer un composant Astro (voir `ines-drelin-savoir.mdx`).
 
@@ -99,7 +105,7 @@ record:
 weightClass: Poids paille
 team: Cage Nord Exemple
 country: France
-discipline: MMA          # MMA ou Grappling
+discipline: MMA          # MMA | Grappling | Kick/Boxe
 organisation: hexagone-mma
 example: true
 fights:
@@ -128,11 +134,13 @@ date: 2026-11-28T20:00:00+01:00
 city: Lyon
 venue: Halle Exemple
 organisation: hexagone-mma
-discipline: MMA          # MMA | Grappling | Mixte
+discipline: MMA          # MMA | Grappling | Kick/Boxe | Mixte (Mixte = MMA + grappling)
 example: true
+tickets: https://exemple.fr/billetterie   # optionnel : bouton « Billetterie » dans le calendrier
 broadcast:
   when: "samedi 28 novembre 2026, 20 h 00 (heure de Paris)"
   channel: "Chaîne Exemple — diffusion fictive"
+  url: https://exemple.fr/live            # optionnel : bouton « Regarder"
 fights:
   - weightClass: Poids welter
     red: Karim Ostel
@@ -147,7 +155,9 @@ fights:
 ---
 ```
 
-Une date future va dans « À venir », une date passée dans « Cartes passées ».
+L’événement apparaît dans le **Calendrier** (`/calendrier/`), groupé par mois, avec un compte à rebours pour le prochain. Une date passée bascule dans « Cartes passées ».
+
+« À venir », le compte à rebours affiché au chargement et le point rouge du menu sont calculés **au build**. Le site n’est reconstruit qu’au push sur `main` : sans push, ces éléments restent figés. Le compte à rebours se met à jour dans le navigateur, mais la liste ne change qu’au build suivant. Voir « Reconstruction quotidienne » plus bas.
 
 ## Ajouter une organisation
 
@@ -179,3 +189,20 @@ Réglage à faire **une fois** dans le dépôt GitHub :
 `astro.config.mjs` fixe `site` sur `https://habjeb.github.io` et `base` sur `/Primal-media`. Les liens internes et les fichiers de `public/` passent par cette base. Si le dépôt est renommé, il faut changer `base`, les URL du README et `public/robots.txt`.
 
 Fil RSS : `/Primal-media/rss.xml`. Plan de site : `/Primal-media/sitemap-index.xml`.
+
+Anciennes adresses redirigées (`redirects` dans `astro.config.mjs`) : `/evenements/` → `/calendrier/`, `/actualites/mma/` → `/mma/`, `/actualites/grappling/` → `/grappling/`, `/actualites/videos/` → `/videos/`.
+
+### Reconstruction quotidienne (recommandée)
+
+Pour que le calendrier reste à jour sans push, ajouter un déclencheur planifié au workflow `.github/workflows/deploy.yml` :
+
+```yaml
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "23 4 * * *"   # chaque jour vers 5 h 23 (heure de Paris en hiver)
+  workflow_dispatch:
+```
+
+GitHub peut retarder les exécutions planifiées, et les désactive sur un dépôt public sans activité pendant 60 jours.

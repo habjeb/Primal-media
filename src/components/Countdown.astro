@@ -1,0 +1,63 @@
+---
+import { formatFull } from '../lib/dates';
+
+/**
+ * Compte à rebours jusqu’à un événement. Le HTML affiche les valeurs calculées au build ;
+ * le script les met à jour chaque seconde dans le navigateur.
+ */
+interface Props {
+  date: Date;
+}
+
+const { date } = Astro.props;
+const left = Math.max(0, date.getTime() - Date.now());
+const units = [
+  { key: 'days', label: 'jours', value: Math.floor(left / 86400000) },
+  { key: 'hours', label: 'heures', value: Math.floor(left / 3600000) % 24 },
+  { key: 'minutes', label: 'min', value: Math.floor(left / 60000) % 60 },
+  { key: 'seconds', label: 'sec', value: Math.floor(left / 1000) % 60 },
+];
+const pad = (n: number) => String(n).padStart(2, '0');
+---
+
+<div class="countdown" data-countdown={date.toISOString()} role="timer" aria-label={`Début : ${formatFull(date)}`}>
+  {
+    units.map((unit) => (
+      <span class="cd-unit">
+        <strong data-unit={unit.key}>{pad(unit.value)}</strong>
+        <span>{unit.label}</span>
+      </span>
+    ))
+  }
+  <p class="cd-done" hidden>C’est parti — ou c’est fini : voir la carte.</p>
+</div>
+
+<script>
+  const pad = (n: number) => String(n).padStart(2, '0');
+  document.querySelectorAll<HTMLElement>('[data-countdown]').forEach((root) => {
+    if (root.dataset.bound) return;
+    root.dataset.bound = 'true';
+    const target = new Date(root.dataset.countdown ?? '').getTime();
+    const cells = Object.fromEntries(
+      [...root.querySelectorAll<HTMLElement>('[data-unit]')].map((cell) => [cell.dataset.unit, cell]),
+    );
+    const tick = () => {
+      const left = target - Date.now();
+      if (left <= 0) {
+        root.querySelectorAll('.cd-unit').forEach((unit) => unit.setAttribute('hidden', ''));
+        root.querySelector('.cd-done')?.removeAttribute('hidden');
+        return false;
+      }
+      cells.days!.textContent = pad(Math.floor(left / 86400000));
+      cells.hours!.textContent = pad(Math.floor(left / 3600000) % 24);
+      cells.minutes!.textContent = pad(Math.floor(left / 60000) % 60);
+      cells.seconds!.textContent = pad(Math.floor(left / 1000) % 60);
+      return true;
+    };
+    if (tick()) {
+      const timer = setInterval(() => {
+        if (!tick()) clearInterval(timer);
+      }, 1000);
+    }
+  });
+</script>

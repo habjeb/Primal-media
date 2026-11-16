@@ -59,3 +59,9 @@ export function titleParts(title: string): { text: string; record: boolean }[] {
     .filter(Boolean)
     .map((text) => ({ text, record: /^\(\d+-\d+(?:-\d+)?\)$/.test(text) }));
 }
+
+/** Temps de lecture estimé (≈ 200 mots par minute), au moins 1 min. */
+export function readingTime(body: string | undefined): number {
+  const words = (body ?? '').replace(/[#*_`>-]/g, ' ').split(/\s+/).filter(Boolean).length;
+  return Math.max(1, Math.round(words / 200));
+}

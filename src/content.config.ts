@@ -2,7 +2,7 @@ import { defineCollection, reference } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { z } from 'astro/zod';
 
-const category = z.enum(['MMA', 'Grappling']);
+const category = z.enum(['MMA', 'Grappling', 'Kick/Boxe']);
 
 const organisations = defineCollection({
   loader: glob({ pattern: '**/*.{md,mdx}', base: './src/content/organisations' }),
@@ -58,14 +58,16 @@ const events = defineCollection({
     city: z.string(),
     venue: z.string(),
     organisation: reference('organisations'),
-    discipline: z.enum(['MMA', 'Grappling', 'Mixte']),
+    discipline: z.enum(['MMA', 'Grappling', 'Kick/Boxe', 'Mixte']),
     example: z.boolean(),
     broadcast: z
       .object({
         when: z.string(),
         channel: z.string(),
+        url: z.string().url().optional(),
       })
       .optional(),
+    tickets: z.string().url().optional(),
     fights: z
       .array(
         z.object({
@@ -94,11 +96,12 @@ const articles = defineCollection({
     pubDate: z.coerce.date(),
     author: z.string(),
     category: category,
-    format: z.enum(['breve', 'diffusion', 'resultats', 'decryptage']).default('breve'),
+    format: z.enum(['breve', 'diffusion', 'resultats', 'decryptage', 'portrait', 'guide']).default('breve'),
     section: z.enum(['une', 'fight']).default('fight'),
     tile: z.enum(['landscape', 'square', 'portrait']).default('landscape'),
     spotlight: z.boolean().default(false),
-    organisation: reference('organisations'),
+    /** Optionnel : sans organisation, l’article est signé « Rédaction » (guides, dossiers). */
+    organisation: reference('organisations').optional(),
     athletes: z.array(reference('athletes')).default([]),
     event: reference('events').optional(),
     tags: z.array(z.string()).default([]),

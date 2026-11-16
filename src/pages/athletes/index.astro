@@ -1,35 +1,163 @@
 ---
-import Avatar from '../../components/Avatar.astro';
 import ExampleNote from '../../components/ExampleNote.astro';
+import Visual from '../../components/Visual.astro';
 import { getSite } from '../../lib/content';
+import { surname } from '../../lib/cover';
+import { DISCIPLINES } from '../../lib/filters';
 import { initials } from '../../lib/text';
+import type { FeedAthlete } from '../../lib/types';
 import Base from '../../layouts/BaseLayout.astro';
 
 const site = await getSite();
+const plain = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '');
+
+// Classement par nom de famille, puis prénom.
+const sorted = site.athletes
+  .map(({ profile }) => profile)
+  .sort(
+    (a, b) =>
+      surname(a.name).localeCompare(surname(b.name), 'fr') || a.name.localeCompare(b.name, 'fr'),
+  );
+
+const letterOf = (profile: FeedAthlete) => plain(surname(profile.name))[0]!.toUpperCase();
+const groups = new Map<string, FeedAthlete[]>();
+for (const profile of sorted) {
+  const letter = letterOf(profile);
+  if (!groups.has(letter)) groups.set(letter, []);
+  groups.get(letter)!.push(profile);
+}
+// Intertitres par lettre seulement quand l’index est assez long pour en avoir besoin.
+const grouped = sorted.length >= 30;
+const sections = grouped ? [...groups.entries()] : [['', sorted] as [string, FeedAthlete[]]];
+
+const orgs = site.organisations.filter(({ org }) => sorted.some((profile) => profile.org.id === org.id));
+const description =
+  'L’index des combattants suivis par Primal Média : record, catégorie, club et organisation. MMA, grappling, kick et boxe.';
+const first = (name: string) => name.split(/\s+/).slice(0, -1).join(' ');
 ---
 
-<Base
-  title="Athlètes"
-  description="Fiches d’athlètes du MMA et du grappling suivis par Primal Média. Les profils d’exemple sont fictifs."
->
-  <header class="page-intro">
-    <h1>Athlètes</h1>
-    <p class="lede">Des fiches chaîne : palmarès, club, organisation et publications liées.</p>
+<Base title="Combattants" description={description}>
+  <header class="rubric-head">
+    <h1>Combat<span class="outline">tants</span></h1>
+    <p class="lede">{description}</p>
   </header>
   <ExampleNote />
-  <ul class="roster">
-    {
-      site.athletes.map(({ profile }) => (
-        <li>
-          <a href={profile.href}>
-            <Avatar seed={profile.id} initials={initials(profile.name)} large />
-            <strong>{profile.name}</strong>
-            {profile.nickname && <span class="meta-line">« {profile.nickname} »</span>}
-            <span>{profile.record} · {profile.weightClass}</span>
-            <span class="meta-line">{profile.org.name}</span>
-          </a>
-        </li>
-      ))
-    }
-  </ul>
+
+  <div class="roster-tools" data-roster-tools>
+    <label class="search">
+      <span class="sr-only">Rechercher un combattant</span>
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"></circle><path d="M20 20l-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"></path></svg>
+      <input type="search" placeholder="Nom, surnom, club…" data-roster-search autocomplete="off" />
+    </label>
+    <div class="chips" role="group" aria-label="Filtrer par discipline">
+      <button type="button" class="chip" data-roster-disc="tout" aria-pressed="true">Toutes</button>
+      {
+        DISCIPLINES.map((d) => (
+          <button type="button" class="chip" data-roster-disc={d.category} aria-pressed="false">
+            {d.label}
+          </button>
+        ))
+      }
+    </div>
+    <label class="org-select">
+      <span class="sr-only">Filtrer par organisation</span>
+      <select data-roster-org>
+        <option value="">Toutes les organisations</option>
+        {orgs.map(({ org }) => <option value={org.id}>{org.name}</option>)}
+      </select>
+    </label>
+  </div>
+
+  <nav class="az" aria-label="Aller à la lettre">
+    {[...groups.keys()].map((letter) => <a href={`#lettre-${letter}`} data-az={letter}>{letter}</a>)}
+  </nav>
+
+  {
+    sections.map(([letter, people]) => (
+      <section
+        class="az-group"
+        id={letter ? `lettre-${letter}` : undefined}
+        data-az-group={letter || undefined}
+        aria-labelledby={letter ? `titre-${letter}` : undefined}
+        aria-label={letter ? undefined : 'Tous les combattants'}
+      >
+        {letter && <h2 class="az-letter" id={`titre-${letter}`}>{letter}</h2>}
+        <ul class="fighter-grid">
+          {people.map((profile, index) => (
+            <li
+              id={!grouped && people.findIndex((other) => letterOf(other) === letterOf(profile)) === index ? `lettre-${letterOf(profile)}` : undefined}
+              data-letter={letterOf(profile)}
+              data-fighter
+              data-disc={profile.discipline}
+              data-org={profile.org.id}
+              data-search={plain(
+                `${profile.name} ${profile.nickname ?? ''} ${profile.team} ${profile.weightClass} ${profile.org.name}`,
+              ).toLowerCase()}
+            >
+              <a class="fighter" href={profile.href}>
+                <span class="fighter-visual">
+                  <Visual
+                    seed={profile.id}
+                    uid={`${profile.id}-roster`}
+                    initials={initials(profile.name)}
+                    cover={{ name: profile.name, discipline: profile.discipline }}
+                    text="texture"
+                  />
+                  <span class="badge cat">{profile.discipline}</span>
+                  {profile.example && <span class="badge ex">Exemple</span>}
+                  <span class="fighter-record">{profile.record}</span>
+                </span>
+                <span class="fighter-name">
+                  {first(profile.name)} <strong>{surname(profile.name)}</strong>
+                </span>
+                {profile.nickname && <span class="fighter-nick">« {profile.nickname} »</span>}
+                <span class="fighter-meta">{profile.weightClass} · {profile.team}</span>
+                <span class="fighter-org">{profile.org.name}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    ))
+  }
+  <p class="empty" data-roster-empty hidden>Aucun combattant ne correspond à cette recherche.</p>
 </Base>
+
+<script>
+  const plain = (value: string) => value.normalize('NFD').replace(/\p{M}/gu, '').toLowerCase();
+  const search = document.querySelector<HTMLInputElement>('[data-roster-search]');
+  const orgSelect = document.querySelector<HTMLSelectElement>('[data-roster-org]');
+  const discs = [...document.querySelectorAll<HTMLButtonElement>('[data-roster-disc]')];
+  const fighters = [...document.querySelectorAll<HTMLElement>('[data-fighter]')];
+  const groups = [...document.querySelectorAll<HTMLElement>('.az-group')];
+  const letters = [...document.querySelectorAll<HTMLAnchorElement>('[data-az]')];
+  const empty = document.querySelector<HTMLElement>('[data-roster-empty]');
+  let disc = 'tout';
+
+  const apply = () => {
+    const query = plain(search?.value.trim() ?? '');
+    const org = orgSelect?.value ?? '';
+    for (const fighter of fighters) {
+      fighter.hidden = !(
+        (disc === 'tout' || fighter.dataset.disc === disc) &&
+        (!org || fighter.dataset.org === org) &&
+        (!query || (fighter.dataset.search ?? '').includes(query))
+      );
+    }
+    for (const group of groups) group.hidden = !group.querySelector('[data-fighter]:not([hidden])');
+    for (const link of letters) {
+      link.classList.toggle('off', !fighters.some((f) => !f.hidden && f.dataset.letter === link.dataset.az));
+    }
+    if (empty) empty.hidden = fighters.some((fighter) => !fighter.hidden);
+    for (const button of discs) button.setAttribute('aria-pressed', String(button.dataset.rosterDisc === disc));
+  };
+
+  search?.addEventListener('input', apply);
+  orgSelect?.addEventListener('change', apply);
+  for (const button of discs) {
+    button.addEventListener('click', () => {
+      disc = button.dataset.rosterDisc ?? 'tout';
+      apply();
+    });
+  }
+</script>

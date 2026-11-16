@@ -1,15 +1,37 @@
 ---
 import { withBase } from '../lib/paths';
 
-const links = [
-  { href: '/', label: 'Fil' },
-  { href: '/actualites/', label: 'Actualités' },
-  { href: '/athletes/', label: 'Athlètes' },
-  { href: '/evenements/', label: 'Événements' },
-  { href: '/organisations/', label: 'Organisations' },
-  { href: '/a-propos/', label: 'À propos' },
-  { href: '/contact/', label: 'Contact' },
-  { href: '/rss.xml', label: 'RSS' },
+const groups = [
+  {
+    title: 'Rubriques',
+    links: [
+      { href: '/calendrier/', label: 'Calendrier' },
+      { href: '/mma/', label: 'MMA' },
+      { href: '/grappling/', label: 'Grappling' },
+      { href: '/kick-boxe/', label: 'Kick/Boxe' },
+      { href: '/videos/', label: 'Vidéos' },
+    ],
+  },
+  {
+    title: 'Le fil',
+    links: [
+      { href: '/actualites/', label: 'Toutes les actualités' },
+      { href: '/actualites/resultats/', label: 'Tous les résultats' },
+      { href: '/actualites/horaires/', label: 'Quelle heure, quelle chaîne ?' },
+      { href: '/portraits/', label: 'Portraits' },
+      { href: '/guides/', label: 'Guides' },
+    ],
+  },
+  {
+    title: 'Primal Média',
+    links: [
+      { href: '/athletes/', label: 'Combattants' },
+      { href: '/organisations/', label: 'Organisations' },
+      { href: '/a-propos/', label: 'À propos' },
+      { href: '/contact/', label: 'Contact' },
+      { href: '/rss.xml', label: 'RSS' },
+    ],
+  },
 ];
 ---
 
@@ -18,18 +40,25 @@ const links = [
     <div>
       <p class="logo-text">PRIMAL <span>MÉDIA</span></p>
       <p>
-        Le fil du MMA et du grappling francophone, côté athlètes des petites organisations.
-        Les entrées marquées « Contenu d’exemple » sont fictives.
+        L’actu fight des circuits amateurs et des petites organisations francophones : MMA, grappling,
+        kick et boxe, côté combattants. Les entrées marquées « Contenu d’exemple » sont fictives.
       </p>
     </div>
-    <ul class="footer-links">
+    <div class="footer-cols">
       {
-        links.map((link) => (
-          <li>
-            <a href={withBase(link.href)}>{link.label}</a>
-          </li>
+        groups.map((group) => (
+          <div>
+            <p class="footer-title">{group.title}</p>
+            <ul class="footer-links">
+              {group.links.map((link) => (
+                <li>
+                  <a href={withBase(link.href)}>{link.label}</a>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))
       }
-    </ul>
+    </div>
   </div>
 </footer>

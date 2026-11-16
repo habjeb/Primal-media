@@ -1,15 +1,29 @@
 ---
+import { getSite } from '../lib/content';
 import { isCurrent, withBase } from '../lib/paths';
 
 const pathname = Astro.url.pathname;
+const site = await getSite();
+
+// Point rouge sur « Calendrier » quand un événement a lieu dans les 7 prochains jours.
+// Calculé au build : sans reconstruction régulière du site, ce point reste figé à la date du dernier déploiement.
+const week = 7 * 24 * 3600 * 1000;
+const now = Date.now();
+const soon = site.events.some(({ event }) => {
+  const delta = event.date.getTime() - now;
+  return delta >= -6 * 3600 * 1000 && delta <= week;
+});
+
 const links = [
-  { href: '/', label: 'Fil' },
-  { href: '/actualites/', label: 'Actualités' },
-  { href: '/athletes/', label: 'Athlètes' },
-  { href: '/evenements/', label: 'Événements' },
-  { href: '/organisations/', label: 'Organisations' },
-  { href: '/a-propos/', label: 'À propos' },
-  { href: '/contact/', label: 'Contact' },
+  { href: '/', label: 'Accueil' },
+  { href: '/calendrier/', label: 'Calendrier', also: ['/evenements/'], dot: soon },
+  { href: '/mma/', label: 'MMA' },
+  { href: '/grappling/', label: 'Grappling' },
+  { href: '/kick-boxe/', label: 'Kick/Boxe' },
+  { href: '/portraits/', label: 'Portraits' },
+  { href: '/athletes/', label: 'Combattants' },
+  { href: '/guides/', label: 'Guides' },
+  { href: '/videos/', label: 'Vidéos' },
 ];
 ---
 
@@ -31,13 +45,21 @@ const links = [
     <nav aria-label="Principal">
       <ul class="nav-links">
         {
-          links.map((link) => (
-            <li>
-              <a href={withBase(link.href)} aria-current={isCurrent(pathname, link.href) ? 'page' : undefined}>
-                {link.label}
-              </a>
-            </li>
-          ))
+          links.map((link) => {
+            const current = isCurrent(pathname, link.href) || (link.also ?? []).some((href) => isCurrent(pathname, href));
+            return (
+              <li>
+                <a href={withBase(link.href)} aria-current={current ? 'page' : undefined}>
+                  {link.label}
+                  {link.dot && (
+                    <span class="live-dot">
+                      <span class="sr-only"> (un événement cette semaine)</span>
+                    </span>
+                  )}
+                </a>
+              </li>
+            );
+          })
         }
       </ul>
     </nav>

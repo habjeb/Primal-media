@@ -32,6 +32,18 @@ type EventRef = { collection: 'events'; id: string };
 
 let pending: Promise<SiteData> | undefined;
 
+/** Signature des articles qui ne dépendent d’aucune organisation (guides, dossiers). */
+const REDACTION: FeedOrg = {
+  id: 'redaction',
+  name: 'Rédaction Primal Média',
+  href: withBase('/a-propos/'),
+  initials: 'PM',
+  place: '',
+  kind: 'amateur',
+  description: 'La rédaction de Primal Média.',
+  example: false,
+};
+
 export function getSite(): Promise<SiteData> {
   if (import.meta.env.DEV) return loadSite();
   if (!pending) pending = loadSite();
@@ -75,7 +87,7 @@ async function loadSite(): Promise<SiteData> {
   const articles: ArticleRecord[] = [];
   for (const entry of articleEntries) {
     if (entry.data.draft) continue;
-    const org = orgById.get(entry.data.organisation.id);
+    const org = entry.data.organisation ? orgById.get(entry.data.organisation.id) : REDACTION;
     if (!org) continue;
     const linked = entry.data.athletes?.length ? await getEntries(entry.data.athletes) : [];
     const people = linked
@@ -191,6 +203,7 @@ async function toEvent(
     example: entry.data.example,
     org,
     broadcast: entry.data.broadcast,
+    tickets: entry.data.tickets,
     bouts,
     upcoming: entry.data.date.getTime() >= Date.now(),
   };

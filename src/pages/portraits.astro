@@ -1,0 +1,36 @@
+---
+import ExampleNote from '../components/ExampleNote.astro';
+import NewsCard from '../components/NewsCard.astro';
+import { filterItems, getSite } from '../lib/content';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const [lead, ...rest] = filterItems(site.items, 'portraits');
+const description = 'Grands formats : le parcours des combattants amateurs et des petites organisations, de la salle de quartier au gala.';
+---
+
+<Base title="Portraits" description={description}>
+  <header class="rubric-head">
+    <h1>Por<span class="outline">traits</span></h1>
+    <p class="lede">{description}</p>
+  </header>
+  <ExampleNote />
+  {
+    lead ? (
+      <>
+        <div class="portrait-lead">
+          <NewsCard item={lead} variant="lead" />
+        </div>
+        {rest.length > 0 && (
+          <div class="mosaic">
+            {rest.map((item) => (
+              <NewsCard item={item} />
+            ))}
+          </div>
+        )}
+      </>
+    ) : (
+      <p class="empty">Le premier portrait arrive bientôt.</p>
+    )
+  }
+</Base>

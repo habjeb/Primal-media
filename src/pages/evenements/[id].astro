@@ -25,7 +25,7 @@ const { Content } = await render(entry);
     <ol class="crumbs">
       <li><a href={withBase('/')}>Fil</a></li>
       <li aria-hidden="true">/</li>
-      <li><a href={withBase('/evenements/')}>Événements</a></li>
+      <li><a href={withBase('/calendrier/')}>Calendrier</a></li>
       <li aria-hidden="true">/</li>
       <li aria-current="page">{event.title}</li>
     </ol>
@@ -60,6 +60,18 @@ const { Content } = await render(entry);
       )
     }
   </dl>
+  {
+    event.upcoming && (event.tickets || event.broadcast?.url) && (
+      <ul class="cal-actions event-actions">
+        {event.tickets && (
+          <li><a class="btn-light" href={event.tickets} rel="noopener noreferrer" target="_blank">Billetterie</a></li>
+        )}
+        {event.broadcast?.url && (
+          <li><a class="btn-ghost" href={event.broadcast.url} rel="noopener noreferrer" target="_blank">Regarder</a></li>
+        )}
+      </ul>
+    )
+  }
   <div class="prose">
     <Content />
   </div>

@@ -1,4 +1,4 @@
-import { PAGE_SIZE } from '../lib/filters';
+import { matches as matchCard, PAGE_SIZE } from '../lib/filters';
 
 function setup(root: HTMLElement) {
   const cards = [...root.querySelectorAll<HTMLElement>('[data-card]')];
@@ -14,27 +14,17 @@ function setup(root: HTMLElement) {
   if (!known.has(filter)) filter = 'tout';
   let extra = 0;
 
-  const matches = (card: HTMLElement) => {
-    switch (filter) {
-      case 'mma':
-        return card.dataset.category === 'MMA';
-      case 'grappling':
-        return card.dataset.category === 'Grappling';
-      case 'hexagone-mma':
-      case 'duel-albertville':
-        return card.dataset.org === filter;
-      case 'resultats':
-        return card.dataset.format === 'resultats';
-      case 'videos':
-        return card.dataset.video === 'true';
-      case 'horaires':
-        return card.dataset.format === 'diffusion';
-      case 'une':
-        return card.dataset.section === 'une';
-      default:
-        return true;
-    }
-  };
+  const matches = (card: HTMLElement) =>
+    matchCard(
+      {
+        category: card.dataset.category ?? '',
+        org: card.dataset.org ?? '',
+        format: card.dataset.format ?? '',
+        video: card.dataset.video === 'true',
+        section: card.dataset.section ?? '',
+      },
+      filter,
+    );
 
   const apply = () => {
     const pinUne = mode === 'home' && filter === 'tout';

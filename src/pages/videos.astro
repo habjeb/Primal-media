@@ -1,0 +1,57 @@
+---
+import ExampleNote from '../components/ExampleNote.astro';
+import NewsCard from '../components/NewsCard.astro';
+import Title from '../components/Title.astro';
+import VideoEmbed from '../components/VideoEmbed.astro';
+import { filterItems, getSite } from '../lib/content';
+import { excerpt } from '../lib/text';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const [featured, ...rest] = filterItems(site.items, 'videos');
+const description = 'Highlights, entretiens et sorties de cage : les vidéos des combattants suivis par Primal Média.';
+---
+
+<Base title="Vidéos" description={description}>
+  <header class="rubric-head">
+    <h1>Vidé<span class="outline">os</span></h1>
+    <p class="lede">{description}</p>
+  </header>
+  <ExampleNote />
+  {
+    featured ? (
+      <>
+        <section class="video-featured" aria-labelledby="featured-title">
+          <VideoEmbed item={featured} initials={featured.org.initials} />
+          <div class="video-featured-copy">
+            <p class="kicker">
+              À la une des vidéos · {featured.category}
+              {featured.duration && <> · {featured.duration}</>}
+            </p>
+            <h2 id="featured-title">
+              <a href={featured.href}>
+                <Title text={featured.title} />
+              </a>
+            </h2>
+            <p class="excerpt">{excerpt(featured.category, featured.description)}</p>
+            <p>
+              <a class="btn-light" href={featured.href}>Voir le sujet</a>
+            </p>
+          </div>
+        </section>
+        {rest.length > 0 && (
+          <section class="rubric-block" aria-labelledby="more-videos">
+            <h2 class="section-title" id="more-videos">Toutes les vidéos</h2>
+            <div class="mosaic">
+              {rest.map((item) => (
+                <NewsCard item={item} />
+              ))}
+            </div>
+          </section>
+        )}
+      </>
+    ) : (
+      <p class="empty">Pas encore de vidéo.</p>
+    )
+  }
+</Base>

@@ -1,56 +1,73 @@
-import type { FeedItem } from './types';
+import type { Category, FeedItem, Format, Section } from './types';
 
 export const PAGE_SIZE = 8;
 
+/** Les trois disciplines couvertes, avec leur rubrique. */
+export const DISCIPLINES: {
+  id: 'mma' | 'grappling' | 'kick-boxe';
+  category: Category;
+  label: string;
+  href: string;
+  title: string;
+  lede: string;
+}[] = [
+  {
+    id: 'mma',
+    category: 'MMA',
+    label: 'MMA',
+    href: '/mma/',
+    title: 'L’actu MMA',
+    lede: 'Galas amateurs, championnats et petites ligues pro : le MMA vu depuis les combattants.',
+  },
+  {
+    id: 'grappling',
+    category: 'Grappling',
+    label: 'Grappling',
+    href: '/grappling/',
+    title: 'L’actu grappling',
+    lede: 'Opens, tournois et soumissions : le grappling amateur et ses meilleurs profils.',
+  },
+  {
+    id: 'kick-boxe',
+    category: 'Kick/Boxe',
+    label: 'Kick/Boxe',
+    href: '/kick-boxe/',
+    title: 'L’actu kick & boxe',
+    lede: 'Kickboxing, K1 et boxe : les galas amateurs et les combattants qui montent.',
+  },
+];
+
 export const FILTERS = [
   { id: 'tout', label: 'Tout', href: '/' },
-  { id: 'mma', label: 'MMA', href: '/actualites/mma/' },
-  { id: 'grappling', label: 'Grappling', href: '/actualites/grappling/' },
-  { id: 'hexagone-mma', label: 'Hexagone', href: '/organisations/hexagone-mma/#publications' },
-  { id: 'duel-albertville', label: 'Duel', href: '/organisations/duel-albertville/#publications' },
+  ...DISCIPLINES.map((d) => ({ id: d.id, label: d.label, href: d.href })),
   { id: 'resultats', label: 'Résultats', href: '/actualites/resultats/' },
-  { id: 'videos', label: 'Vidéos', href: '/actualites/videos/' },
+  { id: 'videos', label: 'Vidéos', href: '/videos/' },
   { id: 'horaires', label: 'Horaires', href: '/actualites/horaires/' },
+  { id: 'portraits', label: 'Portraits', href: '/portraits/' },
+  { id: 'guides', label: 'Guides', href: '/guides/' },
   { id: 'une', label: 'À la une', href: '/actualites/a-la-une/' },
 ] as const;
 
 export type FilterId = (typeof FILTERS)[number]['id'];
 
+/** Filtres qui n’ont pas de rubrique à eux : une page d’archive sous /actualites/<slug>/. */
 export const ARCHIVE_FILTERS: {
-  id: Exclude<FilterId, 'tout' | 'hexagone-mma' | 'duel-albertville'>;
+  id: FilterId;
   slug: string;
   title: string;
   description: string;
 }[] = [
   {
-    id: 'mma',
-    slug: 'mma',
-    title: 'MMA',
-    description: 'Brèves, horaires et résultats de MMA du fil Primal Média.',
-  },
-  {
-    id: 'grappling',
-    slug: 'grappling',
-    title: 'Grappling',
-    description: 'Le grappling amateur et pro du fil Primal Média.',
-  },
-  {
     id: 'resultats',
     slug: 'resultats',
     title: 'Tous les résultats',
-    description: 'Cartes d’exemple : tous les résultats fictifs publiés sur le fil.',
-  },
-  {
-    id: 'videos',
-    slug: 'videos',
-    title: 'Vidéos',
-    description: 'Sujets vidéo du fil. Les lecteurs intégrés sont signalés comme exemples.',
+    description: 'Les comptes rendus de cartes publiés sur le fil.',
   },
   {
     id: 'horaires',
     slug: 'horaires',
     title: 'Quelle heure, quelle chaîne ?',
-    description: 'Horaires et diffuseurs fictifs des cartes d’exemple.',
+    description: 'Horaires et diffusion des prochaines cartes.',
   },
   {
     id: 'une',
@@ -60,24 +77,42 @@ export const ARCHIVE_FILTERS: {
   },
 ];
 
-export function matchFilter(item: FeedItem, filter: string): boolean {
+/** Ce qu’il faut savoir d’un contenu pour le filtrer, côté serveur comme dans le navigateur. */
+export type Filterable = {
+  category: string;
+  org: string;
+  format: Format | string;
+  video: boolean;
+  section: Section | string;
+};
+
+export function matches(card: Filterable, filter: string): boolean {
+  const discipline = DISCIPLINES.find((d) => d.id === filter);
+  if (discipline) return card.category === discipline.category;
   switch (filter) {
-    case 'mma':
-      return item.category === 'MMA';
-    case 'grappling':
-      return item.category === 'Grappling';
-    case 'hexagone-mma':
-    case 'duel-albertville':
-      return item.org.id === filter;
     case 'resultats':
-      return item.format === 'resultats';
+      return card.format === 'resultats';
     case 'videos':
-      return item.hasVideo;
+      return card.video;
     case 'horaires':
-      return item.format === 'diffusion';
+      return card.format === 'diffusion';
+    case 'portraits':
+      return card.format === 'portrait';
+    case 'guides':
+      return card.format === 'guide';
     case 'une':
-      return item.section === 'une';
-    default:
+      return card.section === 'une';
+    case 'tout':
       return true;
+    default:
+      // Identifiant d’organisation (liens « ?filtre=<organisation> »).
+      return card.org === filter;
   }
+}
+
+export function matchFilter(item: FeedItem, filter: string): boolean {
+  return matches(
+    { category: item.category, org: item.org.id, format: item.format, video: item.hasVideo, section: item.section },
+    filter,
+  );
 }

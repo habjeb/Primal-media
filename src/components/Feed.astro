@@ -3,6 +3,7 @@ import { FILTERS, PAGE_SIZE } from '../lib/filters';
 import { withBase } from '../lib/paths';
 import type { FeedItem, NextEvent, Story } from '../lib/types';
 import Avatar from './Avatar.astro';
+import Countdown from './Countdown.astro';
 import NewsCard from './NewsCard.astro';
 
 interface Props {
@@ -59,10 +60,13 @@ const fightOverflow = fight.length > PAGE_SIZE;
   {
     mode === 'home' && nextEvent && (
       <aside class="next-event">
-        <span class="label">Prochain rendez-vous</span>
-        <a href={nextEvent.href}>{nextEvent.title}</a>
-        <span>{nextEvent.when}</span>
-        <span>{nextEvent.detail}</span>
+        <div class="next-event-info">
+          <span class="label">Prochain rendez-vous</span>
+          <a href={nextEvent.href}>{nextEvent.title}</a>
+          <span>{nextEvent.when} · {nextEvent.detail}</span>
+          <a class="next-event-all" href={withBase('/calendrier/')}>Tout le calendrier →</a>
+        </div>
+        <Countdown date={nextEvent.date} />
       </aside>
     )
   }

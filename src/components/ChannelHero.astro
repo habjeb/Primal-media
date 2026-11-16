@@ -1,4 +1,5 @@
 ---
+import type { Discipline } from '../lib/types';
 import Avatar from './Avatar.astro';
 import Visual from './Visual.astro';
 
@@ -15,7 +16,7 @@ interface Props {
   subtitle?: string;
   example?: boolean;
   stats: Stat[];
-  discipline?: 'MMA' | 'Grappling' | 'Mixte';
+  discipline?: Discipline;
 }
 
 const { seed, initials, kicker, title, subtitle, example = false, stats, discipline = 'MMA' } = Astro.props;

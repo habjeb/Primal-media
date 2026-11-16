@@ -1,0 +1,55 @@
+---
+import { dateParts } from '../lib/dates';
+import type { FeedEvent } from '../lib/types';
+
+/** Une ligne du calendrier : grosse date, organisation, lieu et liens utiles. */
+interface Props {
+  event: FeedEvent;
+  past?: boolean;
+}
+
+const { event, past = false } = Astro.props;
+const d = dateParts(event.date);
+const main = event.bouts.find((bout) => bout.main);
+// « Mixte » doit sortir avec les filtres MMA et Grappling.
+const disciplines = event.discipline === 'Mixte' ? 'MMA Grappling Mixte' : event.discipline;
+---
+
+<li
+  class:list={['cal-row', { past }]}
+  data-cal
+  data-disciplines={disciplines}
+  data-org={event.org.id}
+>
+  <time class="cal-date" datetime={event.date.toISOString()}>
+    <span class="cal-wd">{d.weekday}</span>
+    <strong>{d.day}</strong>
+    <span class="cal-mo">{d.month}</span>
+  </time>
+  <div class="cal-body">
+    <p class="cal-meta">
+      <span class="cal-disc">{event.discipline}</span>
+      <a href={event.org.href}>{event.org.name}</a>
+      {event.example && <span class="ex-inline">Contenu d’exemple</span>}
+    </p>
+    <h3><a href={event.href}>{event.title}</a></h3>
+    {main && (
+      <p class="cal-main">
+        {main.redName} <span aria-hidden="true">vs</span><span class="sr-only">contre</span> {main.blueName}
+      </p>
+    )}
+    <p class="meta-line">
+      {d.time} · {event.venue}, {event.city}
+      {event.broadcast && !past && <> · {event.broadcast.channel}</>}
+    </p>
+    <ul class="cal-actions">
+      <li><a class="btn-light" href={event.href}>{past ? 'Résultats' : 'Carte complète'}</a></li>
+      {!past && event.tickets && (
+        <li><a class="btn-ghost" href={event.tickets} rel="noopener noreferrer" target="_blank">Billetterie</a></li>
+      )}
+      {!past && event.broadcast?.url && (
+        <li><a class="btn-ghost" href={event.broadcast.url} rel="noopener noreferrer" target="_blank">Regarder</a></li>
+      )}
+    </ul>
+  </div>
+</li>

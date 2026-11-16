@@ -83,8 +83,37 @@ export function coverSvg(options: CoverSvgOptions): string {
     'aria-hidden': label ? undefined : 'true',
   });
 
+  // Ring de boxe vu de face : poteaux avant (coins rouge et bleu), poteaux arrière plus petits, cordes.
+  const ring = () => {
+    // Plus étroit que la cage, et recentré pour que les deux poteaux restent dans le cadre.
+    const r = rBase * 0.72;
+    const cx = Math.min(cxBase, 1480 - r * 1.4);
+    const ropes = [0.6, 0.3, 0].map((k) => cy - r * k);
+    const sag = (y: number, x1: number, x2: number, depth: number) =>
+      `M${x1} ${y} Q${(x1 + x2) / 2} ${y + depth} ${x2} ${y}`;
+    const fl = cx - r;
+    const fr = cx + r;
+    const bl = cx - r * 0.62;
+    const br = cx + r * 0.62;
+    return `<g fill="none" stroke="${colors.ink}" stroke-linecap="round">
+        <g opacity="0.2" stroke-width="6">
+          <path d="M${bl} ${cy - r * 0.62} V${cy + r * 0.25} M${br} ${cy - r * 0.62} V${cy + r * 0.25}"/>
+          ${ropes.map((y) => `<path d="${sag(y - r * 0.02, bl, br, 10)}"/>`).join('')}
+        </g>
+        <path d="M${cx - r * 1.15} ${cy + r * 0.55} H${cx + r * 1.15} L${cx + r * 1.4} ${cy + r * 0.82} H${cx - r * 1.4} Z" stroke-width="8" opacity="0.35"/>
+        <path d="M${fl} ${cy - r * 0.75} V${cy + r * 0.55} M${fr} ${cy - r * 0.75} V${cy + r * 0.55}" stroke-width="14" opacity="0.5"/>
+        ${ropes.map((y) => `<path d="${sag(y, fl, fr, 26)}" stroke-width="8" opacity="0.45"/>`).join('')}
+        <rect x="${fl - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#c1121f" stroke="none" opacity="0.8"/>
+        <rect x="${fr - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#2d69dc" stroke="none" opacity="0.8"/>
+      </g>`;
+  };
+
+  const rBase = r;
+  const cxBase = cx;
   const motif =
-    discipline === 'Grappling'
+    discipline === 'Kick/Boxe'
+      ? ring()
+      : discipline === 'Grappling'
       ? `<g opacity="0.9">
           <rect width="1600" height="900" fill="url(#${id}-mat)" opacity="0.1"/>
           <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${colors.ink}" stroke-width="12" opacity="0.45"/>
