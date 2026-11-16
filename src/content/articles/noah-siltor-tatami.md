@@ -1,13 +1,13 @@
 ---
 title: "Noah Siltor (4-1) retrouve un tatami amateur imaginaire"
-description: "L’amateur du Club Ancre est annoncé sur une carte Duel qui sert seulement de décor au fil."
+description: "L’amateur du Club Ancre est annoncé sur une carte d’exemple qui sert seulement de décor au fil."
 pubDate: 2026-11-10T12:30:00+01:00
 author: Rédaction exemple
 category: MMA
 format: breve
 section: fight
 tile: square
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - noah-siltor
 event: exemple-open-lac

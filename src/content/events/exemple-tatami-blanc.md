@@ -4,7 +4,7 @@ description: Résultats fictifs d’un open de grappling. Les avantages et le nu
 date: 2026-10-18T10:00:00+01:00
 city: Albertville
 venue: Gymnase Exemple
-organisation: duel-albertville
+organisation: exemple-club-savoie
 discipline: Grappling
 example: true
 fights:

@@ -11,7 +11,7 @@ export type FeedOrg = {
   href: string;
   initials: string;
   place: string;
-  kind: 'professionnelle' | 'amateur';
+  kind: 'professionnelle' | 'amateur' | 'mixte';
   description: string;
   example: boolean;
 };
@@ -28,7 +28,8 @@ export type FeedAthlete = {
   discipline: Category;
   weightClass: string;
   team: string;
-  country: string;
+  country?: string;
+  recordScope?: 'amateur' | 'pro';
   example: boolean;
   org: FeedOrg;
 };
@@ -75,7 +76,7 @@ export type Story = {
 };
 
 export type ResolvedBout = {
-  weightClass: string;
+  weightClass?: string;
   redName: string;
   blueName: string;
   redRecord?: string;
@@ -94,6 +95,8 @@ export type FeedEvent = {
   title: string;
   description: string;
   date: Date;
+  timeKnown: boolean;
+  headline?: string;
   city: string;
   venue: string;
   discipline: Discipline;

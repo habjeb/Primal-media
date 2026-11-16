@@ -27,12 +27,12 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
 
 <Base
   title={`${profile.name} (${profile.record})`}
-  description={`${profile.name}, ${profile.weightClass}, ${profile.team}. Fiche d’exemple fictive.`}
+  description={`${profile.name}, ${profile.weightClass}, ${profile.team}.${profile.example ? ' Fiche d’exemple fictive.' : ''}`}
   jsonLd={{
     '@context': 'https://schema.org',
     '@type': 'Person',
     name: profile.name,
-    description: `Contenu d’exemple fictif. ${profile.weightClass}, ${profile.org.name}.`,
+    description: `${profile.example ? 'Contenu d’exemple fictif. ' : ''}${profile.weightClass}, ${profile.org.name}.`,
     url: pageUrl,
   }}
 >
@@ -54,15 +54,15 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
     subtitle={profile.nickname ? `« ${profile.nickname} »` : undefined}
     example={profile.example}
     stats={[
-      { value: String(profile.wins), label: 'victoires' },
-      { value: String(profile.losses), label: 'défaites' },
-      { value: String(profile.draws), label: 'nuls' },
+      { value: String(profile.wins), label: profile.recordScope === 'amateur' ? 'victoires am.' : 'victoires' },
+      { value: String(profile.losses), label: profile.recordScope === 'amateur' ? 'défaites am.' : 'défaites' },
+      { value: String(profile.draws), label: profile.recordScope === 'amateur' ? 'nuls am.' : 'nuls' },
     ]}
   />
   {profile.example && <ExampleNote />}
   <dl class="facts">
     <div>
-      <dt>Palmarès</dt>
+      <dt>{profile.recordScope === 'amateur' ? 'Palmarès amateur' : 'Palmarès'}</dt>
       <dd>{profile.record}</dd>
     </div>
     <div>
@@ -77,10 +77,14 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
       <dt>Organisation</dt>
       <dd><a href={profile.org.href}>{profile.org.name}</a></dd>
     </div>
-    <div>
-      <dt>Pays</dt>
-      <dd>{profile.country}</dd>
-    </div>
+    {
+      profile.country && (
+        <div>
+          <dt>Pays</dt>
+          <dd>{profile.country}</dd>
+        </div>
+      )
+    }
   </dl>
   <div class="prose">
     <Content />
@@ -101,7 +105,10 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
   </section>
   <section aria-labelledby="fights-title">
     <h2 class="section-title" id="fights-title">Combats récents</h2>
-    <p class="meta-line">Extrait fictif, pas un palmarès complet. Le record annoncé est {profile.record}.</p>
+    <p class="meta-line">
+      {profile.example ? 'Extrait fictif, pas un palmarès complet.' : 'Combats suivis par Primal Média, pas un palmarès complet.'} Record
+      annoncé : {profile.record}
+    </p>
     <div class="table-wrap">
       <table class="fights">
         <thead>

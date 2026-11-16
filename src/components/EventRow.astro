@@ -33,13 +33,15 @@ const disciplines = event.discipline === 'Mixte' ? 'MMA Grappling Mixte' : event
       {event.example && <span class="ex-inline">Contenu d’exemple</span>}
     </p>
     <h3><a href={event.href}>{event.title}</a></h3>
-    {main && (
+    {main ? (
       <p class="cal-main">
         {main.redName} <span aria-hidden="true">vs</span><span class="sr-only">contre</span> {main.blueName}
       </p>
+    ) : (
+      event.headline && <p class="cal-main">{event.headline}</p>
     )}
     <p class="meta-line">
-      {d.time} · {event.venue}, {event.city}
+      {event.timeKnown && <>{d.time} · </>}{event.venue}, {event.city}
       {event.broadcast && !past && <> · {event.broadcast.channel}</>}
     </p>
     <ul class="cal-actions">

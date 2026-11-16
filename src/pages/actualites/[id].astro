@@ -36,7 +36,7 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
         <h1>{filter.title}</h1>
         <p class="lede">{filter.description}</p>
       </header>
-      <ExampleNote />
+      <ExampleNote kind="list" />
       <Feed mode="archive" items={filterItems(site.items, filter.id)} active={filter.id} />
     </Base>
   ) : (

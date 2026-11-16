@@ -9,7 +9,7 @@ const organisations = defineCollection({
   schema: z.object({
     name: z.string(),
     mark: z.string().min(1).max(3),
-    kind: z.enum(['professionnelle', 'amateur']),
+    kind: z.enum(['professionnelle', 'amateur', 'mixte']),
     place: z.string(),
     description: z.string(),
     example: z.boolean(),
@@ -26,9 +26,12 @@ const athletes = defineCollection({
       losses: z.number().int().nonnegative(),
       draws: z.number().int().nonnegative(),
     }),
+    /** Circuit du record affiché. `amateur` ajoute « am. » partout où le record apparaît. */
+    recordScope: z.enum(['amateur', 'pro']).optional(),
     weightClass: z.string(),
     team: z.string(),
-    country: z.string().default('France'),
+    /** Optionnel : ne rien afficher plutôt que deviner. */
+    country: z.string().optional(),
     discipline: category,
     organisation: reference('organisations'),
     example: z.boolean(),
@@ -55,6 +58,10 @@ const events = defineCollection({
     title: z.string(),
     description: z.string(),
     date: z.coerce.date(),
+    /** false quand l’heure n’est pas connue : seul le jour est affiché. */
+    timeKnown: z.boolean().default(true),
+    /** Tête d’affiche à montrer tant que la carte n’est pas publiée (ex. « Combat pro de X »). */
+    headline: z.string().optional(),
     city: z.string(),
     venue: z.string(),
     organisation: reference('organisations'),
@@ -71,7 +78,7 @@ const events = defineCollection({
     fights: z
       .array(
         z.object({
-          weightClass: z.string(),
+          weightClass: z.string().optional(),
           red: z.string(),
           blue: z.string(),
           redRecord: z.string().optional(),

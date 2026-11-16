@@ -6,7 +6,7 @@ author: Rédaction exemple
 category: Grappling
 format: portrait
 section: fight
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - ines-drelin
 tags:

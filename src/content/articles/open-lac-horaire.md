@@ -7,7 +7,7 @@ category: Grappling
 format: diffusion
 section: fight
 tile: landscape
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - ines-drelin
   - sofia-quenel

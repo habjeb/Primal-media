@@ -4,7 +4,7 @@ description: Compétition amateur fictive de MMA, catégories jeunes et seniors.
 date: 2027-02-06T13:00:00+01:00
 city: Annecy
 venue: Halle Exemple
-organisation: duel-albertville
+organisation: exemple-club-savoie
 discipline: MMA
 example: true
 broadcast:

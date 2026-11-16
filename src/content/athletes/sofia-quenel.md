@@ -9,7 +9,7 @@ weightClass: "−57 kg"
 team: Dojo Tempête
 country: France
 discipline: Grappling
-organisation: duel-albertville
+organisation: exemple-club-savoie
 example: true
 fights:
   - date: 2026-10-18

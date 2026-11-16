@@ -7,7 +7,7 @@ category: Grappling
 format: resultats
 section: fight
 tile: landscape
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - ines-drelin
   - sofia-quenel
@@ -27,4 +27,4 @@ Contenu d’exemple. Deuxième modèle de « tous les résultats », cette fois 
 | Sofia Quenel (9-3-1) vs Maya Steiner (8-4) | Nul | Points |
 | Yanis Hordel (12-5) vs Adam Quenric (10-7) | Adam Quenric | Clé de bras |
 
-Duel n’a pas tenu cet open. Les noms du tableau sont fictifs, y compris ceux qui n’ont pas de fiche.
+Aucune organisation réelle n’a tenu cet open. Les noms du tableau sont fictifs, y compris ceux qui n’ont pas de fiche.

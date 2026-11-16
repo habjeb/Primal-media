@@ -18,7 +18,12 @@
 
 Fil d’actualité en français pour le MMA, le grappling, le kick et la boxe des organisations francophones — circuits amateurs et promotions professionnelles modestes. Le site est statique (Astro), sans base de données, et se publie gratuitement sur GitHub Pages.
 
-Les articles, athlètes, records et cartes livrés avec le dépôt portent la mention **Contenu d’exemple**. Ce sont des fictions, pour voir la mise en page. Hexagone MMA et Duel (Albertville) ont une fiche neutre : aucun résultat réel n’y est inventé.
+Le site mélange **contenus réels** et **contenus d’exemple** :
+
+- Réel et sourcé (`example: false`) : la fiche **DUEL Fighting**, les événements **DUEL Fighting 7** (résultats) et **DUEL Fighting 8**, la fiche de **Mehmet Borhan** et la brève associée. Chaque contenu réel cite ses sources et la date de consultation.
+- Fiction (`example: true`, badge **Contenu d’exemple**) : le reste, pour voir la mise en page. Les contenus fictifs sont rattachés à des organisations fictives (Club Exemple Savoie, Ring des Alpes) ou à Hexagone MMA, dont la fiche reste neutre.
+
+Règle : ne jamais rattacher un événement ou un résultat inventé à une organisation réelle qui publie déjà de vrais événements sur le site.
 
 Adresse prévue : <https://habjeb.github.io/Primal-media/>
 
@@ -104,8 +109,9 @@ record:
   draws: 0
 weightClass: Poids paille
 team: Cage Nord Exemple
-country: France
+country: France           # optionnel : laisser vide plutôt que deviner
 discipline: MMA          # MMA | Grappling | Kick/Boxe
+recordScope: amateur     # optionnel : amateur | pro — « amateur » ajoute « am. » au record partout
 organisation: hexagone-mma
 example: true
 fights:
@@ -131,6 +137,8 @@ Le corps du fichier est la bio, sous la bannière. Le record s’affiche `7-2`, 
 title: "Soirée d’exemple"
 description: "Résumé court."
 date: 2026-11-28T20:00:00+01:00
+timeKnown: true          # false si l’heure n’est pas connue : seul le jour est affiché
+headline: "Combat pro de X"   # optionnel : tête d’affiche montrée tant que la carte n’est pas publiée
 city: Lyon
 venue: Halle Exemple
 organisation: hexagone-mma
@@ -142,7 +150,7 @@ broadcast:
   channel: "Chaîne Exemple — diffusion fictive"
   url: https://exemple.fr/live            # optionnel : bouton « Regarder"
 fights:
-  - weightClass: Poids welter
+  - weightClass: Poids welter   # optionnel si l’organisation ne la communique pas
     red: Karim Ostel
     blue: Sami Drelcourt
     redRecord: "14-2"

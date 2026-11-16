@@ -44,7 +44,7 @@ const chips = [
       la diffusion et la billetterie quand elles existent.
     </p>
   </header>
-  <ExampleNote />
+  <ExampleNote kind="list" />
 
   <div class="chips" role="group" aria-label="Filtrer le calendrier" data-cal-chips>
     {
@@ -65,6 +65,7 @@ const chips = [
             <a href={next.href}>{next.title}</a>
           </h2>
           <p class="next-place">{next.city}</p>
+          {next.headline && <p class="cal-main">{next.headline}</p>}
           <p class="meta-line">{formatFull(next.date)}, heure de Paris</p>
           <Countdown date={next.date} />
           <div class="next-actions">

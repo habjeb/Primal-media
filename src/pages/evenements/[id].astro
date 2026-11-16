@@ -3,7 +3,7 @@ import { render } from 'astro:content';
 import Corner from '../../components/Corner.astro';
 import ExampleNote from '../../components/ExampleNote.astro';
 import { getSite } from '../../lib/content';
-import { formatFull } from '../../lib/dates';
+import { formatDay, formatFull } from '../../lib/dates';
 import { withBase } from '../../lib/paths';
 import Base from '../../layouts/BaseLayout.astro';
 
@@ -39,7 +39,7 @@ const { Content } = await render(entry);
   <dl class="facts">
     <div>
       <dt>Date</dt>
-      <dd><time datetime={event.date.toISOString()}>{formatFull(event.date)}</time></dd>
+      <dd><time datetime={event.date.toISOString()}>{event.timeKnown ? formatFull(event.date) : formatDay(event.date)}</time></dd>
     </div>
     <div>
       <dt>Lieu</dt>
@@ -77,14 +77,17 @@ const { Content } = await render(entry);
   </div>
   <section aria-labelledby="card-title">
     <h2 class="section-title" id="card-title">{event.upcoming ? 'Carte annoncée' : 'Résultats'}</h2>
+    {event.bouts.length === 0 && <p class="empty">Carte des combats pas encore dévoilée par l’organisation.</p>}
     <ol class="bouts">
       {
         event.bouts.map((bout) => (
           <li class:list={['bout', { main: bout.main, decided: Boolean(bout.winner) }]}>
-            <p class="wc">
-              {bout.main && <span class="main-tag">Combat principal</span>}
-              {bout.weightClass}
-            </p>
+            {(bout.main || bout.weightClass) && (
+              <p class="wc">
+                {bout.main && <span class="main-tag">Combat principal</span>}
+                {bout.weightClass}
+              </p>
+            )}
             <div class="corners">
               <Corner name={bout.redName} record={bout.redRecord} href={bout.redHref} side="red" win={bout.winner === 'red'} />
               <span class="vs">vs</span>

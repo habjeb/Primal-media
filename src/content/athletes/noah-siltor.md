@@ -9,7 +9,7 @@ weightClass: Poids welter
 team: Club Ancre
 country: France
 discipline: MMA
-organisation: duel-albertville
+organisation: exemple-club-savoie
 example: true
 fights:
   - date: 2026-09-06

@@ -4,18 +4,18 @@ import { athletesForOrg, eventsForOrg, getSite, itemsForOrg } from '../../lib/co
 import Base from '../../layouts/BaseLayout.astro';
 
 const site = await getSite();
-const kindLabel = { professionnelle: 'Professionnelle', amateur: 'Amateur' };
+const kindLabel = { professionnelle: 'Professionnelle', amateur: 'Amateur', mixte: 'Pro et amateur' };
 ---
 
 <Base
   title="Organisations"
-  description="Organisations suivies par Primal Média. Les fiches restent neutres : les résultats d’exemple ne sont pas des résultats réels."
+  description="Les organisations suivies par Primal Média : ligues pro modestes, galas et circuits amateurs. Les contenus marqués « Contenu d’exemple » sont fictifs."
 >
   <header class="page-intro">
     <h1>Organisations</h1>
-    <p class="lede">Deux repères pour cette première version : une organisation pro, une organisation amateur.</p>
+    <p class="lede">Les ligues, galas et clubs suivis par Primal Média, avec leurs combattants, leurs cartes et leurs publications.</p>
   </header>
-  <ExampleNote kind="org" />
+  <ExampleNote kind="list" />
   <ul class="org-grid">
     {
       site.organisations.map(({ org }) => (

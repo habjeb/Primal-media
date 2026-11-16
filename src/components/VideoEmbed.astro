@@ -21,7 +21,7 @@ const placeholder = provider === 'instagram' && item.video?.id?.toUpperCase() ==
       <div class="embed">
         <iframe
           src={`https://www.youtube-nocookie.com/embed/${videoId}`}
-          title="Lecteur YouTube d’exemple, sans rapport avec l’athlète"
+          title={item.example ? 'Lecteur YouTube d’exemple, sans rapport avec l’athlète' : `Vidéo : ${item.title}`}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
           referrerpolicy="strict-origin-when-cross-origin"
           allowfullscreen

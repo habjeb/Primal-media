@@ -9,7 +9,7 @@ weightClass: "−61 kg"
 team: Académie Fil d’exemple
 country: France
 discipline: Grappling
-organisation: duel-albertville
+organisation: exemple-club-savoie
 example: true
 fights:
   - date: 2026-10-18

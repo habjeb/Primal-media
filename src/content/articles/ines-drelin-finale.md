@@ -7,7 +7,7 @@ category: Grappling
 format: breve
 section: une
 tile: portrait
-organisation: duel-albertville
+organisation: exemple-club-savoie
 athletes:
   - ines-drelin
 tags:
@@ -18,4 +18,4 @@ example: true
 
 Contenu d’exemple. Inès Drelin (6-0) n’a pas pris la finale d’un open. Le tableau, l’avantage et la salle sont dessinés pour une vignette verticale du fil.
 
-La page organisation de Duel ne valide pas ce résultat. Elle rappelle seulement que les cartes marquées exemple sont fictives.
+La page de l’organisation, fictive elle aussi, rappelle que les cartes marquées exemple sont fictives.
