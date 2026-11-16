@@ -1,0 +1,11 @@
+---
+import { titleParts } from '../lib/text';
+
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+{titleParts(text).map((part) => (part.record ? <span class="nowrap">{part.text}</span> : part.text))}

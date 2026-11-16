@@ -15,14 +15,15 @@ interface Props {
   subtitle?: string;
   example?: boolean;
   stats: Stat[];
+  discipline?: 'MMA' | 'Grappling' | 'Mixte';
 }
 
-const { seed, initials, kicker, title, subtitle, example = false, stats } = Astro.props;
+const { seed, initials, kicker, title, subtitle, example = false, stats, discipline = 'MMA' } = Astro.props;
 ---
 
 <header class="channel">
   <div class="channel-banner">
-    <Visual seed={seed} uid={`${seed}-banner`} initials={initials} label="" hideInitials />
+    <Visual seed={seed} uid={`${seed}-banner`} initials={initials} cover={{ name: title, discipline }} text="texture" />
   </div>
   <div class="channel-row">
     <Avatar seed={seed} initials={initials} large />
