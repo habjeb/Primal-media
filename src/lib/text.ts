@@ -1,13 +1,13 @@
 export type RecordScore = { wins: number; losses: number; draws: number };
 
-// Tons désaturés : brique, rouille, ardoise, prune, olive, lie-de-vin.
+// Gris graphite (identité Primal : noir, blanc, argent), à peine teintés pour varier les visuels.
 const PALETTES = [
-  { bg: '#231a1b', mid: '#6b3f3d', ink: '#f0dcc8' },
-  { bg: '#221c18', mid: '#7a5038', ink: '#f2e2cf' },
-  { bg: '#181c22', mid: '#3e4c60', ink: '#e3e9f0' },
-  { bg: '#201b20', mid: '#5c4152', ink: '#efdbe2' },
-  { bg: '#1b1d18', mid: '#4d553c', ink: '#ebe0b8' },
-  { bg: '#1f1b1b', mid: '#583a3a', ink: '#eee8e2' },
+  { bg: '#141416', mid: '#4a4a50', ink: '#f0f0f0' },
+  { bg: '#161514', mid: '#55514c', ink: '#f1eeea' },
+  { bg: '#131518', mid: '#454b54', ink: '#e9edf1' },
+  { bg: '#161517', mid: '#504b53', ink: '#efecf1' },
+  { bg: '#141614', mid: '#4b504a', ink: '#ecefe9' },
+  { bg: '#171616', mid: '#5a5655', ink: '#f2f0ee' },
 ] as const;
 
 export function palette(seed: string): { bg: string; mid: string; ink: string } {

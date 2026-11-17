@@ -67,6 +67,8 @@ export type FeedItem = {
   eventId?: string;
   photo?: string | false;
   coverName?: string;
+  advertising?: 'publicite' | 'partenariat';
+  disclosure?: string;
   /** Photo d’illustration retenue (voir assignPhotos). */
   photoId?: string;
 };

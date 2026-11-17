@@ -240,3 +240,13 @@ on:
 ```
 
 GitHub peut retarder les exécutions planifiées, et les désactive sur un dépôt public sans activité pendant 60 jours.
+
+## Éditeur, publicité et liens d’intérêt
+
+Primal Média est édité par la marque Primal (équipement MMA et grappling). Le site l’indique dans le pied de page et sur la page À propos (`src/lib/brand.ts` : nom de l’éditeur, et `SHOP_URL` pour afficher le lien vers la boutique — `undefined` tant que l’adresse n’est pas renseignée).
+
+Règles, à appliquer à chaque article :
+
+- **Contenu commercial** (produits Primal, contenu payé ou co-produit avec une marque) : `advertising: publicite` ou `advertising: partenariat`. Le site affiche un badge sur la carte et un bandeau en tête de l’article.
+- **Lien d’intérêt** (combattant, club ou événement sponsorisé par Primal) : `disclosure: "Leopold Goi est sponsorisé par Primal."` Le site l’affiche en tête de l’article avec la mention de l’éditeur.
+- Ne jamais présenter un produit Primal dans un article d’information sans l’un de ces deux champs. Le principe (une publicité doit être identifiable comme telle) est posé en France par l’article 20 de la LCEN ; vérifier les cas particuliers avec un juriste.

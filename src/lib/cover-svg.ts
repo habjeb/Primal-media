@@ -110,8 +110,8 @@ export function coverSvg(options: CoverSvgOptions): string {
         <path d="M${cx - r * 1.15} ${cy + r * 0.55} H${cx + r * 1.15} L${cx + r * 1.4} ${cy + r * 0.82} H${cx - r * 1.4} Z" stroke-width="8" opacity="0.35"/>
         <path d="M${fl} ${cy - r * 0.75} V${cy + r * 0.55} M${fr} ${cy - r * 0.75} V${cy + r * 0.55}" stroke-width="14" opacity="0.5"/>
         ${ropes.map((y) => `<path d="${sag(y, fl, fr, 26)}" stroke-width="8" opacity="0.45"/>`).join('')}
-        <rect x="${fl - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#a94b43" stroke="none" opacity="0.8"/>
-        <rect x="${fr - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#5b7fb8" stroke="none" opacity="0.8"/>
+        <rect x="${fl - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#b5544b" stroke="none" opacity="0.7"/>
+        <rect x="${fr - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#5b7fb8" stroke="none" opacity="0.7"/>
       </g>`;
   };
 
@@ -150,7 +150,7 @@ export function coverSvg(options: CoverSvgOptions): string {
   const caption =
     text === 'full'
       ? `<g font-family="${FONT}" font-weight="800">
-          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="4" fill="#d8b46e">${esc(cover.kicker.toUpperCase())}</text>` : ''}
+          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="6" fill="#c3c3c9">${esc(cover.kicker.toUpperCase())}</text>` : ''}
           <text x="66" y="770" font-size="${nameSize}" fill="${colors.ink}">${esc(name.toUpperCase())}${
             cover?.record ? `<tspan dx="28" fill="#ffffff" opacity="0.85">${esc(cover.record)}</tspan>` : ''
           }</text>
@@ -169,12 +169,12 @@ export function coverSvg(options: CoverSvgOptions): string {
           <path d="M16 29 L24 9 H28 L20 29 Z" fill="#d8b46e"/>
         </g>`
         }
-        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#ece7de">PRIMAL <tspan fill="#d0756b">MÉDIA</tspan></text>
+        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#f1f1ef">PRIMAL <tspan fill="#b9b9bf">MÉDIA</tspan></text>
         ${
           share.example
             ? `<g transform="translate(1534 74)">
                 <rect x="-470" width="470" height="80" rx="40" fill="#000" opacity="0.75"/>
-                <text x="-235" y="56" font-size="44" letter-spacing="3" fill="#d8b46e" text-anchor="middle">CONTENU D’EXEMPLE</text>
+                <text x="-235" y="56" font-size="44" letter-spacing="3" fill="#d9b26a" text-anchor="middle">CONTENU D’EXEMPLE</text>
               </g>`
             : ''
         }
@@ -212,15 +212,15 @@ export function coverSvg(options: CoverSvgOptions): string {
     ${
       photo
         ? `${photo.href ? `<image href="${photo.href}" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>` : ''}
-    <rect width="1600" height="900" fill="#16171b" opacity="0.2"/>`
+    <rect width="1600" height="900" fill="#111113" opacity="0.2"/>`
         : `<rect width="1600" height="900" fill="url(#${id}-bg)"/>
     <rect width="1600" height="900" fill="url(#${id}-spot)"/>
     ${motif}
     <rect width="1600" height="900" fill="url(#${id}-dots)" mask="url(#${id}-mask)" opacity="0.16"/>`
     }
     <g opacity="${photo ? '0.35' : '0.6'}">
-      <polygon points="${slash(slashX, 110)}" fill="#a94b43" opacity="0.65"/>
-      <polygon points="${slash(slashX + 150, 44)}" fill="#d8b46e" opacity="0.45"/>
+      <polygon points="${slash(slashX, 110)}" fill="#e6e6ea" opacity="0.22"/>
+      <polygon points="${slash(slashX + 150, 44)}" fill="#9a9aa0" opacity="0.3"/>
     </g>
     ${texture}
     <rect width="1600" height="900" fill="url(#${id}-shade)"/>
@@ -229,7 +229,7 @@ export function coverSvg(options: CoverSvgOptions): string {
     ${shareLayer}
     ${
       photo?.credit
-        ? `<text x="1560" y="852" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="26" fill="#ece7de" opacity="0.75" text-anchor="end">${esc(photo.credit)}</text>`
+        ? `<text x="1560" y="852" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="26" fill="#f1f1ef" opacity="0.75" text-anchor="end">${esc(photo.credit)}</text>`
         : ''
     }
   </svg>`;

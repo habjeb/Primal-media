@@ -1,4 +1,5 @@
 ---
+import { AD_LABELS } from '../lib/brand';
 import { coverFor } from '../lib/cover';
 import { photoById } from '../lib/photos';
 import { excerpt } from '../lib/text';
@@ -55,6 +56,7 @@ const initials =
     />
     {!compact && <span class="badge cat">{item.category}</span>}
     {item.example && !compact && <span class="badge ex">Contenu d’exemple</span>}
+    {item.advertising && <span class="badge ad">{AD_LABELS[item.advertising]}</span>}
     {
       item.duration && (
         <span class="duration">
@@ -76,6 +78,7 @@ const initials =
     <h3>
       <a href={item.href}>
         {item.example && <span class="sr-only">Contenu d’exemple. </span>}
+        {item.advertising && <span class="sr-only">{AD_LABELS[item.advertising]}. </span>}
         {item.hasVideo && <span class="sr-only">Vidéo, {item.duration}. </span>}
         <Title text={item.title} />
       </a>

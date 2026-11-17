@@ -1,4 +1,5 @@
 ---
+import { PUBLISHER, PUBLISHER_ACTIVITY, SHOP_URL } from '../lib/brand';
 import { withBase } from '../lib/paths';
 import LogoMark from './LogoMark.astro';
 
@@ -47,6 +48,11 @@ const groups = [
       <p>
         L’actu fight des circuits amateurs et des petites organisations francophones : MMA, grappling,
         kick et boxe, côté combattants. Les entrées marquées « Contenu d’exemple » sont fictives.
+      </p>
+      <p class="footer-publisher">
+        Primal Média est édité par {PUBLISHER}, {PUBLISHER_ACTIVITY}.
+        {SHOP_URL && <a href={SHOP_URL} rel="noopener">Voir la boutique</a>}
+        <a href={withBase('/a-propos/#editeur')}>Indépendance et publicité</a>
       </p>
     </div>
     <div class="footer-cols">
