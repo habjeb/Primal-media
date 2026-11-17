@@ -15,6 +15,7 @@ interface Props {
 const { data, Content } = Astro.props;
 const { profile, fights, posts, next, scopeLabel } = data;
 const dot = { Victoire: 'V', Défaite: 'D', Nul: 'N' } as const;
+const plural = (n: number, word: string) => `${n} ${word}${n > 1 ? 's' : ''}`;
 ---
 
 <article class="mag">
@@ -59,7 +60,7 @@ const dot = { Victoire: 'V', Défaite: 'D', Nul: 'N' } as const;
       <div class="side-box">
         <p class="kicker">{scopeLabel}</p>
         <p class="side-record">{profile.record.replace(' am.', '')}</p>
-        <p class="meta-line">{profile.wins} victoires · {profile.losses} défaites · {profile.draws} nuls</p>
+        <p class="meta-line">{plural(profile.wins, 'victoire')} · {plural(profile.losses, 'défaite')} · {plural(profile.draws, 'nul')}</p>
         <dl>
           <div><dt>Catégorie</dt><dd>{profile.weightClass}</dd></div>
           <div><dt>Club</dt><dd>{profile.team}</dd></div>

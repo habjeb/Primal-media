@@ -183,7 +183,12 @@ const streakLabel = streak && {
   .next h2 { margin: 0; }
   .next-vs { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0.2rem 0; }
   .vs-x { color: var(--faint); margin: 0 0.5rem; font-size: 0.7em; }
-  .days strong { font-family: var(--display); font-size: 2.4rem; color: var(--gold); }
+  .days { margin: 0; }
+  .days strong { font-family: var(--display); font-size: 2.4rem; color: var(--gold); white-space: nowrap; }
+  @media (max-width: 899px) {
+    .tape-portrait :global(.visual) { aspect-ratio: 16 / 9; }
+    .next { flex-direction: column-reverse; align-items: flex-start; gap: 0.3rem; }
+  }
   .stats3 { display: grid; gap: 0.8rem; }
   .stat-box { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
   .stat-box h2 { margin: 0 0 0.6rem; }
