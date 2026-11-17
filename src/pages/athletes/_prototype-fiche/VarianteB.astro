@@ -1,0 +1,143 @@
+---
+// PROTOTYPE — Variante B « Magazine » : le récit d'abord, les chiffres en encadré.
+import ExampleNote from '../../../components/ExampleNote.astro';
+import Title from '../../../components/Title.astro';
+import Visual from '../../../components/Visual.astro';
+import { formatDay } from '../../../lib/dates';
+import { initials } from '../../../lib/text';
+import { chapo, type FicheData } from './data';
+
+interface Props {
+  data: FicheData;
+  Content: any;
+}
+
+const { data, Content } = Astro.props;
+const { profile, fights, posts, next, scopeLabel } = data;
+const dot = { Victoire: 'V', Défaite: 'D', Nul: 'N' } as const;
+---
+
+<article class="mag">
+  <header class="mag-hero">
+    <Visual seed={profile.id} uid={`${profile.id}-protoB`} initials={initials(profile.name)} cover={{ name: profile.name, discipline: profile.discipline }} text="none" />
+    <div class="mag-title">
+      <p class="kicker">Portrait · {profile.discipline} · {profile.org.name}</p>
+      <h1>{profile.name}</h1>
+      {profile.nickname && <p class="nick">« {profile.nickname} »</p>}
+    </div>
+  </header>
+
+  {profile.example && <ExampleNote />}
+
+  <p class="mag-chapo">{chapo(profile)}</p>
+
+  <div class="mag-body">
+    <div class="mag-main">
+      <div class="prose dropcap"><Content /></div>
+
+      {
+        posts.length > 0 && (
+          <section aria-labelledby="b-posts" class="mag-read">
+            <h2 class="section-title" id="b-posts">À lire sur {profile.name}</h2>
+            <ol>
+              {posts.map((item) => (
+                <li>
+                  <a href={item.href}>
+                    <span class="read-date">{formatDay(item.pubDate)}</span>
+                    <span class="read-title"><Title text={item.title} /></span>
+                    <span class="read-desc">{item.description}</span>
+                  </a>
+                </li>
+              ))}
+            </ol>
+          </section>
+        )
+      }
+    </div>
+
+    <aside class="mag-side" aria-label="Fiche">
+      <div class="side-box">
+        <p class="kicker">{scopeLabel}</p>
+        <p class="side-record">{profile.record.replace(' am.', '')}</p>
+        <p class="meta-line">{profile.wins} victoires · {profile.losses} défaites · {profile.draws} nuls</p>
+        <dl>
+          <div><dt>Catégorie</dt><dd>{profile.weightClass}</dd></div>
+          <div><dt>Club</dt><dd>{profile.team}</dd></div>
+          <div><dt>Organisation</dt><dd><a href={profile.org.href}>{profile.org.name}</a></dd></div>
+          {profile.country && <div><dt>Pays</dt><dd>{profile.country}</dd></div>}
+        </dl>
+      </div>
+
+      {
+        next && (
+          <div class="side-box side-next">
+            <p class="kicker">Prochain rendez-vous</p>
+            <p class="side-event"><a href={next.event.href}>{next.event.title}</a></p>
+            <p class="meta-line">
+              {formatDay(next.event.date)} · {next.event.city}
+              {next.opponent && <><br />Face à {next.opponent}{next.opponentRecord && ` (${next.opponentRecord})`}</>}
+            </p>
+          </div>
+        )
+      }
+
+      {
+        fights.length > 0 && (
+          <div class="side-box">
+            <p class="kicker">Derniers combats</p>
+            <ol class="side-fights">
+              {fights.slice(0, 4).map((f) => (
+                <li>
+                  <span class:list={['dot', dot[f.result]]} title={f.result}>{dot[f.result]}</span>
+                  <span>
+                    <strong>{f.opponent}</strong>
+                    <span class="meta-line">{f.method}{f.round ? ` · R${f.round}` : ''} · {formatDay(f.date)}</span>
+                  </span>
+                </li>
+              ))}
+            </ol>
+            <p class="fine">Combats suivis, pas tout le palmarès.</p>
+          </div>
+        )
+      }
+    </aside>
+  </div>
+</article>
+
+<style>
+  .mag { display: grid; gap: 1.4rem; margin-top: 0.6rem; }
+  .mag-hero { position: relative; border-radius: 20px; overflow: hidden; }
+  .mag-hero :global(.visual) { aspect-ratio: 21 / 9; min-height: 260px; border-radius: 0; }
+  .mag-title { position: absolute; inset: auto 0 0 0; padding: 4rem 1.4rem 1.4rem; background: linear-gradient(transparent, rgb(0 0 0 / 0.85)); }
+  .mag-title h1 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(3rem, 9vw, 7rem); line-height: 0.82; margin: 0.2rem 0 0; }
+  .nick { color: var(--gold); font-weight: 700; font-size: 1.2rem; margin: 0.4rem 0 0; }
+  .mag-chapo { font-size: clamp(1.2rem, 2.2vw, 1.5rem); line-height: 1.4; max-width: 46ch; margin: 0; color: var(--text); }
+  .mag-body { display: grid; gap: 2rem; }
+  .dropcap :global(p:first-child::first-letter) { float: left; font-family: var(--display); font-weight: 800; font-size: 4.2rem; line-height: 0.8; margin: 0.35rem 0.5rem 0 0; color: var(--accent); }
+  .mag-read ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--line); }
+  .mag-read a { display: grid; gap: 0.2rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+  .mag-read a:hover .read-title { color: var(--accent); }
+  .read-date { color: var(--faint); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.06em; }
+  .read-title { font-family: var(--display); font-weight: 700; font-size: 1.35rem; text-transform: uppercase; line-height: 1; }
+  .read-desc { color: var(--muted); font-size: 0.95rem; }
+  .mag-side { display: grid; gap: 0.9rem; align-content: start; }
+  .side-box { padding: 1rem 1.1rem; border-radius: 14px; background: var(--card); border: 1px solid var(--line); }
+  .side-box .kicker { margin: 0 0 0.3rem; }
+  .side-record { font-family: var(--display); font-weight: 800; font-size: 3.4rem; line-height: 0.9; margin: 0; }
+  .side-box dl { margin: 0.8rem 0 0; display: grid; gap: 0.5rem; }
+  .side-box dt { color: var(--faint); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .side-box dd { margin: 0; font-weight: 700; }
+  .side-next { border-color: rgb(var(--gold-rgb) / 0.35); }
+  .side-event { font-family: var(--display); font-weight: 800; font-size: 1.4rem; text-transform: uppercase; margin: 0; }
+  .side-event a { color: inherit; text-decoration: none; }
+  .side-fights { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.6rem; }
+  .side-fights li { display: grid; grid-template-columns: 1.8rem 1fr; gap: 0.6rem; align-items: start; }
+  .side-fights .meta-line { display: block; font-size: 0.82rem; }
+  .dot { display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; font-family: var(--display); font-weight: 800; }
+  .dot.V { background: var(--win); color: var(--win-ink); } .dot.D { background: var(--accent-fill); color: white; } .dot.N { background: var(--gold); color: #1a1200; }
+  .fine { color: var(--faint); font-size: 0.78rem; margin: 0.6rem 0 0; }
+  @media (min-width: 1000px) {
+    .mag-body { grid-template-columns: minmax(0, 1fr) 320px; }
+    .mag-side { position: sticky; top: calc(var(--header) + 1rem); }
+  }
+</style>

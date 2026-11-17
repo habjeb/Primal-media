@@ -8,6 +8,12 @@ import { formatDay } from '../../lib/dates';
 import { initials } from '../../lib/text';
 import { withBase } from '../../lib/paths';
 import Base from '../../layouts/BaseLayout.astro';
+// PROTOTYPE fiche combattant (branche prototype/fiche-combattant, à ne pas fusionner).
+import { ficheData } from './_prototype-fiche/data';
+import PrototypeSwitcher from './_prototype-fiche/PrototypeSwitcher.astro';
+import VarianteA from './_prototype-fiche/VarianteA.astro';
+import VarianteB from './_prototype-fiche/VarianteB.astro';
+import VarianteC from './_prototype-fiche/VarianteC.astro';
 
 export async function getStaticPaths() {
   const site = await getSite();
@@ -23,6 +29,8 @@ const { profile, fights, entry } = found;
 const { Content } = await render(entry);
 const posts = itemsForAthlete(profile.id, site.items);
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const PROTO = import.meta.env.DEV;
+const proto = PROTO ? ficheData(site, profile, fights, posts) : undefined;
 ---
 
 <Base
@@ -45,6 +53,30 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
       <li aria-current="page">{profile.name}</li>
     </ol>
   </nav>
+  {
+    proto && (
+      <>
+        <div data-proto-variant="A">
+          <VarianteA data={proto} Content={Content} />
+        </div>
+        <div data-proto-variant="B" hidden>
+          <VarianteB data={proto} Content={Content} />
+        </div>
+        <div data-proto-variant="C" hidden>
+          <VarianteC data={proto} Content={Content} />
+        </div>
+        <PrototypeSwitcher
+          variants={[
+            { key: 'A', label: 'Tale of the tape' },
+            { key: 'B', label: 'Magazine' },
+            { key: 'C', label: 'Parcours' },
+            { key: 'actuelle', label: 'Fiche actuelle (référence)' },
+          ]}
+        />
+      </>
+    )
+  }
+  <div data-proto-variant="actuelle" hidden={PROTO}>
   <ChannelHero
     seed={profile.id}
     initials={initials(profile.name)}
@@ -155,4 +187,5 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
       </table>
     </div>
   </section>
+  </div>
 </Base>

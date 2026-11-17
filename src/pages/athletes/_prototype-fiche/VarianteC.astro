@@ -1,0 +1,146 @@
+---
+// PROTOTYPE — Variante C « Parcours » : une chronologie unique (combats, articles, prochain rendez-vous).
+import Avatar from '../../../components/Avatar.astro';
+import ExampleNote from '../../../components/ExampleNote.astro';
+import Title from '../../../components/Title.astro';
+import { formatDay } from '../../../lib/dates';
+import { initials } from '../../../lib/text';
+import type { FicheData, TimelineEntry } from './data';
+
+interface Props {
+  data: FicheData;
+  Content: any;
+}
+
+const { data, Content } = Astro.props;
+const { profile, timeline, fights, scopeLabel } = data;
+const year = (date: Date) => new Intl.DateTimeFormat('fr-FR', { timeZone: 'Europe/Paris', year: 'numeric' }).format(date);
+const groups: { year: string; entries: TimelineEntry[] }[] = [];
+for (const entry of timeline) {
+  const y = year(entry.date);
+  if (groups.at(-1)?.year !== y) groups.push({ year: y, entries: [] });
+  groups.at(-1)!.entries.push(entry);
+}
+const resultClass = { Victoire: 'win', Défaite: 'loss', Nul: 'draw' } as const;
+const verb = { Victoire: 'Victoire contre', Défaite: 'Défaite contre', Nul: 'Nul face à' } as const;
+// Pas de soustraction palmarès − combats suivis : ils ne portent pas forcément sur le même circuit.
+const hasRecord = profile.wins + profile.losses + profile.draws > 0;
+---
+
+<article class="run">
+  <header class="run-head">
+    <Avatar seed={profile.id} initials={initials(profile.name)} large />
+    <div class="run-id">
+      <h1>{profile.name}</h1>
+      <p class="meta-line">
+        {profile.nickname && <span class="nick">« {profile.nickname} » · </span>}
+        {profile.discipline} · {profile.weightClass} · {profile.team} · <a href={profile.org.href}>{profile.org.name}</a>
+      </p>
+    </div>
+    <p class="run-record" title={scopeLabel}>
+      <strong>{profile.record.replace(' am.', '')}</strong>
+      <span>{scopeLabel}</span>
+    </p>
+  </header>
+
+  {profile.example && <ExampleNote />}
+
+  <section aria-labelledby="c-run" class="run-body">
+    <h2 class="section-title" id="c-run">Parcours</h2>
+    {
+      groups.map((group) => (
+        <div class="year">
+          <p class="year-label">{group.year}</p>
+          <ol class="line">
+            {group.entries.map((entry) =>
+              entry.kind === 'upcoming' ? (
+                <li class="node upcoming">
+                  <p class="node-date">{formatDay(entry.date)} · à venir</p>
+                  <p class="node-title">
+                    <a href={entry.next.event.href}>{entry.next.event.title}</a>
+                  </p>
+                  <p class="meta-line">
+                    {entry.next.opponent
+                      ? `Face à ${entry.next.opponent}${entry.next.opponentRecord ? ` (${entry.next.opponentRecord})` : ''}`
+                      : 'Adversaire pas encore annoncé'}
+                    {' · '}
+                    {entry.next.event.venue}, {entry.next.event.city}
+                  </p>
+                </li>
+              ) : entry.kind === 'fight' ? (
+                <li class:list={['node', 'fight', resultClass[entry.fight.result]]}>
+                  <p class="node-date">{formatDay(entry.date)}</p>
+                  <p class="node-title">
+                    {verb[entry.fight.result]} {entry.fight.opponent}
+                    {entry.fight.opponentRecord && <span class="meta-line"> ({entry.fight.opponentRecord})</span>}
+                  </p>
+                  <p class="meta-line">
+                    {entry.fight.method}
+                    {entry.fight.round ? ` · round ${entry.fight.round}` : ''} ·{' '}
+                    {entry.fight.eventHref ? <a href={entry.fight.eventHref}>{entry.fight.eventName}</a> : entry.fight.eventName}
+                  </p>
+                </li>
+              ) : (
+                <li class="node post">
+                  <p class="node-date">{formatDay(entry.date)} · article</p>
+                  <p class="node-title small">
+                    <a href={entry.item.href}>
+                      <Title text={entry.item.title} />
+                    </a>
+                  </p>
+                </li>
+              ),
+            )}
+          </ol>
+        </div>
+      ))
+    }
+    {
+      hasRecord && (
+        <p class="node-end">
+          Avant : le détail du {scopeLabel.toLowerCase()} ({profile.record.replace(' am.', '')}) n’est pas encore retracé ici.
+        </p>
+      )
+    }
+  </section>
+
+  <section aria-labelledby="c-bio">
+    <h2 class="section-title" id="c-bio">Présentation</h2>
+    <div class="prose"><Content /></div>
+  </section>
+</article>
+
+<style>
+  .run { display: grid; gap: 1.6rem; margin-top: 0.6rem; }
+  .run-head { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 0.8rem 1.1rem; align-items: center; padding: 1.1rem; border-radius: 18px; background: var(--card); border: 1px solid var(--line); }
+  .run-id h1 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(2rem, 4.5vw, 3.2rem); line-height: 0.9; margin: 0; }
+  .run-id .meta-line { margin: 0.35rem 0 0; }
+  .nick { color: var(--gold); font-weight: 700; }
+  .run-record { grid-column: 1 / -1; margin: 0; display: flex; align-items: baseline; gap: 0.6rem; }
+  .run-record strong { font-family: var(--display); font-weight: 800; font-size: 2.8rem; line-height: 1; }
+  .run-record span { color: var(--muted); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; }
+  .run-body { max-width: 760px; }
+  .year { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr); gap: 0 1rem; }
+  .year-label { margin: 0.2rem 0 0; font-family: var(--display); font-weight: 800; font-size: 1.5rem; color: var(--muted); }
+  .line { list-style: none; margin: 0; padding: 0 0 0.6rem 1.4rem; border-left: 2px solid var(--line); display: grid; gap: 1.1rem; }
+  .node { position: relative; }
+  .node::before { content: ""; position: absolute; left: calc(-1.4rem - 7px); top: 0.25rem; width: 12px; height: 12px; border-radius: 50%; background: var(--faint); border: 2px solid var(--bg); }
+  .node.win::before { background: var(--win); } .node.loss::before { background: var(--accent); } .node.draw::before { background: var(--gold); }
+  .node.upcoming::before { background: var(--bg); border: 2px solid var(--gold); width: 14px; height: 14px; left: calc(-1.4rem - 8px); }
+  .node.post::before { width: 8px; height: 8px; left: calc(-1.4rem - 5px); top: 0.4rem; }
+  .node p { margin: 0; }
+  .node-date { color: var(--faint); font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.06em; font-weight: 700; }
+  .upcoming .node-date { color: var(--gold); }
+  .node-title { font-family: var(--display); font-weight: 800; font-size: 1.45rem; text-transform: uppercase; line-height: 1; margin-top: 0.15rem !important; }
+  .node-title.small { font-weight: 700; font-size: 1.1rem; }
+  .node-title a { color: inherit; text-decoration: none; }
+  .node-title a:hover { color: var(--accent); }
+  .win .node-title { color: var(--text); }
+  .loss .node-title { color: var(--muted); }
+  .node .meta-line { font-size: 0.9rem; margin-top: 0.2rem; }
+  .node-end { margin: 0.6rem 0 0 5.2rem; color: var(--faint); font-size: 0.88rem; font-style: italic; }
+  @media (min-width: 800px) {
+    .run-head { grid-template-columns: auto minmax(0, 1fr) auto; }
+    .run-record { grid-column: auto; flex-direction: column; align-items: flex-end; gap: 0; }
+  }
+</style>

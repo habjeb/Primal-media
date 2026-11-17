@@ -1,0 +1,213 @@
+---
+// PROTOTYPE — Variante A « Tale of the tape » : la fiche comme une feuille de stats.
+import ExampleNote from '../../../components/ExampleNote.astro';
+import NewsCard from '../../../components/NewsCard.astro';
+import Visual from '../../../components/Visual.astro';
+import { formatDay } from '../../../lib/dates';
+import { initials } from '../../../lib/text';
+import type { FicheData } from './data';
+
+interface Props {
+  data: FicheData;
+  Content: any;
+}
+
+const { data, Content } = Astro.props;
+const { profile, fights, posts, form, winsBy, followedWins, streak, next, scopeLabel } = data;
+const total = profile.wins + profile.losses + profile.draws || 1;
+const pct = (n: number) => `${(n / total) * 100}%`;
+const short = { Victoire: 'V', Défaite: 'D', Nul: 'N' } as const;
+// En dessous de 3 combats suivis, forme, méthodes et série ne disent rien de fiable : on ne les affiche pas.
+const enough = fights.length >= 3;
+const daysTo = next ? Math.max(0, Math.ceil((next.event.date.getTime() - Date.now()) / 86400000)) : 0;
+const tape = [
+  { k: 'Catégorie', v: profile.weightClass },
+  { k: 'Club', v: profile.team },
+  { k: 'Organisation', v: profile.org.name, href: profile.org.href },
+  { k: 'Discipline', v: profile.discipline },
+  ...(profile.recordScope ? [{ k: 'Palmarès affiché', v: profile.recordScope === 'amateur' ? 'Amateur' : 'Pro' }] : []),
+  ...(profile.country ? [{ k: 'Pays', v: profile.country }] : []),
+];
+const streakLabel = streak && {
+  Victoire: `${streak.count} victoire${streak.count > 1 ? 's' : ''} d’affilée`,
+  Défaite: `${streak.count} défaite${streak.count > 1 ? 's' : ''} d’affilée`,
+  Nul: `${streak.count} nul${streak.count > 1 ? 's' : ''} d’affilée`,
+}[streak.result];
+---
+
+<article class="tape">
+  <header class="tape-hero">
+    <div class="tape-portrait">
+      <Visual seed={profile.id} uid={`${profile.id}-protoA`} initials={initials(profile.name)} cover={{ name: profile.name, discipline: profile.discipline }} text="texture" />
+    </div>
+    <div class="tape-id">
+      <p class="kicker">{profile.discipline} · {profile.org.name}</p>
+      <h1>{profile.name}</h1>
+      {profile.nickname && <p class="nick">« {profile.nickname} »</p>}
+      <div class="record">
+        <span class="record-num">{profile.record.replace(' am.', '')}</span>
+        <span class="record-label">{scopeLabel}</span>
+      </div>
+      <div class="wld" role="img" aria-label={`${profile.wins} victoires, ${profile.losses} défaites, ${profile.draws} nuls`}>
+        <span class="w" style={`width:${pct(profile.wins)}`}></span>
+        <span class="l" style={`width:${pct(profile.losses)}`}></span>
+        <span class="d" style={`width:${pct(profile.draws)}`}></span>
+      </div>
+      <p class="wld-legend"><b class="w">{profile.wins}</b> V · <b class="l">{profile.losses}</b> D · <b class="d">{profile.draws}</b> N</p>
+      <dl class="tape-grid">
+        {
+          tape.map((row) => (
+            <div>
+              <dt>{row.k}</dt>
+              <dd>{row.href ? <a href={row.href}>{row.v}</a> : row.v}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </header>
+
+  {profile.example && <ExampleNote />}
+
+  {
+    next && (
+      <section class="next" aria-labelledby="a-next">
+        <div>
+          <h2 id="a-next" class="kicker">Prochain combat</h2>
+          <p class="next-vs">
+            {profile.name}
+            <span class="vs-x">vs</span>
+            {next.opponent ? `${next.opponent}${next.opponentRecord ? ` (${next.opponentRecord})` : ''}` : 'adversaire à annoncer'}
+          </p>
+          <p class="meta-line">
+            <a href={next.event.href}>{next.event.title}</a> · {formatDay(next.event.date)} · {next.event.city}
+            {next.main && ' · combat principal'}
+          </p>
+        </div>
+        <p class="days"><strong>J-{daysTo}</strong></p>
+      </section>
+    )
+  }
+
+  {!enough && (
+    <p class="few">
+      {fights.length === 0 ? 'Aucun combat suivi' : `${fights.length} combat${fights.length > 1 ? 's' : ''} suivi${fights.length > 1 ? 's' : ''}`} par
+      Primal Média pour l’instant : forme récente, méthodes de victoire et série apparaîtront à partir de 3 combats suivis.
+    </p>
+  )}
+  <section class="stats3" aria-label="Statistiques" hidden={!enough}>
+    <div class="stat-box">
+      <h2 class="kicker">Forme récente</h2>
+      {form.length ? (
+        <ol class="form">
+          {form.map((r) => <li class={short[r]} title={r}>{short[r]}</li>)}
+        </ol>
+      ) : <p class="meta-line">Aucun combat suivi.</p>}
+      <p class="fine">Du plus récent au plus ancien, sur les combats suivis.</p>
+    </div>
+    <div class="stat-box">
+      <h2 class="kicker">Victoires par méthode</h2>
+      {followedWins ? (
+        <ul class="bars">
+          {(['KO/TKO', 'Soumission', 'Décision'] as const).map((k) => (
+            <li>
+              <span>{k}</span>
+              <span class="bar"><span style={`width:${(winsBy[k] / followedWins) * 100}%`}></span></span>
+              <b>{winsBy[k]}</b>
+            </li>
+          ))}
+        </ul>
+      ) : <p class="meta-line">Aucune victoire suivie.</p>}
+      <p class="fine">Sur {followedWins} victoire{followedWins > 1 ? 's' : ''} suivie{followedWins > 1 ? 's' : ''}, pas tout le palmarès.</p>
+    </div>
+    <div class="stat-box">
+      <h2 class="kicker">Série en cours</h2>
+      <p class="streak">{streakLabel ?? '—'}</p>
+      <p class="fine">Sur les combats suivis par Primal Média.</p>
+    </div>
+  </section>
+
+  <section aria-labelledby="a-fights">
+    <h2 class="section-title" id="a-fights">Combats</h2>
+    <ol class="fight-rows">
+      {
+        fights.map((f) => (
+          <li class={short[f.result]}>
+            <span class="res">{short[f.result]}</span>
+            <span class="opp">
+              <strong>{f.opponent}</strong>
+              {f.opponentRecord && <span class="meta-line"> ({f.opponentRecord})</span>}
+            </span>
+            <span class="how">{f.method}{f.round ? ` · R${f.round}` : ''}</span>
+            <span class="when">{formatDay(f.date)} · {f.eventHref ? <a href={f.eventHref}>{f.eventName}</a> : f.eventName}</span>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="fine">Combats suivis par Primal Média, pas un palmarès complet.</p>
+  </section>
+
+  <section aria-labelledby="a-bio">
+    <h2 class="section-title" id="a-bio">Présentation</h2>
+    <div class="prose"><Content /></div>
+  </section>
+
+  {
+    posts.length > 0 && (
+      <section aria-labelledby="a-posts">
+        <h2 class="section-title" id="a-posts">Publications</h2>
+        <div class="mosaic">{posts.map((item) => <NewsCard item={item} />)}</div>
+      </section>
+    )
+  }
+</article>
+
+<style>
+  .tape { display: grid; gap: 1.6rem; margin-top: 0.6rem; }
+  .tape-hero { display: grid; gap: 1.4rem; }
+  .tape-portrait :global(.visual) { aspect-ratio: 4 / 5; border-radius: 18px; }
+  .tape-id h1 { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(2.6rem, 6vw, 4.6rem); line-height: 0.88; margin: 0.2rem 0 0; }
+  .nick { color: var(--gold); font-weight: 700; margin: 0.3rem 0 0; }
+  .record { display: flex; align-items: baseline; gap: 0.8rem; margin: 1rem 0 0.4rem; }
+  .record-num { font-family: var(--display); font-weight: 800; font-size: clamp(4rem, 10vw, 6.5rem); line-height: 0.85; font-variant-numeric: tabular-nums; }
+  .record-label { color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; font-size: 0.8rem; font-weight: 700; }
+  .wld { display: flex; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card-2); max-width: 26rem; }
+  .wld .w { background: var(--win); } .wld .l { background: var(--accent); } .wld .d { background: var(--gold); }
+  .wld-legend { margin: 0.4rem 0 0; color: var(--muted); font-size: 0.9rem; }
+  .wld-legend .w { color: var(--win); } .wld-legend .l { color: var(--accent); } .wld-legend .d { color: var(--gold); }
+  .tape-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin: 1.2rem 0 0; border-top: 1px solid var(--line); }
+  .tape-grid div { padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
+  .tape-grid dt { color: var(--faint); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; }
+  .tape-grid dd { margin: 0.1rem 0 0; font-weight: 700; }
+  .next { display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.1rem 1.2rem; border-radius: 16px; border: 1px solid rgb(var(--gold-rgb) / 0.35); background: var(--card); }
+  .next h2 { margin: 0; }
+  .next-vs { font-family: var(--display); font-weight: 800; text-transform: uppercase; font-size: clamp(1.4rem, 3vw, 2rem); margin: 0.2rem 0; }
+  .vs-x { color: var(--faint); margin: 0 0.5rem; font-size: 0.7em; }
+  .days strong { font-family: var(--display); font-size: 2.4rem; color: var(--gold); }
+  .stats3 { display: grid; gap: 0.8rem; }
+  .stat-box { padding: 1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+  .stat-box h2 { margin: 0 0 0.6rem; }
+  .form { display: flex; gap: 0.35rem; list-style: none; padding: 0; margin: 0; }
+  .form li { display: grid; place-items: center; width: 2.2rem; height: 2.2rem; border-radius: 8px; font-family: var(--display); font-weight: 800; font-size: 1.2rem; }
+  .form .V { background: var(--win); color: var(--win-ink); } .form .D { background: var(--accent-fill); color: white; } .form .N { background: var(--gold); color: #1a1200; }
+  .bars { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.45rem; }
+  .bars li { display: grid; grid-template-columns: 6rem 1fr 1.5rem; align-items: center; gap: 0.5rem; font-size: 0.9rem; }
+  .bar { height: 8px; border-radius: 999px; background: var(--card-2); overflow: hidden; }
+  .bar span { display: block; height: 100%; background: var(--gold); }
+  .streak { font-family: var(--display); font-weight: 800; font-size: 1.7rem; text-transform: uppercase; margin: 0; }
+  .fine { color: var(--faint); font-size: 0.78rem; margin: 0.6rem 0 0; }
+  .few { margin: 0; padding: 0.9rem 1rem; border-radius: 14px; border: 1px dashed var(--line); color: var(--muted); font-size: 0.92rem; }
+  .stats3[hidden] { display: none; }
+  .fight-rows { list-style: none; padding: 0; margin: 0; display: grid; gap: 0.5rem; }
+  .fight-rows li { display: grid; grid-template-columns: 2.4rem 1fr; gap: 0.2rem 0.8rem; align-items: center; padding: 0.7rem 0.9rem; border-radius: 12px; background: var(--card); border-left: 4px solid var(--line); }
+  .fight-rows li.V { border-left-color: var(--win); } .fight-rows li.D { border-left-color: var(--accent); } .fight-rows li.N { border-left-color: var(--gold); }
+  .res { grid-row: span 3; font-family: var(--display); font-weight: 800; font-size: 1.6rem; text-align: center; }
+  .V .res { color: var(--win); } .D .res { color: var(--accent); } .N .res { color: var(--gold); }
+  .how, .when { color: var(--muted); font-size: 0.88rem; }
+  @media (min-width: 900px) {
+    .tape-hero { grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); align-items: center; }
+    .stats3 { grid-template-columns: repeat(3, 1fr); }
+    .fight-rows li { grid-template-columns: 2.4rem 1.2fr 1fr 1.4fr; }
+    .res { grid-row: auto; }
+  }
+</style>

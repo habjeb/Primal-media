@@ -1,0 +1,63 @@
+---
+// PROTOTYPE — barre flottante pour passer d'une variante à l'autre (?variant=A|B|C|actuelle).
+// Rendue seulement en développement : la page ne l'inclut que si import.meta.env.DEV.
+interface Props {
+  variants: { key: string; label: string }[];
+}
+
+const { variants } = Astro.props;
+---
+
+<div class="proto-bar" data-proto-bar data-variants={JSON.stringify(variants)} role="toolbar" aria-label="Variantes du prototype">
+  <span class="proto-tag">Prototype</span>
+  <button type="button" data-proto-prev aria-label="Variante précédente">←</button>
+  <span class="proto-label" data-proto-label aria-live="polite"></span>
+  <button type="button" data-proto-next aria-label="Variante suivante">→</button>
+</div>
+
+<style is:global>
+  [data-proto-variant][hidden] { display: none !important; }
+  .proto-bar {
+    position: fixed; z-index: 100; left: 50%; bottom: 4.5rem; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.5rem 0.4rem 0.8rem;
+    border-radius: 999px; background: #f4f1ea; color: #111; box-shadow: 0 8px 30px rgb(0 0 0 / 0.5);
+    font: 600 0.92rem/1 system-ui, sans-serif; white-space: nowrap;
+  }
+  .proto-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: #8a2a22; }
+  .proto-bar button { width: 2.2rem; height: 2.2rem; border-radius: 50%; border: 0; background: #111; color: #fff; font-size: 1.1rem; cursor: pointer; }
+  .proto-label { min-width: 13rem; text-align: center; }
+</style>
+
+<script>
+  const bar = document.querySelector<HTMLElement>('[data-proto-bar]');
+  if (bar) {
+    const variants: { key: string; label: string }[] = JSON.parse(bar.dataset.variants ?? '[]');
+    const label = bar.querySelector<HTMLElement>('[data-proto-label]')!;
+    const keys = variants.map((v) => v.key);
+    const show = (key: string) => {
+      const current = keys.includes(key) ? key : keys[0]!;
+      document.querySelectorAll<HTMLElement>('[data-proto-variant]').forEach((el) => {
+        el.hidden = el.dataset.protoVariant !== current;
+      });
+      const v = variants.find((x) => x.key === current)!;
+      label.textContent = `${v.key} · ${v.label}`;
+      const url = new URL(location.href);
+      url.searchParams.set('variant', current);
+      history.replaceState({}, '', url);
+      return current;
+    };
+    let current = show(new URLSearchParams(location.search).get('variant') ?? keys[0]!);
+    const step = (delta: number) => {
+      const i = keys.indexOf(current);
+      current = show(keys[(i + delta + keys.length) % keys.length]!);
+    };
+    bar.querySelector('[data-proto-prev]')?.addEventListener('click', () => step(-1));
+    bar.querySelector('[data-proto-next]')?.addEventListener('click', () => step(1));
+    document.addEventListener('keydown', (event) => {
+      const target = event.target as HTMLElement;
+      if (target.closest('input, textarea, select, [contenteditable]')) return;
+      if (event.key === 'ArrowLeft') step(-1);
+      if (event.key === 'ArrowRight') step(1);
+    });
+  }
+</script>
