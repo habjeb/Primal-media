@@ -85,7 +85,10 @@ const events = defineCollection({
           blueRecord: z.string().optional(),
           redAthlete: reference('athletes').optional(),
           blueAthlete: reference('athletes').optional(),
-          winner: z.enum(['red', 'blue', 'draw']).optional(),
+          /** nc = no contest (résultat annulé) ; omettre si le combat n'a pas encore eu lieu. */
+          winner: z.enum(['red', 'blue', 'draw', 'nc']).optional(),
+          /** Combat amateur sur une carte pro. */
+          amateur: z.boolean().optional(),
           method: z.string().optional(),
           round: z.number().int().positive().optional(),
           main: z.boolean().optional(),
@@ -113,6 +116,8 @@ const articles = defineCollection({
     event: reference('events').optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Nom affiché sur le visuel quand l’article ne lie aucune fiche combattant (sinon : 1er combattant lié). */
+    coverName: z.string().optional(),
     /** Photo d’illustration : identifiant de src/lib/photos.ts, ou false pour garder le visuel généré. */
     photo: z.union([z.string(), z.literal(false)]).optional(),
     example: z.boolean(),

@@ -81,10 +81,11 @@ const { Content } = await render(entry);
     <ol class="bouts">
       {
         event.bouts.map((bout) => (
-          <li class:list={['bout', { main: bout.main, decided: Boolean(bout.winner) }]}>
-            {(bout.main || bout.weightClass) && (
+          <li class:list={['bout', { main: bout.main, decided: bout.winner === 'red' || bout.winner === 'blue' }]}>
+            {(bout.main || bout.amateur || bout.weightClass) && (
               <p class="wc">
                 {bout.main && <span class="main-tag">Combat principal</span>}
+                {bout.amateur && <span class="am-tag">Amateur</span>}
                 {bout.weightClass}
               </p>
             )}
@@ -94,7 +95,9 @@ const { Content } = await render(entry);
               <Corner name={bout.blueName} record={bout.blueRecord} href={bout.blueHref} side="blue" win={bout.winner === 'blue'} />
             </div>
             <p class="method">
-              {bout.winner === 'draw'
+              {bout.winner === 'nc'
+                ? `No contest${bout.method ? ` · ${bout.method}` : ''}`
+                : bout.winner === 'draw'
                 ? `Nul${bout.method ? ` · ${bout.method}` : ''}`
                 : bout.winner
                   ? [bout.method, bout.round && `Round ${bout.round}`].filter(Boolean).join(' · ') || 'Résultat officiel'

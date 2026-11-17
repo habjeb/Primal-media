@@ -71,6 +71,14 @@ const photo = embedded || !item.photoId ? undefined : photoById(item.photoId);
         <dd><a href={item.org.href}>{item.org.name}</a></dd>
       </div>
       {
+        event && (
+          <div>
+            <dt>Événement</dt>
+            <dd><a href={event.href}>{event.title}</a></dd>
+          </div>
+        )
+      }
+      {
         item.athletes.length > 0 && (
           <div>
             <dt>Combattants</dt>
