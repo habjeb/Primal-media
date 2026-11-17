@@ -49,3 +49,16 @@ export function dateParts(date: Date) {
     monthKey: part(date, { year: 'numeric', month: '2-digit' }),
   };
 }
+
+/** Date du jour (AAAA-MM-JJ) à l’heure de Paris. */
+function parisDay(date: Date): string {
+  return new Intl.DateTimeFormat('en-CA', { ...paris, year: 'numeric', month: '2-digit', day: '2-digit' }).format(date);
+}
+
+/**
+ * Nombre de jours de calendrier (heure de Paris) entre aujourd’hui et la date : 0 le jour même.
+ * À utiliser quand l’heure de l’événement n’est pas connue, plutôt qu’un décompte en tranches de 24 h.
+ */
+export function calendarDaysUntil(date: Date, now: Date = new Date()): number {
+  return Math.round((Date.parse(parisDay(date)) - Date.parse(parisDay(now))) / 86400000);
+}
