@@ -20,8 +20,8 @@ Fil d’actualité en français pour le MMA, le grappling, le kick et la boxe de
 
 Le site mélange **contenus réels** et **contenus d’exemple** :
 
-- Réel et sourcé (`example: false`) : la fiche **DUEL Fighting**, les événements **DUEL Fighting 7** (résultats) et **DUEL Fighting 8**, la fiche de **Mehmet Borhan** et la brève associée. Chaque contenu réel cite ses sources et la date de consultation.
-- Fiction (`example: true`, badge **Contenu d’exemple**) : le reste, pour voir la mise en page. Les contenus fictifs sont rattachés à des organisations fictives (Club Exemple Savoie, Ring des Alpes) ou à Hexagone MMA, dont la fiche reste neutre.
+- Réel et sourcé (`example: false`) : les fiches **DUEL Fighting** et **Hexagone MMA**, les événements **DUEL Fighting 7** (résultats) et **DUEL Fighting 8**, les **10 prochaines dates d’Hexagone MMA** (Rennes, Paris, Montpellier… jusqu’à Lyon en juin 2027), la fiche de **Mehmet Borhan** et la brève associée. Chaque contenu réel cite ses sources et la date de consultation.
+- Fiction (`example: true`, badge **Contenu d’exemple**) : le reste, pour voir la mise en page. Les contenus fictifs sont tous rattachés à des organisations fictives (Ligue Exemple Pro, Club Exemple Savoie, Ring des Alpes).
 
 Règle : ne jamais rattacher un événement ou un résultat inventé à une organisation réelle qui publie déjà de vrais événements sur le site.
 
@@ -89,11 +89,26 @@ Un fichier `.mdx` peut importer un composant Astro (voir `ines-drelin-savoir.mdx
 
 Image de partage : chaque article reçoit automatiquement une image 1200×630 (`/og/<identifiant>.jpg`), générée au build dans le même style que les visuels du fil (nom et record du premier athlète, format de l’article, mention « Contenu d’exemple » si `example: true`). Rien à faire : elle est déclarée dans les balises `og:image` et `twitter:image` de la page.
 
+Photo d’illustration : chaque article reçoit automatiquement une photo libre de sa discipline (sans répéter une photo sur des cartes voisines). Pour en imposer une : `photo: salle-comble-ring` (identifiant de `src/lib/photos.ts`). Pour garder le visuel généré sans photo : `photo: false`.
+
 Vidéo :
 
 - YouTube : `provider: youtube` et `id` (11 caractères). Le lecteur passe par `youtube-nocookie.com`.
 - Instagram : `provider: instagram` et le code court du post (`instagram.com/p/CODE/`). La valeur `EXEMPLE` n’appelle aucun compte : elle montre le cadre d’attente.
 - `provider: fichier` : badge de durée dans le fil, sans lecteur tiers.
+
+## Photos
+
+Les photos d’illustration sont des photos **sous licence libre** de Wikimedia Commons (domaine public, CC BY, CC BY-SA), stockées dans `src/assets/photos/` et décrites dans `src/lib/photos.ts` (texte alternatif, disciplines, auteur, licence, source). Le site les optimise en WebP (640 et 1280 px) au build.
+
+Règles de sélection :
+
+- licence libre vérifiée sur la page Commons du fichier, auteur et source notés ;
+- **pas de visage reconnaissable**, pas d’enfant, pas de marque mise en avant : une photo illustre une discipline, jamais la personne nommée dans un article ;
+- chaque page d’article affiche le crédit (« Photo d’illustration, sans lien avec les personnes citées… ») ; la page `/credits-photos/` (lien en pied de page) les liste toutes ; les images de partage portent le crédit en petit ;
+- sur le site, les photos sont recadrées, redimensionnées, légèrement désaturées et recouvertes de texte : les adaptations de photos CC BY-SA sont partagées sous la même licence.
+
+Ajouter une photo : déposer le JPEG (1280 px de large suffit) dans `src/assets/photos/`, puis ajouter son entrée dans `PHOTOS` (`src/lib/photos.ts`). Les photos d’athlètes ou d’événements réels ne peuvent être utilisées qu’avec l’accord de leur auteur (photographe, organisation).
 
 ## Ajouter un athlète
 

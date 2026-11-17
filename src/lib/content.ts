@@ -2,6 +2,7 @@ import { getCollection, getEntries, getEntry, type CollectionEntry } from 'astro
 import { formatDay, formatFull } from './dates';
 import { matchFilter } from './filters';
 import { withBase } from './paths';
+import { assignPhotos } from './photos';
 import { formatRecord } from './text';
 import type {
   AthleteFight,
@@ -100,6 +101,8 @@ async function loadSite(): Promise<SiteData> {
   }
 
   articles.sort((a, b) => b.item.pubDate.getTime() - a.item.pubDate.getTime());
+  const photos = assignPhotos(articles.map((article) => article.item));
+  for (const article of articles) article.item.photoId = photos.get(article.item.id);
   const items = articles.map((article) => article.item);
 
   const organisations = orgEntries
@@ -233,6 +236,7 @@ function toItem(entry: CollectionEntry<'articles'>, org: FeedOrg, athletes: Feed
     org,
     athletes,
     eventId: entry.data.event?.id,
+    photo: entry.data.photo,
   };
 }
 

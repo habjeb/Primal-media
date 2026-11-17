@@ -2,11 +2,13 @@
 name: Hexagone MMA
 mark: HX
 kind: professionnelle
-place: France
-description: Organisation professionnelle de mixed martial arts dans l’espace francophone.
+place: Toulouse · tournée nationale
+description: Ligue professionnelle française de MMA, en tournée dans les grandes salles du pays.
 example: false
 ---
 
-Hexagone MMA est une organisation professionnelle de MMA active dans l’espace francophone. Cette fiche ne publie ni palmarès, ni champion, ni résultat : Primal Média s’en tient ici à une description neutre.
+HEXAGONE MMA Winamax est une ligue professionnelle de MMA créée à Toulouse et en tournée dans toute la France : Zénith de Paris, LDLC Arena à Lyon, Arkéa Arena à Bordeaux, Zénith de Nantes, de Lille, de Montpellier…
 
-Les athlètes, cartes et articles associés à cette page et marqués « Contenu d’exemple » sont des données fictives, créées pour tester la mise en page.
+Sa dernière soirée, HEXAGONE MMA 48, s’est tenue le 24 octobre 2026 au Zénith de Paris : Leopold Goi y a battu Samba Sima pour la ceinture des poids coqs, selon le compte rendu de la ligue. Les prochaines dates sont dans le calendrier ci-dessous.
+
+Sources : [hexagonemma.fr](https://hexagonemma.fr/evenements/) et le [compte rendu d’HEXAGONE MMA 48](https://hexagonemma.fr/hexagone-mma-48-heroique-leopold-goi-domine-samba-sima-et-decroche-la-ceinture-retour-reussi-pour-paul-dena/), consultés le 17 novembre 2026.

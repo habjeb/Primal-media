@@ -97,3 +97,13 @@ export async function svgToJpeg(svg: string): Promise<Uint8Array> {
   const png = resvg.render().asPng();
   return new Uint8Array(await sharp(png).jpeg({ quality: 82, mozjpeg: true }).toBuffer());
 }
+
+/**
+ * Photo d’illustration en data URI pour resvg : lue depuis src/assets/photos (le build tourne à la
+ * racine du projet), redimensionnée à 1600 px et légèrement désaturée comme sur le site.
+ */
+export async function photoDataUri(id: string): Promise<string> {
+  const file = join(process.cwd(), 'src', 'assets', 'photos', `${id}.jpg`);
+  const jpeg = await sharp(file).resize({ width: 1600 }).modulate({ saturation: 0.82 }).jpeg({ quality: 80 }).toBuffer();
+  return `data:image/jpeg;base64,${jpeg.toString('base64')}`;
+}

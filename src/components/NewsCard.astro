@@ -1,5 +1,6 @@
 ---
 import { coverFor } from '../lib/cover';
+import { photoById } from '../lib/photos';
 import { excerpt } from '../lib/text';
 import type { FeedItem } from '../lib/types';
 import Avatar from './Avatar.astro';
@@ -48,6 +49,9 @@ const initials =
       initials={initials}
       cover={coverFor(item)}
       text={variant === 'default' ? 'full' : 'texture'}
+      photo={item.photoId ? photoById(item.photoId) : undefined}
+      sizes={variant === 'lead' ? '(min-width: 960px) 62vw, 100vw' : variant === 'compact' ? '200px' : undefined}
+      priority={variant === 'lead'}
     />
     {!compact && <span class="badge cat">{item.category}</span>}
     {item.example && !compact && <span class="badge ex">Contenu d’exemple</span>}

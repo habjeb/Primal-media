@@ -27,6 +27,12 @@ export type CoverSvgOptions = {
   size?: { width: number; height: number };
   /** Habillage des images de partage : logo et mention « Contenu d’exemple ». */
   share?: { example: boolean };
+  /**
+   * Photo d’illustration en fond. Sur le site, la photo est une balise <img> placée sous le SVG :
+   * le SVG reste transparent. Pour les images de partage, `href` (data URI) l’intègre au SVG,
+   * et `credit` s’affiche en petit en bas à droite.
+   */
+  photo?: { href?: string; credit?: string };
 };
 
 const FONT = 'Barlow Condensed, Impact, sans-serif';
@@ -47,7 +53,7 @@ function attrs(values: Record<string, string | number | undefined>): string {
 }
 
 export function coverSvg(options: CoverSvgOptions): string {
-  const { seed, initials, uid = seed, label = '', cover, size, share } = options;
+  const { seed, initials, uid = seed, label = '', cover, size, share, photo } = options;
   const text = options.text ?? 'full';
   const colors = palette(seed);
   const rand = seeded(seed);
@@ -103,8 +109,8 @@ export function coverSvg(options: CoverSvgOptions): string {
         <path d="M${cx - r * 1.15} ${cy + r * 0.55} H${cx + r * 1.15} L${cx + r * 1.4} ${cy + r * 0.82} H${cx - r * 1.4} Z" stroke-width="8" opacity="0.35"/>
         <path d="M${fl} ${cy - r * 0.75} V${cy + r * 0.55} M${fr} ${cy - r * 0.75} V${cy + r * 0.55}" stroke-width="14" opacity="0.5"/>
         ${ropes.map((y) => `<path d="${sag(y, fl, fr, 26)}" stroke-width="8" opacity="0.45"/>`).join('')}
-        <rect x="${fl - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#c1121f" stroke="none" opacity="0.8"/>
-        <rect x="${fr - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#2d69dc" stroke="none" opacity="0.8"/>
+        <rect x="${fl - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#a94b43" stroke="none" opacity="0.8"/>
+        <rect x="${fr - 16}" y="${cy - r * 0.78}" width="32" height="${r * 0.22}" rx="6" fill="#5b7fb8" stroke="none" opacity="0.8"/>
       </g>`;
   };
 
@@ -136,14 +142,14 @@ export function coverSvg(options: CoverSvgOptions): string {
         <clipPath id="${id}-cage"><polygon points="${outer}"/></clipPath>`;
 
   const texture =
-    text === 'none'
+    text === 'none' || photo
       ? ''
       : `<text x="${bigX}" y="560" font-size="${bigSize}" font-family="${FONT}" font-weight="800" fill="none" stroke="${colors.ink}" stroke-width="3" opacity="0.22">${esc(big)}</text>`;
 
   const caption =
     text === 'full'
       ? `<g font-family="${FONT}" font-weight="800">
-          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="4" fill="#ffb020">${esc(cover.kicker.toUpperCase())}</text>` : ''}
+          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="4" fill="#d8b46e">${esc(cover.kicker.toUpperCase())}</text>` : ''}
           <text x="66" y="770" font-size="${nameSize}" fill="${colors.ink}">${esc(name.toUpperCase())}${
             cover?.record ? `<tspan dx="28" fill="#ffffff" opacity="0.85">${esc(cover.record)}</tspan>` : ''
           }</text>
@@ -154,16 +160,16 @@ export function coverSvg(options: CoverSvgOptions): string {
   const shareLayer = share
     ? `<g font-family="${FONT}" font-weight="800">
         <g transform="translate(66 74) scale(2.4)">
-          <rect width="36" height="36" rx="8" fill="#c1121f"/>
+          <rect width="36" height="36" rx="8" fill="#a94b43"/>
           <path d="M7 29 L16 7 H20 L11 29 Z" fill="#fff"/>
-          <path d="M16 29 L24 9 H28 L20 29 Z" fill="#ffb020"/>
+          <path d="M16 29 L24 9 H28 L20 29 Z" fill="#d8b46e"/>
         </g>
-        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#f6f3ec">PRIMAL <tspan fill="#e0313d">MÉDIA</tspan></text>
+        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#ece7de">PRIMAL <tspan fill="#d0756b">MÉDIA</tspan></text>
         ${
           share.example
             ? `<g transform="translate(1534 74)">
                 <rect x="-470" width="470" height="80" rx="40" fill="#000" opacity="0.75"/>
-                <text x="-235" y="56" font-size="44" letter-spacing="3" fill="#ffb020" text-anchor="middle">CONTENU D’EXEMPLE</text>
+                <text x="-235" y="56" font-size="44" letter-spacing="3" fill="#d8b46e" text-anchor="middle">CONTENU D’EXEMPLE</text>
               </g>`
             : ''
         }
@@ -185,8 +191,8 @@ export function coverSvg(options: CoverSvgOptions): string {
         <stop offset="100%" stop-color="#000" stop-opacity="0.6"/>
       </radialGradient>
       <linearGradient id="${id}-shade" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="45%" stop-color="#000" stop-opacity="0"/>
-        <stop offset="100%" stop-color="#000" stop-opacity="0.6"/>
+        <stop offset="${photo ? '30%' : '45%'}" stop-color="#000" stop-opacity="0"/>
+        <stop offset="100%" stop-color="#000" stop-opacity="${photo ? '0.8' : '0.6'}"/>
       </linearGradient>
       <pattern id="${id}-dots" width="22" height="22" patternUnits="userSpaceOnUse">
         <circle cx="11" cy="11" r="4" fill="${colors.ink}"/>
@@ -198,18 +204,28 @@ export function coverSvg(options: CoverSvgOptions): string {
       <mask id="${id}-mask"><rect width="1600" height="900" fill="url(#${id}-fade)"/></mask>
       ${motifDefs}
     </defs>
-    <rect width="1600" height="900" fill="url(#${id}-bg)"/>
+    ${
+      photo
+        ? `${photo.href ? `<image href="${photo.href}" width="1600" height="900" preserveAspectRatio="xMidYMid slice"/>` : ''}
+    <rect width="1600" height="900" fill="#16171b" opacity="0.2"/>`
+        : `<rect width="1600" height="900" fill="url(#${id}-bg)"/>
     <rect width="1600" height="900" fill="url(#${id}-spot)"/>
     ${motif}
-    <rect width="1600" height="900" fill="url(#${id}-dots)" mask="url(#${id}-mask)" opacity="0.16"/>
-    <g opacity="0.75">
-      <polygon points="${slash(slashX, 110)}" fill="#c1121f" opacity="0.7"/>
-      <polygon points="${slash(slashX + 150, 44)}" fill="#ffb020" opacity="0.45"/>
+    <rect width="1600" height="900" fill="url(#${id}-dots)" mask="url(#${id}-mask)" opacity="0.16"/>`
+    }
+    <g opacity="${photo ? '0.35' : '0.6'}">
+      <polygon points="${slash(slashX, 110)}" fill="#a94b43" opacity="0.65"/>
+      <polygon points="${slash(slashX + 150, 44)}" fill="#d8b46e" opacity="0.45"/>
     </g>
     ${texture}
     <rect width="1600" height="900" fill="url(#${id}-shade)"/>
     <rect width="1600" height="900" fill="url(#${id}-vig)"/>
     ${caption}
     ${shareLayer}
+    ${
+      photo?.credit
+        ? `<text x="1560" y="852" font-family="Barlow Condensed, sans-serif" font-weight="700" font-size="26" fill="#ece7de" opacity="0.75" text-anchor="end">${esc(photo.credit)}</text>`
+        : ''
+    }
   </svg>`;
 }

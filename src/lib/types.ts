@@ -65,6 +65,9 @@ export type FeedItem = {
   org: FeedOrg;
   athletes: FeedAthlete[];
   eventId?: string;
+  photo?: string | false;
+  /** Photo d’illustration retenue (voir assignPhotos). */
+  photoId?: string;
 };
 
 export type Story = {
@@ -112,6 +115,7 @@ export type NextEvent = {
   href: string;
   title: string;
   date: Date;
+  timeKnown: boolean;
   when: string;
   detail: string;
 };

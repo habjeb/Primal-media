@@ -3,7 +3,7 @@ import Countdown from '../components/Countdown.astro';
 import EventRow from '../components/EventRow.astro';
 import ExampleNote from '../components/ExampleNote.astro';
 import { getSite } from '../lib/content';
-import { dateParts, formatFull } from '../lib/dates';
+import { dateParts, formatDay, formatFull } from '../lib/dates';
 import type { FeedEvent } from '../lib/types';
 import Base from '../layouts/BaseLayout.astro';
 
@@ -66,8 +66,10 @@ const chips = [
           </h2>
           <p class="next-place">{next.city}</p>
           {next.headline && <p class="cal-main">{next.headline}</p>}
-          <p class="meta-line">{formatFull(next.date)}, heure de Paris</p>
-          <Countdown date={next.date} />
+          <p class="meta-line">
+            {next.timeKnown ? `${formatFull(next.date)}, heure de Paris` : `${formatDay(next.date)}, heure non communiquée`}
+          </p>
+          <Countdown date={next.date} daysOnly={!next.timeKnown} />
           <div class="next-actions">
             <a class="btn-light" href={next.href}>Carte complète</a>
             {next.tickets && (

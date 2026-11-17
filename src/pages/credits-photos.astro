@@ -1,0 +1,49 @@
+---
+import { getImage } from 'astro:assets';
+import { PHOTOS } from '../lib/photos';
+import Base from '../layouts/BaseLayout.astro';
+
+const description =
+  'Les photos d’illustration utilisées sur Primal Média : auteurs, licences libres et sources (Wikimedia Commons).';
+const rows = await Promise.all(
+  PHOTOS.map(async (photo) => ({ photo, thumb: await getImage({ src: photo.image, width: 480, format: 'webp', quality: 70 }) })),
+);
+---
+
+<Base title="Crédits photos" description={description}>
+  <header class="rubric-head">
+    <h1>Crédits <span class="outline">photos</span></h1>
+    <p class="lede">{description}</p>
+  </header>
+  <div class="prose">
+    <p>
+      Primal Média n’a pas encore ses propres photos. En attendant, les articles sont illustrés par des photos sous
+      licence libre, choisies pour représenter une discipline : aucune ne montre les personnes citées dans les
+      articles. Sur le site, elles sont recadrées, redimensionnées, légèrement désaturées et recouvertes de texte ;
+      les adaptations de photos sous licence CC BY-SA sont partagées sous la même licence.
+    </p>
+  </div>
+  <ul class="credits-grid">
+    {
+      rows.map(({ photo, thumb }) => (
+        <li class="credit-card">
+          <img src={thumb.src} width={thumb.attributes.width} height={thumb.attributes.height} alt={photo.alt} loading="lazy" decoding="async" />
+          <div>
+            <p class="credit-title">
+              <a href={photo.credit.source} rel="noopener noreferrer" target="_blank">« {photo.credit.title} »</a>
+            </p>
+            <p class="meta-line">{photo.credit.author}</p>
+            <p class="meta-line">
+              {photo.credit.licenseUrl ? (
+                <a href={photo.credit.licenseUrl} rel="license noopener noreferrer" target="_blank">{photo.credit.license}</a>
+              ) : (
+                photo.credit.license
+              )}
+              {' · '}Wikimedia Commons · {photo.disciplines.join(', ')}
+            </p>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+</Base>

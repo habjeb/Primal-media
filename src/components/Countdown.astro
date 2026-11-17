@@ -1,5 +1,5 @@
 ---
-import { formatFull } from '../lib/dates';
+import { formatDay, formatFull } from '../lib/dates';
 
 /**
  * Compte à rebours jusqu’à un événement. Le HTML affiche les valeurs calculées au build ;
@@ -7,20 +7,27 @@ import { formatFull } from '../lib/dates';
  */
 interface Props {
   date: Date;
+  /** Heure inconnue : seul le nombre de jours est affiché, pas d’heures ni de minutes inventées. */
+  daysOnly?: boolean;
 }
 
-const { date } = Astro.props;
+const { date, daysOnly = false } = Astro.props;
 const left = Math.max(0, date.getTime() - Date.now());
 const units = [
   { key: 'days', label: 'jours', value: Math.floor(left / 86400000) },
   { key: 'hours', label: 'heures', value: Math.floor(left / 3600000) % 24 },
   { key: 'minutes', label: 'min', value: Math.floor(left / 60000) % 60 },
   { key: 'seconds', label: 'sec', value: Math.floor(left / 1000) % 60 },
-];
+].filter((unit) => !daysOnly || unit.key === 'days');
 const pad = (n: number) => String(n).padStart(2, '0');
 ---
 
-<div class="countdown" data-countdown={date.toISOString()} role="timer" aria-label={`Début : ${formatFull(date)}`}>
+<div
+  class:list={['countdown', { 'days-only': daysOnly }]}
+  data-countdown={date.toISOString()}
+  role="timer"
+  aria-label={daysOnly ? `Le ${formatDay(date)}` : `Début : ${formatFull(date)}`}
+>
   {
     units.map((unit) => (
       <span class="cd-unit">
@@ -48,10 +55,10 @@ const pad = (n: number) => String(n).padStart(2, '0');
         root.querySelector('.cd-done')?.removeAttribute('hidden');
         return false;
       }
-      cells.days!.textContent = pad(Math.floor(left / 86400000));
-      cells.hours!.textContent = pad(Math.floor(left / 3600000) % 24);
-      cells.minutes!.textContent = pad(Math.floor(left / 60000) % 60);
-      cells.seconds!.textContent = pad(Math.floor(left / 1000) % 60);
+      if (cells.days) cells.days.textContent = pad(Math.floor(left / 86400000));
+      if (cells.hours) cells.hours.textContent = pad(Math.floor(left / 3600000) % 24);
+      if (cells.minutes) cells.minutes.textContent = pad(Math.floor(left / 60000) % 60);
+      if (cells.seconds) cells.seconds.textContent = pad(Math.floor(left / 1000) % 60);
       return true;
     };
     if (tick()) {

@@ -2,7 +2,8 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import { coverFor, OG_SIZE } from '../../lib/cover';
 import { coverSvg } from '../../lib/cover-svg';
 import { getSite } from '../../lib/content';
-import { svgToJpeg } from '../../lib/og';
+import { photoDataUri, svgToJpeg } from '../../lib/og';
+import { photoById } from '../../lib/photos';
 import type { FeedItem } from '../../lib/types';
 
 // Une image de partage 1200×630 par article, générée au build : /og/<article>.jpg
@@ -13,7 +14,14 @@ export const getStaticPaths = (async () => {
 
 export const GET: APIRoute = async ({ props }) => {
   const item = props.item as FeedItem;
+  const photo = item.photoId ? photoById(item.photoId) : undefined;
   const svg = coverSvg({
+    photo: photo
+      ? {
+          href: await photoDataUri(photo.id),
+          credit: `Photo d’illustration : ${photo.credit.author} · ${photo.credit.license} · Wikimedia Commons`,
+        }
+      : undefined,
     seed: item.id,
     initials: item.org.initials,
     cover: coverFor(item),

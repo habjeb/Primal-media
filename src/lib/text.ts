@@ -1,12 +1,13 @@
 export type RecordScore = { wins: number; losses: number; draws: number };
 
+// Tons désaturés : brique, rouille, ardoise, prune, olive, lie-de-vin.
 const PALETTES = [
-  { bg: '#2a0c10', mid: '#8e1d2a', ink: '#ffd7a8' },
-  { bg: '#1a100c', mid: '#a33b16', ink: '#ffe1c2' },
-  { bg: '#10141c', mid: '#2c3d5c', ink: '#e4edf8' },
-  { bg: '#1c1018', mid: '#6d2248', ink: '#ffd0dc' },
-  { bg: '#12160f', mid: '#3c4a28', ink: '#f0d78a' },
-  { bg: '#1a1010', mid: '#5c1518', ink: '#f4f4f4' },
+  { bg: '#231a1b', mid: '#6b3f3d', ink: '#f0dcc8' },
+  { bg: '#221c18', mid: '#7a5038', ink: '#f2e2cf' },
+  { bg: '#181c22', mid: '#3e4c60', ink: '#e3e9f0' },
+  { bg: '#201b20', mid: '#5c4152', ink: '#efdbe2' },
+  { bg: '#1b1d18', mid: '#4d553c', ink: '#ebe0b8' },
+  { bg: '#1f1b1b', mid: '#583a3a', ink: '#eee8e2' },
 ] as const;
 
 export function palette(seed: string): { bg: string; mid: string; ink: string } {

@@ -1,0 +1,29 @@
+---
+import type { Photo } from '../lib/photos';
+import { withBase } from '../lib/paths';
+
+/** Crédit d’une photo d’illustration : titre, auteur, licence, source, mention d’adaptation. */
+interface Props {
+  photo: Photo;
+}
+
+const { photo } = Astro.props;
+const { credit } = photo;
+---
+
+<p class="photo-credit">
+  {'Photo d’illustration, sans lien avec les personnes citées : '}
+  <a href={credit.source} rel="noopener noreferrer" target="_blank">« {credit.title} »</a>
+  {`, ${credit.author}, `}
+  {
+    credit.licenseUrl ? (
+      <a href={credit.licenseUrl} rel="license noopener noreferrer" target="_blank">
+        {credit.license}
+      </a>
+    ) : (
+      credit.license
+    )
+  }
+  {', via Wikimedia Commons, recadrée et retouchée. '}
+  <a href={withBase('/credits-photos/')}>Tous les crédits</a>
+</p>

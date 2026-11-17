@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: fight
 tile: landscape
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - lea-varmont
 tags:

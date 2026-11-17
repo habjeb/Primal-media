@@ -9,7 +9,7 @@ weightClass: Poids paille
 team: Cage Nord Exemple
 country: France
 discipline: MMA
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 example: true
 fights:
   - date: 2026-11-01
