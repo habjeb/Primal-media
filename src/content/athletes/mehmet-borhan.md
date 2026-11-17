@@ -22,6 +22,6 @@ fights:
 
 D’après sa fiche sur le site de DUEL Fighting, Mehmet Borhan, 22 ans et 1,72 m, combat désormais en professionnel chez les poids légers. Il y affiche un palmarès amateur de 21 victoires, 3 défaites et 1 nul, un titre de champion du monde IMMAF 2025 et des ceintures à la MMA League et au PEF. L’organisation met aussi en avant une série de cinq victoires d’affilée.
 
-Son palmarès professionnel n’est pas détaillé sur cette fiche. Le tableau ci-dessous ne liste que les combats suivis par Primal Média.
+Son palmarès professionnel n’est pas détaillé sur cette fiche. Seuls les combats suivis par Primal Média sont listés ici.
 
 Source : [fiche de Mehmet Borhan sur duel-mma.com](https://duel-mma.com/combattant/mehmet-borhan-95), consultée le 16 novembre 2026.

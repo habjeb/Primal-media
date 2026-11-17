@@ -1,8 +1,10 @@
 ---
 import { render } from 'astro:content';
-import ChannelHero from '../../components/ChannelHero.astro';
 import ExampleNote from '../../components/ExampleNote.astro';
-import NewsCard from '../../components/NewsCard.astro';
+import RecordGauge from '../../components/RecordGauge.astro';
+import Title from '../../components/Title.astro';
+import Visual from '../../components/Visual.astro';
+import { athleteLede, bareRecord, nextFightFor, recordLabel } from '../../lib/athlete';
 import { getSite, itemsForAthlete } from '../../lib/content';
 import { formatDay } from '../../lib/dates';
 import { initials } from '../../lib/text';
@@ -19,15 +21,21 @@ const site = await getSite();
 const found = site.athletes.find((athlete) => athlete.profile.id === id);
 if (!found || !id) throw new Error('Athlète introuvable');
 
-const { profile, fights, entry } = found;
+const { profile, entry } = found;
 const { Content } = await render(entry);
 const posts = itemsForAthlete(profile.id, site.items);
+const fights = found.fights.slice().sort((a, b) => b.date.getTime() - a.date.getTime());
+const next = nextFightFor(site, profile, posts);
 const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
+const resultKey = { Victoire: 'w', Défaite: 'l', Nul: 'd' } as const;
+const resultLetter = { Victoire: 'V', Défaite: 'D', Nul: 'N' } as const;
+// L'encadré liste les 4 derniers combats ; au-delà, la liste complète passe dans la colonne principale.
+const SIDE_FIGHTS = 4;
 ---
 
 <Base
   title={`${profile.name} (${profile.record})`}
-  description={`${profile.name}, ${profile.weightClass}, ${profile.team}.${profile.example ? ' Fiche d’exemple fictive.' : ''}`}
+  description={athleteLede(profile) + (profile.example ? ' Fiche d’exemple fictive.' : '')}
   jsonLd={{
     '@context': 'https://schema.org',
     '@type': 'Person',
@@ -45,114 +53,249 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
       <li aria-current="page">{profile.name}</li>
     </ol>
   </nav>
-  <ChannelHero
-    seed={profile.id}
-    initials={initials(profile.name)}
-    kicker={`${profile.discipline} · ${profile.org.name}`}
-    title={profile.name}
-    discipline={profile.discipline}
-    subtitle={profile.nickname ? `« ${profile.nickname} »` : undefined}
-    example={profile.example}
-    stats={[
-      { value: String(profile.wins), label: profile.recordScope === 'amateur' ? 'victoires am.' : 'victoires' },
-      { value: String(profile.losses), label: profile.recordScope === 'amateur' ? 'défaites am.' : 'défaites' },
-      { value: String(profile.draws), label: profile.recordScope === 'amateur' ? 'nuls am.' : 'nuls' },
-    ]}
-  />
-  {profile.example && <ExampleNote />}
-  <dl class="facts">
-    <div>
-      <dt>{profile.recordScope === 'amateur' ? 'Palmarès amateur' : 'Palmarès'}</dt>
-      <dd>{profile.record}</dd>
-    </div>
-    <div>
-      <dt>Catégorie</dt>
-      <dd>{profile.weightClass}</dd>
-    </div>
-    <div>
-      <dt>Club</dt>
-      <dd>{profile.team}</dd>
-    </div>
-    <div>
-      <dt>Organisation</dt>
-      <dd><a href={profile.org.href}>{profile.org.name}</a></dd>
-    </div>
-    {
-      profile.country && (
-        <div>
-          <dt>Pays</dt>
-          <dd>{profile.country}</dd>
+
+  <article class="fiche">
+    <header class="fiche-hero">
+      <Visual
+        seed={profile.id}
+        uid={`${profile.id}-fiche`}
+        initials={initials(profile.name)}
+        cover={{ name: profile.name, discipline: profile.discipline }}
+        text="none"
+      />
+      <div class="fiche-title">
+        <p class="kicker">{profile.discipline} · {profile.org.name}</p>
+        <h1>{profile.name}</h1>
+        {profile.nickname && <p class="fiche-nick">« {profile.nickname} »</p>}
+      </div>
+    </header>
+
+    {profile.example && <ExampleNote />}
+
+    <p class="fiche-lede">{athleteLede(profile)}</p>
+
+    <div class="fiche-body">
+      <aside class="fiche-side" aria-label={`Fiche de ${profile.name}`}>
+        <div class="side-box">
+          <p class="kicker">{recordLabel(profile)}</p>
+          <p class="side-record">{bareRecord(profile)}</p>
+          <RecordGauge wins={profile.wins} losses={profile.losses} draws={profile.draws} />
+          <dl class="side-facts">
+            <div><dt>Catégorie</dt><dd>{profile.weightClass}</dd></div>
+            <div><dt>Club</dt><dd>{profile.team}</dd></div>
+            <div><dt>Organisation</dt><dd><a href={profile.org.href}>{profile.org.name}</a></dd></div>
+            {profile.country && <div><dt>Pays</dt><dd>{profile.country}</dd></div>}
+          </dl>
         </div>
-      )
-    }
-  </dl>
-  <div class="prose">
-    <Content />
-  </div>
-  <section aria-labelledby="posts-title">
-    <h2 class="section-title" id="posts-title">Publications</h2>
-    {
-      posts.length === 0 ? (
-        <p class="empty">Aucune publication liée.</p>
-      ) : (
-        <div class="mosaic">
-          {posts.map((item) => (
-            <NewsCard item={item} />
-          ))}
+
+        {
+          next && (
+            <div class="side-box side-next">
+              <p class="kicker">Prochain rendez-vous</p>
+              <p class="side-event">
+                <a href={next.event.href}>{next.event.title}</a>
+              </p>
+              <p class="meta-line">
+                {formatDay(next.event.date)} · {next.event.city}
+              </p>
+              <p class="meta-line">
+                {next.opponent
+                  ? `Face à ${next.opponent}${next.opponentRecord ? ` (${next.opponentRecord})` : ''}${next.main ? ' · combat principal' : ''}`
+                  : 'Adversaire pas encore annoncé'}
+              </p>
+            </div>
+          )
+        }
+
+        {
+          fights.length > 0 && (
+            <div class="side-box">
+              <p class="kicker">Derniers combats</p>
+              <ol class="side-fights">
+                {fights.slice(0, SIDE_FIGHTS).map((f) => (
+                  <li>
+                    <span class:list={['dot', resultKey[f.result]]} title={f.result} aria-label={f.result}>
+                      {resultLetter[f.result]}
+                    </span>
+                    <span>
+                      <strong>{f.opponent}</strong>
+                      {f.opponentRecord && <span class="opp-record"> ({f.opponentRecord})</span>}
+                      <span class="meta-line">
+                        {f.method}
+                        {f.round ? ` · R${f.round}` : ''} · {formatDay(f.date)}
+                      </span>
+                      <span class="meta-line">
+                        {f.eventHref ? <a href={f.eventHref}>{f.eventName}</a> : f.eventName}
+                      </span>
+                    </span>
+                  </li>
+                ))}
+              </ol>
+              <p class="fine">
+                {profile.example ? 'Combats fictifs, pas un palmarès complet.' : 'Combats suivis par Primal Média, pas tout le palmarès.'}
+              </p>
+            </div>
+          )
+        }
+      </aside>
+
+      <div class="fiche-main">
+        <div class="prose dropcap">
+          <Content />
         </div>
-      )
-    }
-  </section>
-  <section aria-labelledby="fights-title">
-    <h2 class="section-title" id="fights-title">Combats récents</h2>
-    <p class="meta-line">
-      {profile.example ? 'Extrait fictif, pas un palmarès complet.' : 'Combats suivis par Primal Média, pas un palmarès complet.'} Record
-      annoncé : {profile.record}
-    </p>
-    <div class="table-wrap">
-      <table class="fights">
-        <thead>
-          <tr>
-            <th scope="col">Date</th>
-            <th scope="col">Adversaire</th>
-            <th scope="col">Résultat</th>
-            <th scope="col">Méthode</th>
-            <th scope="col">Événement</th>
-          </tr>
-        </thead>
-        <tbody>
-          {
-            fights
-              .slice()
-              .sort((a, b) => b.date.getTime() - a.date.getTime())
-              .map((fight) => (
-                <tr>
-                  <td>{formatDay(fight.date)}</td>
-                  <td>
-                    {fight.opponent}
-                    {fight.opponentRecord && ` (${fight.opponentRecord})`}
-                  </td>
-                  <td
-                    class:list={{
-                      'result-w': fight.result === 'Victoire',
-                      'result-l': fight.result === 'Défaite',
-                      'result-d': fight.result === 'Nul',
-                    }}
-                  >
-                    {fight.result}
-                  </td>
-                  <td>
-                    {fight.method}
-                    {fight.round ? ` · R${fight.round}` : ''}
-                  </td>
-                  <td>
-                    {fight.eventHref ? <a href={fight.eventHref}>{fight.eventName}</a> : fight.eventName}
-                  </td>
-                </tr>
-              ))
-          }
-        </tbody>
-      </table>
+
+        {
+          posts.length > 0 && (
+            <section class="fiche-read" aria-labelledby="read-title">
+              <h2 class="section-title" id="read-title">
+                À lire sur {profile.name}
+              </h2>
+              <ol>
+                {posts.map((item) => (
+                  <li>
+                    <a href={item.href}>
+                      <span class="read-date">
+                        {formatDay(item.pubDate)}
+                        {item.example && ' · contenu d’exemple'}
+                      </span>
+                      <span class="read-title">
+                        <Title text={item.title} />
+                      </span>
+                      <span class="read-desc">{item.description}</span>
+                    </a>
+                  </li>
+                ))}
+              </ol>
+            </section>
+          )
+        }
+
+        {
+          fights.length > SIDE_FIGHTS && (
+            <section aria-labelledby="fights-title">
+              <h2 class="section-title" id="fights-title">
+                Tous les combats suivis
+              </h2>
+              <div class="table-wrap">
+                <table class="fights">
+                  <thead>
+                    <tr>
+                      <th scope="col">Date</th>
+                      <th scope="col">Adversaire</th>
+                      <th scope="col">Résultat</th>
+                      <th scope="col">Méthode</th>
+                      <th scope="col">Événement</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fights.map((f) => (
+                      <tr>
+                        <td>{formatDay(f.date)}</td>
+                        <td>
+                          {f.opponent}
+                          {f.opponentRecord && ` (${f.opponentRecord})`}
+                        </td>
+                        <td class={`result-${resultKey[f.result]}`}>{f.result}</td>
+                        <td>
+                          {f.method}
+                          {f.round ? ` · R${f.round}` : ''}
+                        </td>
+                        <td>{f.eventHref ? <a href={f.eventHref}>{f.eventName}</a> : f.eventName}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </section>
+          )
+        }
+      </div>
     </div>
-  </section>
+  </article>
 </Base>
+
+<style>
+  .fiche { display: grid; gap: 1.3rem; margin-top: 0.6rem; }
+
+  .fiche-hero { position: relative; border-radius: 20px; overflow: hidden; }
+  .fiche-hero :global(.visual) { aspect-ratio: 21 / 9; min-height: 240px; border-radius: 0; }
+  .fiche-title {
+    position: absolute;
+    inset: auto 0 0 0;
+    padding: 4rem 1.4rem 1.3rem;
+    background: linear-gradient(transparent, rgb(0 0 0 / 0.85));
+  }
+  .fiche-title h1 {
+    margin: 0.2rem 0 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.8rem, 9vw, 7rem);
+    line-height: 0.82;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .fiche-nick { margin: 0.4rem 0 0; color: var(--gold); font-weight: 700; font-size: 1.15rem; }
+
+  .fiche-lede { margin: 0; max-width: 48ch; font-size: clamp(1.15rem, 2.2vw, 1.45rem); line-height: 1.4; }
+
+  .fiche-body { display: grid; gap: 1.8rem; }
+  .fiche-side { display: grid; gap: 0.9rem; align-content: start; }
+  .side-box { padding: 1rem 1.1rem; border: 1px solid var(--line); border-radius: 14px; background: var(--card); }
+  .side-box > .kicker { margin: 0 0 0.3rem; }
+  .side-record {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 3.4rem;
+    line-height: 0.9;
+    font-variant-numeric: tabular-nums;
+  }
+  .side-facts { display: grid; gap: 0.55rem; margin: 1rem 0 0; }
+  .side-facts dt { color: var(--faint); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; }
+  .side-facts dd { margin: 0; font-weight: 700; }
+  .side-next { border-color: rgb(var(--gold-rgb) / 0.35); }
+  .side-event { margin: 0; font-family: var(--display); font-weight: 800; font-size: 1.4rem; line-height: 1; text-transform: uppercase; }
+  .side-event a { color: inherit; text-decoration: none; }
+  .side-event a:hover { color: var(--accent); }
+  .side-next .meta-line { margin: 0.3rem 0 0; }
+  .side-fights { display: grid; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
+  .side-fights li { display: grid; grid-template-columns: 1.8rem minmax(0, 1fr); gap: 0.6rem; align-items: start; }
+  .side-fights .meta-line { display: block; font-size: 0.82rem; }
+  .opp-record { color: var(--muted); font-size: 0.85rem; }
+  .dot {
+    display: grid;
+    place-items: center;
+    width: 1.8rem;
+    height: 1.8rem;
+    border-radius: 50%;
+    font-family: var(--display);
+    font-weight: 800;
+  }
+  .dot.w { background: var(--win); color: var(--win-ink); }
+  .dot.l { background: var(--accent-fill); color: white; }
+  .dot.d { background: var(--gold); color: #1a1200; }
+  .fine { margin: 0.7rem 0 0; color: var(--faint); font-size: 0.78rem; }
+
+  .fiche-main { display: grid; gap: 1.6rem; align-content: start; min-width: 0; }
+  .dropcap :global(p:first-child::first-letter) {
+    float: left;
+    margin: 0.35rem 0.5rem 0 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 4.2rem;
+    line-height: 0.8;
+    color: var(--accent);
+  }
+  .fiche-read ol { display: grid; margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--line); }
+  .fiche-read a { display: grid; gap: 0.2rem; padding: 0.9rem 0; border-bottom: 1px solid var(--line); color: inherit; text-decoration: none; }
+  .fiche-read a:hover .read-title { color: var(--accent); }
+  .read-date { color: var(--faint); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; }
+  .read-title { font-family: var(--display); font-weight: 700; font-size: 1.35rem; line-height: 1; text-transform: uppercase; }
+  .read-desc { color: var(--muted); font-size: 0.95rem; }
+
+  @media (min-width: 1000px) {
+    .fiche-body { grid-template-columns: minmax(0, 1fr) 320px; grid-template-areas: 'main side'; }
+    .fiche-main { grid-area: main; }
+    .fiche-side { grid-area: side; position: sticky; top: calc(var(--header) + 1rem); }
+  }
+</style>
