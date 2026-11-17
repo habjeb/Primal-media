@@ -1,4 +1,5 @@
 ---
+import { PUBLISHER, PUBLISHER_ACTIVITY, SHOP_URL } from '../lib/brand';
 import Base from '../layouts/BaseLayout.astro';
 
 const description =
@@ -17,6 +18,28 @@ const description =
       dans de plus petites organisations francophones : ligues professionnelles comme Hexagone MMA,
       galas comme DUEL Fighting en Savoie, circuits amateurs.
     </p>
+    <h2 id="editeur">Qui édite Primal Média ?</h2>
+    <p>
+      Primal Média est édité par {PUBLISHER}, {PUBLISHER_ACTIVITY}
+      {SHOP_URL ? <> (<a href={SHOP_URL} rel="noopener">la boutique</a>)</> : null}. Le média et la marque partagent
+      le même gorille. Nous le disons clairement, parce qu’un média doit dire à qui il appartient.
+    </p>
+    <h2>Indépendance et publicité</h2>
+    <ul>
+      <li>
+        <strong>Un contenu commercial est toujours signalé</strong> : un badge « Publicité » ou « Partenariat » sur sa
+        carte, et un bandeau en tête de l’article. Pas de placement de produit déguisé en article.
+      </li>
+      <li>
+        <strong>Les liens d’intérêt sont déclarés</strong> : quand un article parle d’un combattant, d’un club ou d’un
+        événement lié à {PUBLISHER} (sponsoring, partenariat), une mention « Lien d’intérêt » le précise en tête de
+        l’article.
+      </li>
+      <li>
+        <strong>Les résultats restent les résultats</strong> : cartes, records et comptes rendus viennent des sources
+        officielles des organisations, citées et datées, quel que soit le lien commercial avec les combattants.
+      </li>
+    </ul>
     <h2>Ce que ce site montre aujourd’hui</h2>
     <p>
       Le site mélange des contenus réels et des contenus d’exemple. Les articles, athlètes, records,

@@ -116,6 +116,10 @@ const articles = defineCollection({
     event: reference('events').optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Contenu commercial : toujours signalé (badge sur les cartes, bandeau sur l'article). */
+    advertising: z.enum(['publicite', 'partenariat']).optional(),
+    /** Lien d'intérêt à déclarer, ex. « Leopold Goi est sponsorisé par Primal. » */
+    disclosure: z.string().optional(),
     /** Nom affiché sur le visuel quand l’article ne lie aucune fiche combattant (sinon : 1er combattant lié). */
     coverName: z.string().optional(),
     /** Photo d’illustration : identifiant de src/lib/photos.ts, ou false pour garder le visuel généré. */

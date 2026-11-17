@@ -1,5 +1,5 @@
 ---
-import { formatDay, formatFull } from '../lib/dates';
+import { calendarDaysUntil, formatDay, formatFull } from '../lib/dates';
 
 /**
  * Compte à rebours jusqu’à un événement. Le HTML affiche les valeurs calculées au build ;
@@ -14,7 +14,8 @@ interface Props {
 const { date, daysOnly = false } = Astro.props;
 const left = Math.max(0, date.getTime() - Date.now());
 const units = [
-  { key: 'days', label: 'jours', value: Math.floor(left / 86400000) },
+  // Heure inconnue : jours de calendrier à l’heure de Paris (du 17 au 27 = 10), pas des tranches de 24 h.
+  { key: 'days', label: 'jours', value: daysOnly ? Math.max(0, calendarDaysUntil(date)) : Math.floor(left / 86400000) },
   { key: 'hours', label: 'heures', value: Math.floor(left / 3600000) % 24 },
   { key: 'minutes', label: 'min', value: Math.floor(left / 60000) % 60 },
   { key: 'seconds', label: 'sec', value: Math.floor(left / 1000) % 60 },
@@ -25,6 +26,7 @@ const pad = (n: number) => String(n).padStart(2, '0');
 <div
   class:list={['countdown', { 'days-only': daysOnly }]}
   data-countdown={date.toISOString()}
+  data-days-only={daysOnly ? 'true' : undefined}
   role="timer"
   aria-label={daysOnly ? `Le ${formatDay(date)}` : `Début : ${formatFull(date)}`}
 >
@@ -48,7 +50,21 @@ const pad = (n: number) => String(n).padStart(2, '0');
     const cells = Object.fromEntries(
       [...root.querySelectorAll<HTMLElement>('[data-unit]')].map((cell) => [cell.dataset.unit, cell]),
     );
+    const daysOnly = root.dataset.daysOnly === 'true';
+    const parisDay = (d: Date) =>
+      new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Paris', year: 'numeric', month: '2-digit', day: '2-digit' }).format(d);
     const tick = () => {
+      if (daysOnly) {
+        // Jours de calendrier à l’heure de Paris ; « c’est parti » seulement une fois le jour passé.
+        const days = Math.round((Date.parse(parisDay(new Date(target))) - Date.parse(parisDay(new Date()))) / 86400000);
+        if (days < 0) {
+          root.querySelectorAll('.cd-unit').forEach((unit) => unit.setAttribute('hidden', ''));
+          root.querySelector('.cd-done')?.removeAttribute('hidden');
+          return false;
+        }
+        if (cells.days) cells.days.textContent = pad(days);
+        return true;
+      }
       const left = target - Date.now();
       if (left <= 0) {
         root.querySelectorAll('.cd-unit').forEach((unit) => unit.setAttribute('hidden', ''));

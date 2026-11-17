@@ -6,6 +6,7 @@ import { withBase } from '../lib/paths';
 import { photoById } from '../lib/photos';
 import { safeVideoId, withRecord } from '../lib/text';
 import type { FeedItem } from '../lib/types';
+import { AD_LABELS, PUBLISHER, PUBLISHER_ACTIVITY } from '../lib/brand';
 import ExampleNote from './ExampleNote.astro';
 import PhotoCredit from './PhotoCredit.astro';
 import RelatedList from './RelatedList.astro';
@@ -54,6 +55,23 @@ const photo = embedded || !item.photoId ? undefined : photoById(item.photoId);
     <VideoEmbed item={item} initials={initials} />
     {photo && <PhotoCredit photo={photo} />}
     {item.example && <ExampleNote />}
+    {
+      item.advertising && (
+        <p class="disclosure ad" role="note">
+          <strong>{AD_LABELS[item.advertising]}.</strong>{' '}
+          {item.advertising === 'publicite'
+            ? `Ce contenu présente des produits ou des services de ${PUBLISHER}, l’éditeur de Primal Média.`
+            : 'Ce contenu est réalisé en partenariat avec une marque.'}
+        </p>
+      )
+    }
+    {
+      item.disclosure && (
+        <p class="disclosure" role="note">
+          <strong>Lien d’intérêt.</strong> {item.disclosure} Primal Média est édité par {PUBLISHER}, {PUBLISHER_ACTIVITY}.
+        </p>
+      )
+    }
     <p class="kicker">{item.category} · {item.org.name}</p>
     <h1 class="article-title"><Title text={item.title} /></h1>
     <p class="byline">

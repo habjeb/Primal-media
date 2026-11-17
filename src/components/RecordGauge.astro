@@ -36,11 +36,11 @@ const label = `${plural(wins, 'victoire')}, ${plural(losses, 'défaite')}, ${plu
   .gauge-bar { display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card-2); }
   .gauge-bar span { display: block; height: 100%; }
   .gauge-bar .w { background: var(--win); }
-  .gauge-bar .l { background: var(--accent); }
+  .gauge-bar .l { background: var(--loss); }
   .gauge-bar .d { background: var(--gold); }
   .gauge-legend { display: flex; gap: 0.9rem; margin: 0.45rem 0 0; color: var(--muted); font-size: 0.9rem; }
   .gauge-legend b { font-weight: 800; }
   .gauge-legend .w { color: var(--win); }
-  .gauge-legend .l { color: var(--accent); }
+  .gauge-legend .l { color: var(--loss); }
   .gauge-legend .d { color: var(--gold); }
 </style>

@@ -9,7 +9,7 @@
 import sharp from 'sharp';
 
 const SRC = 'src/assets/brand/logo-source.png';
-const BG = { r: 22, g: 23, b: 27, alpha: 1 }; // --bg du site
+const BG = { r: 17, g: 17, b: 19, alpha: 1 }; // --bg du site
 const CLEAR = { r: 0, g: 0, b: 0, alpha: 0 };
 
 // Recadrage sur la partie opaque du logo.
