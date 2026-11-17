@@ -1,0 +1,130 @@
+---
+// PROTOTYPE accueil — Variante C « Prochain combat en vedette » : l'accueil s'ouvre sur le prochain événement.
+import LogoMark from '../../components/LogoMark.astro';
+import Title from '../../components/Title.astro';
+import { calendarDaysUntil, formatDay, formatFull } from '../../lib/dates';
+import { withBase } from '../../lib/paths';
+import type { FeedEvent, FeedItem } from '../../lib/types';
+
+interface Props {
+  next?: FeedEvent;
+  lastResults?: FeedItem;
+}
+
+const { next, lastResults } = Astro.props;
+const days = next ? Math.max(0, calendarDaysUntil(next.date)) : 0;
+const main = next?.bouts.find((b) => b.main);
+---
+
+{
+  next && (
+    <section class="spot">
+      <div class="spot-mark" aria-hidden="true">
+        <LogoMark height={560} />
+      </div>
+      <div class="spot-days" aria-label={`Dans ${days} jours`}>
+        <span>J-</span>
+        {days}
+      </div>
+      <div class="spot-copy">
+        <p class="spot-kicker">Prochain rendez-vous · {next.org.name}</p>
+        <h1 class="spot-title">
+          <a href={next.href}>{next.title}</a>
+        </h1>
+        <p class="spot-meta">
+          {next.timeKnown ? formatFull(next.date) : formatDay(next.date)} · {next.venue}, {next.city}
+        </p>
+        <p class="spot-main">
+          {main ? `${main.redName} vs ${main.blueName}` : next.headline ?? 'Carte pas encore dévoilée par l’organisation'}
+        </p>
+        <div class="spot-actions">
+          <a class="pill" href={next.href}>Carte complète</a>
+          {next.tickets && (
+            <a class="pill ghost" href={next.tickets} rel="noopener noreferrer" target="_blank">
+              Billetterie
+            </a>
+          )}
+          <a class="pill ghost" href={withBase('/calendrier/')}>Tout le calendrier</a>
+        </div>
+      </div>
+    </section>
+  )
+}
+{
+  lastResults && (
+    <a class="last" href={lastResults.href}>
+      <span class="last-label">Derniers résultats</span>
+      <span class="last-title">
+        <Title text={lastResults.title} />
+      </span>
+      <span aria-hidden="true">→</span>
+    </a>
+  )
+}
+
+<style>
+  .spot {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    gap: 1rem 2.5rem;
+    align-items: center;
+    margin: 1rem 0 0.8rem;
+    padding: 2.2rem 1.6rem;
+    border-radius: 22px;
+    border: 1px solid var(--line);
+    background: radial-gradient(70% 90% at 20% 40%, #26262a 0%, #0f0f11 75%);
+  }
+  .spot-mark { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); opacity: 0.06; filter: grayscale(1); pointer-events: none; }
+  .spot-days {
+    position: relative;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(5rem, 16vw, 11rem);
+    line-height: 0.8;
+    background: var(--metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    font-variant-numeric: tabular-nums;
+  }
+  .spot-days span { font-size: 0.45em; vertical-align: 0.9em; margin-right: 0.05em; }
+  .spot-copy { position: relative; display: grid; gap: 0.5rem; }
+  .spot-kicker { margin: 0; color: var(--gold); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.2em; text-transform: uppercase; }
+  .spot-title { margin: 0; font-family: var(--display); font-weight: 800; font-size: clamp(2.4rem, 5vw, 4.2rem); line-height: 0.9; text-transform: uppercase; }
+  .spot-title a { color: inherit; text-decoration: none; }
+  .spot-meta { margin: 0; color: var(--muted); }
+  .spot-main { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.3rem; text-transform: uppercase; color: var(--text); }
+  .spot-actions { display: flex; flex-wrap: wrap; gap: 0.6rem; margin-top: 0.6rem; }
+  .pill {
+    display: inline-flex;
+    padding: 0.7rem 1.4rem;
+    border-radius: 999px;
+    background: var(--pill);
+    border: 1px solid rgb(255 255 255 / 0.32);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22);
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .pill.ghost { background: transparent; box-shadow: none; border-color: var(--line); }
+  .pill:hover { border-color: rgb(255 255 255 / 0.7); color: white; }
+  .last {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    margin: 0 0 1.2rem;
+    padding: 0.8rem 1.1rem;
+    border-radius: 14px;
+    border: 1px solid var(--line);
+    background: var(--card);
+    color: inherit;
+    text-decoration: none;
+  }
+  .last:hover { border-color: rgb(255 255 255 / 0.3); }
+  .last-label { flex: none; color: var(--gold); font-size: 0.72rem; font-weight: 800; letter-spacing: 0.16em; text-transform: uppercase; }
+  .last-title { font-family: var(--display); font-weight: 700; font-size: 1.15rem; text-transform: uppercase; line-height: 1; }
+  @media (min-width: 900px) {
+    .spot { grid-template-columns: auto minmax(0, 1fr); padding: 2.6rem 2.4rem; }
+  }
+</style>

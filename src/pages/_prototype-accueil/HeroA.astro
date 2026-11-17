@@ -1,0 +1,100 @@
+---
+// PROTOTYPE accueil — Variante A « Vitrine » : la une comme la page d'accueil de la boutique.
+import { getImage } from 'astro:assets';
+import LogoMark from '../../components/LogoMark.astro';
+import Title from '../../components/Title.astro';
+import { withBase } from '../../lib/paths';
+import { photoById } from '../../lib/photos';
+import type { FeedItem } from '../../lib/types';
+
+interface Props {
+  lead: FeedItem;
+}
+
+const { lead } = Astro.props;
+const photo = lead.photoId ? photoById(lead.photoId) : undefined;
+const img = photo ? await getImage({ src: photo.image, width: 1280, format: 'webp', quality: 72 }) : undefined;
+---
+
+<section class="vitrine">
+  <div class="vitrine-mark" aria-hidden="true"><LogoMark height={620} /></div>
+  {img && <img class="vitrine-photo" src={img.src} alt="" />}
+  <div class="vitrine-copy">
+    <p class="vitrine-brand" aria-hidden="true">PRIMAL <span>MÉDIA</span></p>
+    <p class="vitrine-kicker">À la une · {lead.org.name}</p>
+    <h1 class="vitrine-title"><Title text={lead.title} /></h1>
+    <div class="vitrine-actions">
+      <a class="pill" href={lead.href}>Lire</a>
+      <a class="pill" href={withBase('/calendrier/')}>Calendrier</a>
+    </div>
+    {photo && <p class="vitrine-credit">Photo d’illustration : {photo.credit.author}, {photo.credit.license}</p>}
+  </div>
+</section>
+
+<style>
+  .vitrine {
+    position: relative;
+    overflow: hidden;
+    display: grid;
+    place-items: center;
+    min-height: min(78vh, 760px);
+    margin: 0 calc(50% - 50vw) 1.4rem;
+    padding: 3rem 1rem 3.5rem;
+    background: radial-gradient(70% 70% at 50% 45%, #232327 0%, #0d0d0e 75%);
+    text-align: center;
+  }
+  .vitrine-mark { position: absolute; inset: 0; display: grid; place-items: center; opacity: 0.07; filter: grayscale(1); pointer-events: none; }
+  .vitrine-mark :global(img) { height: min(620px, 80vh); width: auto; }
+  .vitrine-photo {
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: min(62vw, 900px);
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.55;
+    filter: grayscale(0.85) contrast(1.05);
+    -webkit-mask-image: linear-gradient(to left, #000 35%, transparent 100%);
+    mask-image: linear-gradient(to left, #000 35%, transparent 100%);
+  }
+  .vitrine-copy { position: relative; z-index: 1; max-width: 980px; display: grid; justify-items: center; gap: 0.9rem; }
+  .vitrine-brand {
+    margin: 0 0 1rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-style: italic;
+    font-size: clamp(2.6rem, 8vw, 5.5rem);
+    line-height: 0.9;
+    letter-spacing: 0.02em;
+    background: var(--metal);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    transform: skewX(-6deg);
+  }
+  .vitrine-brand span { opacity: 0.75; }
+  .vitrine-kicker { margin: 0; color: var(--gold); font-size: 0.78rem; font-weight: 800; letter-spacing: 0.22em; text-transform: uppercase; }
+  .vitrine-title {
+    margin: 0;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.2rem, 5.5vw, 4.6rem);
+    line-height: 0.92;
+    text-transform: uppercase;
+    text-wrap: balance;
+  }
+  .vitrine-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.8rem; margin-top: 0.6rem; }
+  .pill {
+    display: inline-flex;
+    padding: 0.85rem 1.8rem;
+    border-radius: 999px;
+    background: var(--pill);
+    border: 1px solid rgb(255 255 255 / 0.35);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.25), 0 10px 30px rgb(0 0 0 / 0.45);
+    color: var(--text);
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .pill:hover { border-color: rgb(255 255 255 / 0.7); color: white; }
+  .vitrine-credit { margin: 1rem 0 0; color: var(--faint); font-size: 0.72rem; }
+</style>

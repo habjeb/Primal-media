@@ -4,6 +4,11 @@ import Feed from '../components/Feed.astro';
 import { getSite } from '../lib/content';
 import { formatDay } from '../lib/dates';
 import Base from '../layouts/BaseLayout.astro';
+// PROTOTYPE accueil (branche prototype/accueil-primal, à ne pas fusionner).
+import HeroA from './_prototype-accueil/HeroA.astro';
+import HeroB from './_prototype-accueil/HeroB.astro';
+import HeroC from './_prototype-accueil/HeroC.astro';
+import PrototypeSwitcher from './_prototype-accueil/PrototypeSwitcher.astro';
 
 const site = await getSite();
 const next = site.events
@@ -13,6 +18,10 @@ const next = site.events
 const description =
   'Fil d’actualité fight francophone — MMA, grappling, kick et boxe — centré sur les combattants des circuits amateurs et des petites organisations. Les contenus d’exemple sont fictifs.';
 const siteUrl = new URL(import.meta.env.BASE_URL, Astro.site).toString();
+const PROTO = import.meta.env.DEV;
+const une = site.items.filter((item) => item.section === 'une');
+const lead = une.find((item) => item.spotlight) ?? une[0];
+const lastResults = site.items.find((item) => item.format === 'resultats' && !item.example);
 ---
 
 <Base
@@ -27,7 +36,33 @@ const siteUrl = new URL(import.meta.env.BASE_URL, Astro.site).toString();
     description,
   }}
 >
-  <header class="feed-head">
+  {
+    PROTO && (
+      <>
+        <div data-proto-variant="A">{lead && <HeroA lead={lead} />}</div>
+        <div data-proto-variant="B" hidden><HeroB /></div>
+        <div data-proto-variant="C" hidden><HeroC next={next} lastResults={lastResults} /></div>
+        <PrototypeSwitcher
+          variants={[
+            { key: 'A', label: 'Vitrine' },
+            { key: 'B', label: 'Bandeau de marque' },
+            { key: 'C', label: 'Prochain combat' },
+            { key: 'actuelle', label: 'Accueil actuel (référence)' },
+          ]}
+        />
+        <style is:global>
+          html[data-proto-variant='A'] .une-lead { display: none; }
+          html[data-proto-variant='A'] .une-grid { grid-template-columns: 1fr; }
+          @media (min-width: 960px) {
+            html[data-proto-variant='A'] .une-side { grid-template-columns: repeat(3, minmax(0, 1fr)); column-gap: 1.6rem; }
+            html[data-proto-variant='A'] .une-side .card-compact { padding-top: 0; border-top: 0; }
+          }
+          html[data-proto-variant='C'] .next-event { display: none; }
+        </style>
+      </>
+    )
+  }
+  <header class="feed-head" data-proto-variant="actuelle" hidden={PROTO}>
     <h1>Fil d’actualité</h1>
     <p>MMA, grappling, kick et boxe : les circuits amateurs et les petites organisations francophones, au rythme d’un fil.</p>
   </header>
