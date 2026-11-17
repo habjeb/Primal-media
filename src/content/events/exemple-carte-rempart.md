@@ -4,7 +4,7 @@ description: Résultats fictifs d’une carte MMA. Aucun de ces combats n’a é
 date: 2026-11-01T20:00:00+01:00
 city: Lyon
 venue: Halle Exemple
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 discipline: MMA
 example: true
 fights:

@@ -1,0 +1,19 @@
+---
+import { getImage } from 'astro:assets';
+import logo from '../assets/brand/logo.png';
+
+/** Logo Primal Média (tête de gorille), optimisé en WebP 1x / 2x pour la hauteur demandée. */
+interface Props {
+  height: number;
+  class?: string;
+}
+
+const { height, class: className } = Astro.props;
+const width = Math.round((height * logo.width) / logo.height);
+const [x1, x2] = await Promise.all([
+  getImage({ src: logo, height, format: 'webp' }),
+  getImage({ src: logo, height: height * 2, format: 'webp' }),
+]);
+---
+
+<img class={className} src={x1.src} srcset={`${x1.src} 1x, ${x2.src} 2x`} width={width} height={height} alt="" decoding="async" />

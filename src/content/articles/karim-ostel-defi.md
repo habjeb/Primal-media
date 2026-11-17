@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: fight
 tile: square
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - karim-ostel
 tags:

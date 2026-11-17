@@ -7,7 +7,7 @@ category: MMA
 format: decryptage
 section: une
 tile: landscape
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - lea-varmont
 event: exemple-soiree-cage

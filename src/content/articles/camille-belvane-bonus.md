@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: fight
 tile: portrait
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - camille-belvane
 event: exemple-carte-rempart

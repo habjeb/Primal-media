@@ -66,7 +66,7 @@ const fightOverflow = fight.length > PAGE_SIZE;
           <span>{nextEvent.when} · {nextEvent.detail}</span>
           <a class="next-event-all" href={withBase('/calendrier/')}>Tout le calendrier →</a>
         </div>
-        <Countdown date={nextEvent.date} />
+        <Countdown date={nextEvent.date} daysOnly={!nextEvent.timeKnown} />
       </aside>
     )
   }

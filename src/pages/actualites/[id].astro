@@ -5,6 +5,7 @@ import Feed from '../../components/Feed.astro';
 import { filterItems, getSite } from '../../lib/content';
 import { ARCHIVE_FILTERS } from '../../lib/filters';
 import { OG_SIZE } from '../../lib/cover';
+import { withBase } from '../../lib/paths';
 import { excerpt } from '../../lib/text';
 import Base from '../../layouts/BaseLayout.astro';
 
@@ -62,7 +63,11 @@ const pageUrl = new URL(Astro.url.pathname, Astro.site).toString();
           datePublished: found.item.pubDate.toISOString(),
           inLanguage: 'fr-FR',
           author: { '@type': 'Organization', name: found.item.author },
-          publisher: { '@type': 'Organization', name: 'Primal Média' },
+          publisher: {
+            '@type': 'Organization',
+            name: 'Primal Média',
+            logo: { '@type': 'ImageObject', url: new URL(withBase('/logo-512.png'), Astro.site).toString() },
+          },
           mainEntityOfPage: pageUrl,
           articleSection: found.item.category,
           keywords: found.item.tags.join(', '),

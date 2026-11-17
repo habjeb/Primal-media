@@ -1,5 +1,6 @@
 ---
 import { withBase } from '../lib/paths';
+import LogoMark from './LogoMark.astro';
 
 const groups = [
   {
@@ -29,6 +30,7 @@ const groups = [
       { href: '/organisations/', label: 'Organisations' },
       { href: '/a-propos/', label: 'À propos' },
       { href: '/contact/', label: 'Contact' },
+      { href: '/credits-photos/', label: 'Crédits photos' },
       { href: '/rss.xml', label: 'RSS' },
     ],
   },
@@ -38,7 +40,10 @@ const groups = [
 <footer class="site-footer">
   <div class="wrap footer-grid">
     <div>
-      <p class="logo-text">PRIMAL <span>MÉDIA</span></p>
+      <p class="footer-brand">
+        <LogoMark class="footer-logo" height={56} />
+        <span class="logo-text">PRIMAL <span>MÉDIA</span></span>
+      </p>
       <p>
         L’actu fight des circuits amateurs et des petites organisations francophones : MMA, grappling,
         kick et boxe, côté combattants. Les entrées marquées « Contenu d’exemple » sont fictives.

@@ -4,7 +4,7 @@ description: Carte fictive en quatre combats. Ni la date, ni la salle, ni la cha
 date: 2026-11-28T20:00:00+01:00
 city: Lyon
 venue: Halle Exemple
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 discipline: MMA
 example: true
 broadcast:
@@ -38,6 +38,6 @@ fights:
     redAthlete: camille-belvane
 ---
 
-Cette soirée n’est pas annoncée par Hexagone MMA. Les quatre combats, la Halle Exemple et la Chaîne Exemple servent à montrer une carte à venir, avec un encadré « quelle heure, quelle chaîne ? ».
+Cette soirée n’est annoncée par aucune organisation réelle. Les quatre combats, la Halle Exemple et la Chaîne Exemple servent à montrer une carte à venir, avec un encadré « quelle heure, quelle chaîne ? ».
 
 Les coins bleus sont des adversaires fictifs, sans fiche sur le site.

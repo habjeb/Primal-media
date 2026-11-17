@@ -2,10 +2,10 @@
 import { render } from 'astro:content';
 import Avatar from '../../components/Avatar.astro';
 import ChannelHero from '../../components/ChannelHero.astro';
+import EventRow from '../../components/EventRow.astro';
 import ExampleNote from '../../components/ExampleNote.astro';
 import NewsCard from '../../components/NewsCard.astro';
 import { athletesForOrg, eventsForOrg, getSite, itemsForOrg } from '../../lib/content';
-import { formatDay } from '../../lib/dates';
 import { initials } from '../../lib/text';
 import { withBase } from '../../lib/paths';
 import Base from '../../layouts/BaseLayout.astro';
@@ -25,6 +25,17 @@ const { Content } = await render(entry);
 const posts = itemsForOrg(org.id, site.items);
 const people = athletesForOrg(org.id, site.athletes);
 const events = eventsForOrg(org.id, site.events);
+const upcoming = events.map((record) => record.event).filter((event) => event.upcoming);
+const past = events
+  .map((record) => record.event)
+  .filter((event) => !event.upcoming)
+  .sort((a, b) => b.date.getTime() - a.date.getTime());
+// Bandeau « contenus d’exemple » seulement s’il y en a vraiment sur la page.
+const hasExamples =
+  org.example ||
+  posts.some((item) => item.example) ||
+  people.some(({ profile }) => profile.example) ||
+  events.some(({ event }) => event.example);
 const kindLabel = { professionnelle: 'Organisation professionnelle', amateur: 'Organisation amateur', mixte: 'Organisation pro et amateur' }[org.kind];
 ---
 
@@ -45,52 +56,68 @@ const kindLabel = { professionnelle: 'Organisation professionnelle', amateur: 'O
     title={org.name}
     stats={[
       { value: String(posts.length), label: 'articles' },
-      { value: String(people.length), label: 'athlètes' },
+      { value: String(people.length), label: 'combattants' },
       { value: String(events.length), label: 'cartes' },
     ]}
   />
-  <ExampleNote kind={org.example ? 'entry' : 'org'} />
+  {hasExamples && <ExampleNote kind={org.example ? 'entry' : 'org'} />}
   <div class="prose">
     <Content />
   </div>
-  <section aria-labelledby="people-title">
-    <h2 class="section-title" id="people-title">Combattants</h2>
-    <ul class="roster">
-      {
-        people.map(({ profile }) => (
-          <li>
-            <a href={profile.href}>
-              <Avatar seed={profile.id} initials={initials(profile.name)} large />
-              <strong>{profile.name} ({profile.record})</strong>
-              <span class="meta-line">{profile.weightClass}</span>
-            </a>
-          </li>
-        ))
-      }
-    </ul>
-  </section>
-  <section id="publications" aria-labelledby="posts-title">
-    <h2 class="section-title" id="posts-title">Publications</h2>
-    <div class="mosaic">
-      {posts.map((item) => <NewsCard item={item} />)}
-    </div>
-  </section>
-  <section aria-labelledby="events-title">
-    <h2 class="section-title" id="events-title">Cartes</h2>
-    <div class="event-list">
-      {
-        events
-          .slice()
-          .sort((a, b) => b.event.date.getTime() - a.event.date.getTime())
-          .map(({ event }) => (
-            <article class="event-card">
-              <p class="kicker">{event.upcoming ? 'À venir' : 'Passé'} · {formatDay(event.date)}</p>
-              <h2><a href={event.href}>{event.title}</a></h2>
-              <p class="meta-line">{event.city} · {event.venue}</p>
-              {event.example && <p class="ex-inline">Contenu d’exemple</p>}
-            </article>
-          ))
-      }
-    </div>
-  </section>
+  {
+    upcoming.length > 0 && (
+      <section class="rubric-block" aria-labelledby="upcoming-title">
+        <h2 class="section-title" id="upcoming-title">Prochaines dates</h2>
+        <ol class="cal-rows">
+          {upcoming.map((event) => (
+            <EventRow event={event} />
+          ))}
+        </ol>
+      </section>
+    )
+  }
+  {
+    people.length > 0 && (
+      <section class="rubric-block" aria-labelledby="people-title">
+        <h2 class="section-title" id="people-title">Combattants</h2>
+        <ul class="roster">
+          {people.map(({ profile }) => (
+            <li>
+              <a href={profile.href}>
+                <Avatar seed={profile.id} initials={initials(profile.name)} large />
+                <strong>
+                  {profile.name} ({profile.record})
+                </strong>
+                <span class="meta-line">{profile.weightClass}</span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    )
+  }
+  {
+    posts.length > 0 && (
+      <section class="rubric-block" id="publications" aria-labelledby="posts-title">
+        <h2 class="section-title" id="posts-title">Publications</h2>
+        <div class="mosaic">
+          {posts.map((item) => (
+            <NewsCard item={item} />
+          ))}
+        </div>
+      </section>
+    )
+  }
+  {
+    past.length > 0 && (
+      <section class="rubric-block" aria-labelledby="past-title">
+        <h2 class="section-title" id="past-title">Cartes passées</h2>
+        <ol class="cal-rows">
+          {past.map((event) => (
+            <EventRow event={event} past />
+          ))}
+        </ol>
+      </section>
+    )
+  }
 </Base>

@@ -7,7 +7,7 @@ category: MMA
 format: breve
 section: une
 tile: landscape
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - theo-mavrek
 tags:

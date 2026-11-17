@@ -8,7 +8,7 @@ format: breve
 section: une
 tile: landscape
 spotlight: false
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - karim-ostel
 event: exemple-soiree-cage

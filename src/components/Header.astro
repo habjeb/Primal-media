@@ -1,6 +1,7 @@
 ---
 import { getSite } from '../lib/content';
 import { isCurrent, withBase } from '../lib/paths';
+import LogoMark from './LogoMark.astro';
 
 const pathname = Astro.url.pathname;
 const site = await getSite();
@@ -30,11 +31,7 @@ const links = [
 <header class="site-header">
   <div class="wrap header-row">
     <a class="logo" href={withBase('/')}>
-      <svg class="logo-mark" viewBox="0 0 36 36" aria-hidden="true">
-        <rect width="36" height="36" rx="8" fill="#c1121f"></rect>
-        <path d="M7 29 L16 7 H20 L11 29 Z" fill="#fff"></path>
-        <path d="M16 29 L24 9 H28 L20 29 Z" fill="#ffb020"></path>
-      </svg>
+      <LogoMark class="logo-mark" height={44} />
       <span class="logo-text">PRIMAL <span>MÉDIA</span></span>
     </a>
     <div class="header-tools">

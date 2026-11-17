@@ -1,5 +1,6 @@
 ---
 import { coverFor } from '../lib/cover';
+import { photoById } from '../lib/photos';
 import { safeVideoId } from '../lib/text';
 import type { FeedItem } from '../lib/types';
 import Visual from './Visual.astro';
@@ -47,7 +48,15 @@ const placeholder = provider === 'instagram' && item.video?.id?.toUpperCase() ==
         </p>
       </div>
     ) : (
-      <Visual seed={item.id} uid={`${item.id}-stage`} initials={initials} cover={coverFor(item)} />
+      <Visual
+        seed={item.id}
+        uid={`${item.id}-stage`}
+        initials={initials}
+        cover={coverFor(item)}
+        photo={item.photoId ? photoById(item.photoId) : undefined}
+        sizes="(min-width: 1040px) 66vw, 100vw"
+        priority
+      />
     )
   }
 </div>

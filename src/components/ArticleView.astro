@@ -3,9 +3,11 @@ import { render, type CollectionEntry } from 'astro:content';
 import { relatedItems, type SiteData } from '../lib/content';
 import { formatFull } from '../lib/dates';
 import { withBase } from '../lib/paths';
-import { withRecord } from '../lib/text';
+import { photoById } from '../lib/photos';
+import { safeVideoId, withRecord } from '../lib/text';
 import type { FeedItem } from '../lib/types';
 import ExampleNote from './ExampleNote.astro';
+import PhotoCredit from './PhotoCredit.astro';
 import RelatedList from './RelatedList.astro';
 import RelativeTime from './RelativeTime.astro';
 import ShareBar from './ShareBar.astro';
@@ -30,6 +32,11 @@ const initials =
     .map((part) => part[0] ?? '')
     .join('')
     .toUpperCase() || item.org.initials;
+// La photo n’apparaît que si l’en-tête n’est pas un vrai lecteur vidéo (YouTube, Instagram).
+const embedded =
+  (item.video?.provider === 'youtube' || item.video?.provider === 'instagram') &&
+  (Boolean(safeVideoId(item.video.provider, item.video.id)) || item.video.id?.toUpperCase() === 'EXEMPLE');
+const photo = embedded || !item.photoId ? undefined : photoById(item.photoId);
 ---
 
 <nav aria-label="Fil d’Ariane">
@@ -45,6 +52,7 @@ const initials =
 <div class="watch">
   <article>
     <VideoEmbed item={item} initials={initials} />
+    {photo && <PhotoCredit photo={photo} />}
     {item.example && <ExampleNote />}
     <p class="kicker">{item.category} · {item.org.name}</p>
     <h1 class="article-title"><Title text={item.title} /></h1>

@@ -1,9 +1,12 @@
 ---
+import { getImage } from 'astro:assets';
 import type { Cover } from '../lib/cover';
 import { coverSvg } from '../lib/cover-svg';
+import type { Photo } from '../lib/photos';
 
 /**
- * Visuel généré façon affiche de combat, sans photo.
+ * Visuel façon affiche de combat. Avec `photo`, une photo libre d’illustration passe en fond
+ * (balise <img> optimisée, WebP 640 et 1280 px) ; sinon, le fond est entièrement généré.
  * La composition vit dans `src/lib/cover-svg.ts`, partagée avec les images de partage.
  */
 interface Props {
@@ -13,13 +16,51 @@ interface Props {
   label?: string;
   cover?: Cover;
   text?: 'full' | 'texture' | 'none';
+  photo?: Photo;
+  /** Taille d’affichage pour le navigateur (attribut sizes). */
+  sizes?: string;
+  /** true pour une image visible dès l’arrivée (une, en-tête d’article) : chargement immédiat. */
+  priority?: boolean;
   /** Ancien réglage, équivaut à `text="texture"`. */
   hideInitials?: boolean;
 }
 
-const { seed, initials, uid, label, cover, hideInitials = false } = Astro.props;
+const {
+  seed,
+  initials,
+  uid,
+  label,
+  cover,
+  photo,
+  sizes = '(min-width: 960px) 33vw, 100vw',
+  priority = false,
+  hideInitials = false,
+} = Astro.props;
 const text = Astro.props.text ?? (hideInitials ? 'texture' : 'full');
-const svg = coverSvg({ seed, initials, uid, label, cover, text });
+const svg = coverSvg({ seed, initials, uid, label, cover, text, photo: photo ? {} : undefined });
+const [small, large] = photo
+  ? await Promise.all([
+      getImage({ src: photo.image, width: 640, format: 'webp', quality: 72 }),
+      getImage({ src: photo.image, width: 1280, format: 'webp', quality: 72 }),
+    ])
+  : [];
 ---
 
-<div class="visual" set:html={svg} />
+<div class:list={['visual', { 'has-photo': photo }]}>
+  {
+    photo && small && large && (
+      <img
+        class="visual-photo"
+        src={large.src}
+        srcset={`${small.src} 640w, ${large.src} 1280w`}
+        sizes={sizes}
+        alt=""
+        loading={priority ? 'eager' : 'lazy'}
+        fetchpriority={priority ? 'high' : undefined}
+        decoding="async"
+        style={photo.focus ? `object-position: ${photo.focus}` : undefined}
+      />
+    )
+  }
+  <Fragment set:html={svg} />
+</div>

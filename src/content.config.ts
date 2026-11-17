@@ -113,6 +113,8 @@ const articles = defineCollection({
     event: reference('events').optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Photo d’illustration : identifiant de src/lib/photos.ts, ou false pour garder le visuel généré. */
+    photo: z.union([z.string(), z.literal(false)]).optional(),
     example: z.boolean(),
     video: z
       .object({

@@ -7,7 +7,7 @@ category: MMA
 format: diffusion
 section: fight
 tile: landscape
-organisation: hexagone-mma
+organisation: exemple-ligue-pro
 athletes:
   - karim-ostel
   - lea-varmont

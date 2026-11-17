@@ -1,5 +1,6 @@
 ---
 import { coverFor } from '../lib/cover';
+import { photoById } from '../lib/photos';
 import type { FeedItem } from '../lib/types';
 import RelativeTime from './RelativeTime.astro';
 import Title from './Title.astro';
@@ -28,7 +29,15 @@ const { items } = Astro.props;
           <li>
             <a class="related-item" href={item.href}>
               <span class="related-thumb">
-                <Visual seed={item.id} uid={`${item.id}-rel`} initials={initials} cover={coverFor(item)} text="texture" />
+                <Visual
+                  seed={item.id}
+                  uid={`${item.id}-rel`}
+                  initials={initials}
+                  cover={coverFor(item)}
+                  text="texture"
+                  photo={item.photoId ? photoById(item.photoId) : undefined}
+                  sizes="160px"
+                />
               </span>
               <span>
                 <h3><Title text={item.title} /></h3>
