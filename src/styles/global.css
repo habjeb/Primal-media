@@ -207,10 +207,8 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   100% { box-shadow: 0 0 0 0 rgb(var(--live-rgb) / 0); }
 }
 
-.feed-head,
 .page-intro { margin: 1rem 0 0.85rem; }
 
-.feed-head h1,
 .page-intro h1,
 .article-title,
 .channel-id h1,
@@ -223,13 +221,10 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   margin: 0;
 }
 
-.feed-head h1 { font-size: clamp(2rem, 4vw, 2.8rem); }
-
 .page-intro h1,
 .event-title { font-size: clamp(2.2rem, 5vw, 3.5rem); }
 
-.lede,
-.feed-head p { color: var(--muted); margin: 0.35rem 0 0; max-width: 68ch; }
+.lede { color: var(--muted); margin: 0.35rem 0 0; max-width: 68ch; }
 
 .disclaimer {
   color: #e6dccb;
