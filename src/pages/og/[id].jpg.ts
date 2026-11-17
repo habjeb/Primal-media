@@ -2,7 +2,7 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import { coverFor, OG_SIZE } from '../../lib/cover';
 import { coverSvg } from '../../lib/cover-svg';
 import { getSite } from '../../lib/content';
-import { photoDataUri, svgToJpeg } from '../../lib/og';
+import { logoDataUri, photoDataUri, svgToJpeg } from '../../lib/og';
 import { photoById } from '../../lib/photos';
 import type { FeedItem } from '../../lib/types';
 
@@ -27,7 +27,7 @@ export const GET: APIRoute = async ({ props }) => {
     cover: coverFor(item),
     text: 'full',
     size: OG_SIZE,
-    share: { example: item.example },
+    share: { example: item.example, logoHref: await logoDataUri() },
   });
   return new Response(await svgToJpeg(svg), { headers: { 'Content-Type': 'image/jpeg' } });
 };

@@ -26,7 +26,8 @@ export type CoverSvgOptions = {
   /** Taille de sortie (attributs width/height). Absente = s’adapte au conteneur. */
   size?: { width: number; height: number };
   /** Habillage des images de partage : logo et mention « Contenu d’exemple ». */
-  share?: { example: boolean };
+  /** `logoHref` : logo en data URI (images de partage). */
+  share?: { example: boolean; logoHref?: string };
   /**
    * Photo d’illustration en fond. Sur le site, la photo est une balise <img> placée sous le SVG :
    * le SVG reste transparent. Pour les images de partage, `href` (data URI) l’intègre au SVG,
@@ -159,11 +160,15 @@ export function coverSvg(options: CoverSvgOptions): string {
   // Habillage des images de partage. Le cadre 1200×630 rogne environ 30 unités en haut et en bas.
   const shareLayer = share
     ? `<g font-family="${FONT}" font-weight="800">
-        <g transform="translate(66 74) scale(2.4)">
+        ${
+          share.logoHref
+            ? `<image href="${share.logoHref}" x="58" y="46" width="98" height="131" preserveAspectRatio="xMidYMid meet"/>`
+            : `<g transform="translate(66 74) scale(2.4)">
           <rect width="36" height="36" rx="8" fill="#a94b43"/>
           <path d="M7 29 L16 7 H20 L11 29 Z" fill="#fff"/>
           <path d="M16 29 L24 9 H28 L20 29 Z" fill="#d8b46e"/>
-        </g>
+        </g>`
+        }
         <text x="174" y="148" font-size="78" letter-spacing="3" fill="#ece7de">PRIMAL <tspan fill="#d0756b">MÉDIA</tspan></text>
         ${
           share.example

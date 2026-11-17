@@ -97,6 +97,16 @@ Vidéo :
 - Instagram : `provider: instagram` et le code court du post (`instagram.com/p/CODE/`). La valeur `EXEMPLE` n’appelle aucun compte : elle montre le cadre d’attente.
 - `provider: fichier` : badge de durée dans le fil, sans lecteur tiers.
 
+## Logo
+
+Source : `src/assets/brand/logo-source.png` (PNG détouré, fond transparent). Après tout changement du logo, régénérer les déclinaisons :
+
+```bash
+npm run brand
+```
+
+Le script `scripts/brand-assets.mjs` recadre le logo et produit `src/assets/brand/logo.png` (en-tête, pied de page, images de partage), `public/favicon-32.png`, `public/favicon-192.png`, `public/apple-touch-icon.png` (fond sombre, iOS ne gère pas la transparence) et `public/logo-512.png` (logo éditeur des données structurées). L’image de partage par défaut (`/og/site.jpg`) est générée au build.
+
 ## Photos
 
 Les photos d’illustration sont des photos **sous licence libre** de Wikimedia Commons (domaine public, CC BY, CC BY-SA), stockées dans `src/assets/photos/` et décrites dans `src/lib/photos.ts` (texte alternatif, disciplines, auteur, licence, source). Le site les optimise en WebP (640 et 1280 px) au build.

@@ -110,7 +110,11 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   text-decoration: none;
 }
 
-.logo-mark { width: 2rem; height: 2rem; flex: none; }
+.logo-mark { width: auto; height: 2.75rem; flex: none; filter: drop-shadow(0 2px 6px rgb(0 0 0 / 0.45)); }
+
+.footer-brand { display: flex; align-items: center; gap: 0.7rem; margin: 0 0 0.6rem; }
+
+.footer-logo { width: auto; height: 3.5rem; flex: none; }
 
 .logo-text {
   font-family: var(--display);
@@ -1459,3 +1463,5 @@ html:not(.js) [data-roster-tools] { display: none; }
 .countdown.days-only { grid-template-columns: minmax(0, 9rem); }
 
 .next-event .countdown.days-only { justify-content: end; }
+
+.footer-brand .logo-text { color: var(--text); }
