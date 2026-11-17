@@ -1,0 +1,46 @@
+---
+import { plural } from '../lib/athlete';
+
+/** Jauge victoires / défaites / nuls, proportionnelle au palmarès. */
+interface Props {
+  wins: number;
+  losses: number;
+  draws: number;
+}
+
+const { wins, losses, draws } = Astro.props;
+const total = wins + losses + draws;
+const pct = (n: number) => `${(n / total) * 100}%`;
+const label = `${plural(wins, 'victoire')}, ${plural(losses, 'défaite')}, ${plural(draws, 'nul')}`;
+---
+
+{
+  total > 0 && (
+    <div class="gauge">
+      <div class="gauge-bar" role="img" aria-label={label}>
+        {wins > 0 && <span class="w" style={`width:${pct(wins)}`} />}
+        {losses > 0 && <span class="l" style={`width:${pct(losses)}`} />}
+        {draws > 0 && <span class="d" style={`width:${pct(draws)}`} />}
+      </div>
+      <p class="gauge-legend" aria-hidden="true">
+        <span><b class="w">{wins}</b> V</span>
+        <span><b class="l">{losses}</b> D</span>
+        <span><b class="d">{draws}</b> N</span>
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .gauge { margin: 0.7rem 0 0; }
+  .gauge-bar { display: flex; gap: 2px; height: 10px; border-radius: 999px; overflow: hidden; background: var(--card-2); }
+  .gauge-bar span { display: block; height: 100%; }
+  .gauge-bar .w { background: var(--win); }
+  .gauge-bar .l { background: var(--accent); }
+  .gauge-bar .d { background: var(--gold); }
+  .gauge-legend { display: flex; gap: 0.9rem; margin: 0.45rem 0 0; color: var(--muted); font-size: 0.9rem; }
+  .gauge-legend b { font-weight: 800; }
+  .gauge-legend .w { color: var(--win); }
+  .gauge-legend .l { color: var(--accent); }
+  .gauge-legend .d { color: var(--gold); }
+</style>
