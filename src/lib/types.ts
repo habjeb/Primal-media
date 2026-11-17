@@ -66,6 +66,7 @@ export type FeedItem = {
   athletes: FeedAthlete[];
   eventId?: string;
   photo?: string | false;
+  coverName?: string;
   /** Photo d’illustration retenue (voir assignPhotos). */
   photoId?: string;
 };
@@ -86,7 +87,8 @@ export type ResolvedBout = {
   blueRecord?: string;
   redHref?: string;
   blueHref?: string;
-  winner?: 'red' | 'blue' | 'draw';
+  winner?: 'red' | 'blue' | 'draw' | 'nc';
+  amateur: boolean;
   method?: string;
   round?: number;
   main: boolean;

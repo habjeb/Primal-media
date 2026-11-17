@@ -68,6 +68,7 @@ tags:
   - paille
 draft: false
 example: false          # true affiche le badge « Contenu d’exemple »
+coverName: Prénom Nom   # optionnel : nom sur le visuel si aucun combattant n’est lié (combattant sans fiche)
 video:                  # optionnel — badge durée + lecteur
   provider: youtube     # youtube | instagram | fichier
   id: ABCdef12345       # identifiant YouTube, ou code court Instagram

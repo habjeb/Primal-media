@@ -26,7 +26,7 @@ export function coverFor(item: FeedItem): Cover {
   const topic = item.title.split(/\s:\s|\s—\s/)[0]!.trim();
   const fallback = topic.length <= 30 ? topic : item.org.name;
   return {
-    name: athlete?.name ?? fallback,
+    name: athlete?.name ?? item.coverName ?? fallback,
     record: athlete?.record,
     kicker: item.hasVideo ? 'Vidéo' : FORMAT_KICKER[item.format],
     discipline: item.category,

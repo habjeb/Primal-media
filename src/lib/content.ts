@@ -189,6 +189,7 @@ async function toEvent(
       redHref: red?.href,
       blueHref: blue?.href,
       winner: fight.winner,
+      amateur: Boolean(fight.amateur),
       method: fight.method,
       round: fight.round,
       main: Boolean(fight.main),
@@ -237,6 +238,7 @@ function toItem(entry: CollectionEntry<'articles'>, org: FeedOrg, athletes: Feed
     athletes,
     eventId: entry.data.event?.id,
     photo: entry.data.photo,
+    coverName: entry.data.coverName,
   };
 }
 

@@ -872,6 +872,8 @@ html:not(.js) [data-more] { display: none; }
   text-transform: uppercase;
 }
 
+.am-tag { color: var(--text); border: 1px solid var(--line); border-radius: 999px; padding: 0.05rem 0.5rem; font-weight: 800; }
+
 .main-tag { color: #1a1200; background: var(--gold); border-radius: 999px; padding: 0.1rem 0.5rem; font-weight: 800; }
 
 .corners { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 0.6rem; align-items: center; }
