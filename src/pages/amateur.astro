@@ -1,0 +1,84 @@
+---
+import ExampleNote from '../components/ExampleNote.astro';
+import Feed from '../components/Feed.astro';
+import { filterItems, getSite } from '../lib/content';
+import { formatDay } from '../lib/dates';
+import Base from '../layouts/BaseLayout.astro';
+
+const site = await getSite();
+const items = filterItems(site.items, 'amateur');
+
+// Derniers combats amateurs des cartes réelles (les cartes d'exemple sont exclues).
+const RECENT_BOUTS = 12;
+const bouts = site.events
+  .map((record) => record.event)
+  .filter((event) => !event.upcoming && !event.example)
+  .sort((a, b) => b.date.getTime() - a.date.getTime())
+  .flatMap((event) =>
+    event.bouts
+      .filter((bout) => bout.amateur && (bout.winner === 'red' || bout.winner === 'blue'))
+      .map((bout) => ({ event, bout })),
+  )
+  .slice(0, RECENT_BOUTS);
+
+const description =
+  'Championnats, galas et combattants du circuit amateur : le MMA d’abord, le grappling et le kick/boxe aussi. Résultats sourcés, parcours, passages chez les pros.';
+---
+
+<Base title="L’actu amateur" description={description}>
+  <header class="rubric-head">
+    <h1>Ama<span class="outline">teur</span></h1>
+    <p class="lede">{description}</p>
+  </header>
+  <ExampleNote kind="list" />
+
+  <section class="rubric-block" aria-labelledby="fil-amateur">
+    <h2 class="section-title" id="fil-amateur">Le fil amateur</h2>
+    {items.length > 0 ? <Feed mode="archive" items={items} active="amateur" /> : <p class="empty">Pas encore d’article dans cette rubrique.</p>}
+  </section>
+
+  {
+    bouts.length > 0 && (
+      <section class="rubric-block" aria-labelledby="combats-amateurs">
+        <h2 class="section-title" id="combats-amateurs">
+          Les derniers combats amateurs
+        </h2>
+        <p class="lede">Les combats amateurs disputés sur les cartes suivies par Primal Média, d’après les résultats officiels.</p>
+        <ol class="am-bouts">
+          {bouts.map(({ event, bout }) => {
+            const red = bout.winner === 'red';
+            return (
+              <li>
+                <p class="am-result">
+                  <strong>{red ? bout.redName : bout.blueName}</strong> bat {red ? bout.blueName : bout.redName}
+                </p>
+                <p class="meta-line">
+                  {[bout.weightClass, [bout.method, bout.round && `round ${bout.round}`].filter(Boolean).join(', ')].filter(Boolean).join(' · ')}
+                </p>
+                <p class="meta-line">
+                  <a href={event.href}>{event.title}</a> · {formatDay(event.date)}
+                </p>
+              </li>
+            );
+          })}
+        </ol>
+      </section>
+    )
+  }
+</Base>
+
+<style>
+  .am-bouts {
+    display: grid;
+    gap: 0.6rem;
+    margin: 0.8rem 0 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: repeat(auto-fill, minmax(17rem, 1fr));
+  }
+  .am-bouts li { padding: 0.8rem 0.95rem; border: 1px solid var(--line); border-left: 3px solid var(--win); border-radius: 12px; background: var(--card); }
+  .am-bouts p { margin: 0; }
+  .am-result { font-family: var(--display); font-size: 1.15rem; line-height: 1.1; text-transform: uppercase; color: var(--muted); }
+  .am-result strong { color: var(--text); font-weight: 800; }
+  .am-bouts .meta-line { margin-top: 0.25rem; font-size: 0.86rem; }
+</style>

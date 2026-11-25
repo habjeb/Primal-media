@@ -116,6 +116,8 @@ const articles = defineCollection({
     event: reference('events').optional(),
     tags: z.array(z.string()).default([]),
     draft: z.boolean().default(false),
+    /** Article consacré au circuit amateur : il apparaît dans la rubrique /amateur/. */
+    amateur: z.boolean().default(false),
     /** Contenu commercial : toujours signalé (badge sur les cartes, bandeau sur l'article). */
     advertising: z.enum(['publicite', 'partenariat']).optional(),
     /** Lien d'intérêt à déclarer, ex. « Leopold Goi est sponsorisé par Primal. » */
