@@ -10,6 +10,8 @@ const organisations = defineCollection({
     name: z.string(),
     mark: z.string().min(1).max(3),
     kind: z.enum(['professionnelle', 'amateur', 'mixte']),
+    /** Compte X officiel, sans @ (vérifié : publications officielles, site de l'organisation). */
+    x: z.string().regex(/^[A-Za-z0-9_]{1,15}$/).optional(),
     place: z.string(),
     description: z.string(),
     example: z.boolean(),

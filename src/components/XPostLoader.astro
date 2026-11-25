@@ -1,0 +1,122 @@
+---
+/**
+ * Publications X dans les articles.
+ *
+ * Dans le Markdown, un lien vers une publication X seul sur sa ligne :
+ *
+ *   https://x.com/ares_fighting/status/2123902871347560608
+ *
+ * Sans JavaScript, il reste un simple lien. Avec JavaScript, ce script le remplace par une carte
+ * « Publication de @compte ». La vraie publication ne se charge qu'au clic du lecteur, ou s'il a
+ * choisi « Toujours afficher les contenus X » (mémorisé dans son navigateur) : le script de X peut
+ * déposer des cookies, aucune requête n'est faite vers X avant ce choix.
+ */
+---
+
+<script>
+  const STATUS = /^https?:\/\/(?:www\.|mobile\.)?(?:x|twitter)\.com\/([A-Za-z0-9_]{1,15})\/status\/(\d{5,25})\/?(?:\?.*)?$/;
+  const PREF = 'primal-media:x-embeds';
+
+  const readPref = () => {
+    try {
+      return localStorage.getItem(PREF) === 'always';
+    } catch {
+      return false;
+    }
+  };
+  const savePref = () => {
+    try {
+      localStorage.setItem(PREF, 'always');
+    } catch {
+      /* stockage indisponible : le choix vaut pour cette page seulement */
+    }
+  };
+
+  /** Paragraphe d'article qui ne contient qu'un lien (ou une adresse) vers une publication X. */
+  const asPost = (p: HTMLParagraphElement) => {
+    const text = p.textContent?.trim() ?? '';
+    const only = p.children.length === 1 && p.firstElementChild instanceof HTMLAnchorElement ? p.firstElementChild : null;
+    const url = only && only.textContent?.trim() === text ? only.href : p.children.length === 0 ? text : '';
+    const match = STATUS.exec(url);
+    return match ? { handle: match[1]!, id: match[2]! } : undefined;
+  };
+
+  const el = <K extends keyof HTMLElementTagNameMap>(tag: K, props: Record<string, string> = {}, text?: string) => {
+    const node = document.createElement(tag);
+    for (const [key, value] of Object.entries(props)) node.setAttribute(key, value);
+    if (text) node.textContent = text;
+    return node;
+  };
+
+  const card = (handle: string, id: string) => {
+    const url = `https://x.com/${handle}/status/${id}`;
+    const figure = el('figure', { class: 'xpost', 'data-xpost': '', 'data-handle': handle, 'data-id': id });
+    const box = el('div', { class: 'xpost-card' });
+    const head = el('p', { class: 'xpost-head' });
+    head.append(el('span', { class: 'xpost-logo', 'aria-hidden': 'true' }, '𝕏'), 'Publication de ');
+    head.append(el('a', { href: `https://x.com/${handle}`, rel: 'noopener noreferrer', target: '_blank' }, `@${handle}`));
+    const note = el('p', { class: 'xpost-note' }, 'Ce contenu est hébergé par X. L’afficher charge un script de X, qui peut déposer des cookies.');
+    const actions = el('p', { class: 'xpost-actions' });
+    actions.append(
+      el('button', { type: 'button', class: 'btn-light', 'data-xpost-load': '' }, 'Afficher la publication'),
+      el('button', { type: 'button', class: 'btn-ghost', 'data-xpost-always': '' }, 'Toujours afficher les contenus X'),
+      el('a', { class: 'btn-ghost', href: url, rel: 'noopener noreferrer', target: '_blank' }, 'Ouvrir sur X'),
+    );
+    box.append(head, note, actions);
+    figure.append(box);
+    return figure;
+  };
+
+  type Twttr = { widgets?: { load: (target?: Element) => void } };
+  let script: Promise<void> | undefined;
+  const loadScript = () =>
+    (script ??= new Promise<void>((resolve, reject) => {
+      const tag = el('script', { src: 'https://platform.twitter.com/widgets.js', async: '', charset: 'utf-8' });
+      tag.addEventListener('load', () => resolve());
+      tag.addEventListener('error', () => reject(new Error('widgets.js')));
+      document.head.append(tag);
+    }));
+
+  const show = async (figure: HTMLElement) => {
+    if (figure.dataset.loaded === 'true') return;
+    figure.dataset.loaded = 'true';
+    const { handle = '', id = '' } = figure.dataset;
+    const quote = el('blockquote', { class: 'twitter-tweet', 'data-lang': 'fr', 'data-theme': 'dark', 'data-dnt': 'true' });
+    quote.append(el('a', { href: `https://twitter.com/${handle}/status/${id}` }, `Publication de @${handle} sur X`));
+    const box = figure.querySelector('.xpost-card');
+    box?.setAttribute('hidden', '');
+    figure.append(quote);
+    try {
+      await loadScript();
+      (window as unknown as { twttr?: Twttr }).twttr?.widgets?.load(figure);
+    } catch {
+      quote.remove();
+      box?.removeAttribute('hidden');
+      figure.dataset.loaded = '';
+      const note = figure.querySelector('.xpost-note');
+      if (note) note.textContent = 'Impossible de charger la publication depuis X. Utilisez le lien « Ouvrir sur X ».';
+    }
+  };
+
+  const figures: HTMLElement[] = [];
+  document.querySelectorAll<HTMLParagraphElement>('.prose p').forEach((p) => {
+    const post = asPost(p);
+    if (!post) return;
+    const figure = card(post.handle, post.id);
+    p.replaceWith(figure);
+    figures.push(figure);
+  });
+
+  document.addEventListener('click', (event) => {
+    const target = event.target as HTMLElement;
+    const figure = target.closest<HTMLElement>('[data-xpost]');
+    if (!figure) return;
+    if (target.closest('[data-xpost-load]')) show(figure);
+    if (target.closest('[data-xpost-always]')) {
+      savePref();
+      figures.forEach(show);
+    }
+  });
+
+  if (readPref()) figures.forEach(show);
+</script>

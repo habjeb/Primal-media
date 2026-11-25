@@ -134,6 +134,7 @@ function toOrg(entry: CollectionEntry<'organisations'>): FeedOrg {
     place: entry.data.place,
     kind: entry.data.kind,
     description: entry.data.description,
+    x: entry.data.x,
     example: entry.data.example,
   };
 }

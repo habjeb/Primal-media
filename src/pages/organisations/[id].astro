@@ -65,6 +65,16 @@ const kindLabel = { professionnelle: 'Organisation professionnelle', amateur: 'O
     <Content />
   </div>
   {
+    org.x && (
+      <p class="org-social">
+        Sur X :{' '}
+        <a href={`https://x.com/${org.x}`} rel="noopener noreferrer" target="_blank">
+          @{org.x}
+        </a>
+      </p>
+    )
+  }
+  {
     upcoming.length > 0 && (
       <section class="rubric-block" aria-labelledby="upcoming-title">
         <h2 class="section-title" id="upcoming-title">Prochaines dates</h2>
