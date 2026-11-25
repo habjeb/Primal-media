@@ -22,6 +22,7 @@ function setup(root: HTMLElement) {
         format: card.dataset.format ?? '',
         video: card.dataset.video === 'true',
         section: card.dataset.section ?? '',
+        amateur: card.dataset.amateur === 'true',
       },
       filter,
     );

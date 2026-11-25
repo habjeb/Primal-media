@@ -39,6 +39,7 @@ export const DISCIPLINES: {
 
 export const FILTERS = [
   { id: 'tout', label: 'Tout', href: '/' },
+  { id: 'amateur', label: 'Amateur', href: '/amateur/' },
   ...DISCIPLINES.map((d) => ({ id: d.id, label: d.label, href: d.href })),
   { id: 'resultats', label: 'Résultats', href: '/actualites/resultats/' },
   { id: 'videos', label: 'Vidéos', href: '/videos/' },
@@ -84,12 +85,15 @@ export type Filterable = {
   format: Format | string;
   video: boolean;
   section: Section | string;
+  amateur: boolean;
 };
 
 export function matches(card: Filterable, filter: string): boolean {
   const discipline = DISCIPLINES.find((d) => d.id === filter);
   if (discipline) return card.category === discipline.category;
   switch (filter) {
+    case 'amateur':
+      return card.amateur;
     case 'resultats':
       return card.format === 'resultats';
     case 'videos':
@@ -112,7 +116,14 @@ export function matches(card: Filterable, filter: string): boolean {
 
 export function matchFilter(item: FeedItem, filter: string): boolean {
   return matches(
-    { category: item.category, org: item.org.id, format: item.format, video: item.hasVideo, section: item.section },
+    {
+      category: item.category,
+      org: item.org.id,
+      format: item.format,
+      video: item.hasVideo,
+      section: item.section,
+      amateur: item.amateur,
+    },
     filter,
   );
 }

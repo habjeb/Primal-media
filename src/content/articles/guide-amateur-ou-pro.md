@@ -5,6 +5,7 @@ pubDate: 2026-11-10T08:00:00+01:00
 author: Rédaction exemple
 category: MMA
 format: guide
+amateur: true
 section: fight
 tags:
   - guide

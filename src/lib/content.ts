@@ -239,6 +239,7 @@ function toItem(entry: CollectionEntry<'articles'>, org: FeedOrg, athletes: Feed
     eventId: entry.data.event?.id,
     photo: entry.data.photo,
     coverName: entry.data.coverName,
+    amateur: entry.data.amateur,
     advertising: entry.data.advertising,
     disclosure: entry.data.disclosure,
   };
