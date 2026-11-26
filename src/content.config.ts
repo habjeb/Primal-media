@@ -31,7 +31,8 @@ const athletes = defineCollection({
     /** Circuit du record affiché. `amateur` ajoute « am. » partout où le record apparaît. */
     recordScope: z.enum(['amateur', 'pro']).optional(),
     weightClass: z.string(),
-    team: z.string(),
+    /** Optionnel : ne rien indiquer plutôt que deviner le club. */
+    team: z.string().optional(),
     /** Optionnel : ne rien afficher plutôt que deviner. */
     country: z.string().optional(),
     discipline: category,

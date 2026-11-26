@@ -28,7 +28,7 @@ export type FeedAthlete = {
   draws: number;
   discipline: Category;
   weightClass: string;
-  team: string;
+  team?: string;
   country?: string;
   recordScope?: 'amateur' | 'pro';
   example: boolean;
@@ -38,6 +38,8 @@ export type FeedAthlete = {
 export type AthleteFight = {
   date: Date;
   opponent: string;
+  /** Fiche de l'adversaire, quand elle existe. */
+  opponentHref?: string;
   opponentRecord?: string;
   result: 'Victoire' | 'Défaite' | 'Nul';
   method: string;

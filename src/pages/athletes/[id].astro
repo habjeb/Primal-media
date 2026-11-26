@@ -82,7 +82,7 @@ const SIDE_FIGHTS = 4;
           <RecordGauge wins={profile.wins} losses={profile.losses} draws={profile.draws} />
           <dl class="side-facts">
             <div><dt>Catégorie</dt><dd>{profile.weightClass}</dd></div>
-            <div><dt>Club</dt><dd>{profile.team}</dd></div>
+            {profile.team && <div><dt>Club</dt><dd>{profile.team}</dd></div>}
             <div><dt>Organisation</dt><dd><a href={profile.org.href}>{profile.org.name}</a></dd></div>
             {profile.country && <div><dt>Pays</dt><dd>{profile.country}</dd></div>}
           </dl>
@@ -118,7 +118,7 @@ const SIDE_FIGHTS = 4;
                       {resultLetter[f.result]}
                     </span>
                     <span>
-                      <strong>{f.opponent}</strong>
+                      <strong>{f.opponentHref ? <a href={f.opponentHref}>{f.opponent}</a> : f.opponent}</strong>
                       {f.opponentRecord && <span class="opp-record"> ({f.opponentRecord})</span>}
                       <span class="meta-line">
                         {f.method}
@@ -192,7 +192,7 @@ const SIDE_FIGHTS = 4;
                       <tr>
                         <td>{formatDay(f.date)}</td>
                         <td>
-                          {f.opponent}
+                          {f.opponentHref ? <a href={f.opponentHref}>{f.opponent}</a> : f.opponent}
                           {f.opponentRecord && ` (${f.opponentRecord})`}
                         </td>
                         <td class={`result-${resultKey[f.result]}`}>{f.result}</td>
@@ -261,6 +261,8 @@ const SIDE_FIGHTS = 4;
   .side-fights { display: grid; gap: 0.7rem; margin: 0; padding: 0; list-style: none; }
   .side-fights li { display: grid; grid-template-columns: 1.8rem minmax(0, 1fr); gap: 0.6rem; align-items: start; }
   .side-fights .meta-line { display: block; font-size: 0.82rem; }
+  .side-fights strong a { color: inherit; text-decoration: underline; text-decoration-color: var(--line); text-underline-offset: 0.15em; }
+  .side-fights strong a:hover { color: var(--accent); }
   .opp-record { color: var(--muted); font-size: 0.85rem; }
   .dot {
     display: grid;

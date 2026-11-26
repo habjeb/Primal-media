@@ -9,7 +9,9 @@ section: une
 spotlight: true
 organisation: ares-fighting
 event: ares-45-paris
-coverName: Baysangur Chamsoudinov
+athletes:
+  - baysangur-chamsoudinov
+  - jordan-zebo
 tags:
   - ares
   - resultats
