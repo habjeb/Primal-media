@@ -44,6 +44,8 @@ const imageSize = pageImage ?? { width: 1200, height: 630 };
 const imageAlt = pageImage?.alt ?? 'Primal Média, l’actu fight amateur : MMA, grappling, kick et boxe';
 const rss = new URL(withBase('/rss.xml'), Astro.site);
 const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : undefined;
+// PROTOTYPE couleur signature (branche prototype/couleur-signature, à ne pas fusionner).
+import ColorProto from '../prototype-couleur/ColorProto.astro';
 ---
 
 <!doctype html>
@@ -103,5 +105,6 @@ const json = jsonLd ? JSON.stringify(jsonLd).replace(/</g, '\\u003c') : undefine
       refresh();
       window.setInterval(refresh, 60000);
     </script>
+    {import.meta.env.DEV && <ColorProto />}
   </body>
 </html>

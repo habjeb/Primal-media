@@ -219,8 +219,8 @@ export function coverSvg(options: CoverSvgOptions): string {
     <rect width="1600" height="900" fill="url(#${id}-dots)" mask="url(#${id}-mask)" opacity="0.16"/>`
     }
     <g opacity="${photo ? '0.35' : '0.6'}">
-      <polygon points="${slash(slashX, 110)}" fill="#e6e6ea" opacity="0.22"/>
-      <polygon points="${slash(slashX + 150, 44)}" fill="#9a9aa0" opacity="0.3"/>
+      <polygon class="slash-a" points="${slash(slashX, 110)}" fill="#e6e6ea" opacity="0.22"/>
+      <polygon class="slash-b" points="${slash(slashX + 150, 44)}" fill="#9a9aa0" opacity="0.3"/>
     </g>
     ${texture}
     <rect width="1600" height="900" fill="url(#${id}-shade)"/>
