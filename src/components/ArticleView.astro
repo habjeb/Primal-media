@@ -14,6 +14,7 @@ import RelativeTime from './RelativeTime.astro';
 import ShareBar from './ShareBar.astro';
 import Title from './Title.astro';
 import VideoEmbed from './VideoEmbed.astro';
+import XPostLoader from './XPostLoader.astro';
 
 interface Props {
   site: SiteData;
@@ -141,3 +142,6 @@ const photo = embedded || !item.photoId ? undefined : photoById(item.photoId);
   </article>
   {related.length > 0 && <RelatedList items={related} />}
 </div>
+
+<XPostLoader />
+

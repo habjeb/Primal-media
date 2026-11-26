@@ -6,7 +6,7 @@ author: Rédaction Primal Média
 category: MMA
 format: breve
 section: une
-spotlight: true
+spotlight: false
 organisation: duel-albertville
 athletes:
   - mehmet-borhan

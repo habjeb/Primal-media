@@ -92,6 +92,14 @@ Image de partage : chaque article reçoit automatiquement une image 1200×630 (`
 
 Photo d’illustration : chaque article reçoit automatiquement une photo libre de sa discipline (sans répéter une photo sur des cartes voisines). Pour en imposer une : `photo: salle-comble-ring` (identifiant de `src/lib/photos.ts`). Pour garder le visuel généré sans photo : `photo: false`.
 
+Publication X : coller le lien de la publication **seul sur sa ligne** dans le corps de l’article.
+
+```markdown
+https://x.com/ares_fighting/status/2123902871347560608
+```
+
+Le lecteur voit une carte « Publication de @compte ». La vraie publication ne se charge qu’au clic, ou s’il a choisi « Toujours afficher les contenus X » (mémorisé dans son navigateur) : le script de X peut déposer des cookies, aucune requête n’est faite vers X avant ce choix. Sans JavaScript, le lien reste un lien. Préférer les comptes officiels (organisation, combattant, diffuseur) aux comptes qui republient des extraits vidéo. Une organisation peut afficher son compte X officiel sur sa fiche : `x: ares_fighting` (sans @).
+
 Vidéo :
 
 - YouTube : `provider: youtube` et `id` (11 caractères). Le lecteur passe par `youtube-nocookie.com`.

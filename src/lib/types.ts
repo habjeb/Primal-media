@@ -12,6 +12,7 @@ export type FeedOrg = {
   initials: string;
   place: string;
   kind: 'professionnelle' | 'amateur' | 'mixte';
+  x?: string;
   description: string;
   example: boolean;
 };
