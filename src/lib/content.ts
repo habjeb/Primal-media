@@ -80,7 +80,7 @@ async function loadSite(): Promise<SiteData> {
     .map((entry) => {
       const profile = athleteById.get(entry.id);
       if (!profile) return undefined;
-      return { profile, fights: toFights(entry, eventById), entry };
+      return { profile, fights: toFights(entry, eventById, athleteById), entry };
     })
     .filter((record): record is AthleteRecord => Boolean(record))
     .sort((a, b) => a.profile.name.localeCompare(b.profile.name, 'fr'));
@@ -159,10 +159,19 @@ function toAthlete(entry: CollectionEntry<'athletes'>, org: FeedOrg): FeedAthlet
   };
 }
 
-function toFights(entry: CollectionEntry<'athletes'>, events: Map<string, FeedEvent>): AthleteFight[] {
+function toFights(
+  entry: CollectionEntry<'athletes'>,
+  events: Map<string, FeedEvent>,
+  athletes: Map<string, FeedAthlete>,
+): AthleteFight[] {
+  // L'adversaire renvoie à sa fiche quand une fiche porte exactement ce nom (même statut réel / exemple).
+  const byName = new Map(
+    [...athletes.values()].filter((a) => a.example === entry.data.example).map((a) => [a.name, a.href]),
+  );
   return (entry.data.fights ?? []).map((fight) => ({
     date: fight.date,
     opponent: fight.opponent,
+    opponentHref: byName.get(fight.opponent),
     opponentRecord: fight.opponentRecord,
     result: fight.result,
     method: fight.method,

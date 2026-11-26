@@ -91,7 +91,7 @@ const first = (name: string) => name.split(/\s+/).slice(0, -1).join(' ');
               data-disc={profile.discipline}
               data-org={profile.org.id}
               data-search={plain(
-                `${profile.name} ${profile.nickname ?? ''} ${profile.team} ${profile.weightClass} ${profile.org.name}`,
+                `${profile.name} ${profile.nickname ?? ''} ${profile.team ?? ''} ${profile.weightClass} ${profile.org.name}`,
               ).toLowerCase()}
             >
               <a class="fighter" href={profile.href}>
@@ -111,7 +111,7 @@ const first = (name: string) => name.split(/\s+/).slice(0, -1).join(' ');
                   {first(profile.name)} <strong>{surname(profile.name)}</strong>
                 </span>
                 {profile.nickname && <span class="fighter-nick">« {profile.nickname} »</span>}
-                <span class="fighter-meta">{profile.weightClass} · {profile.team}</span>
+                <span class="fighter-meta">{[profile.weightClass, profile.team].filter(Boolean).join(' · ')}</span>
                 <span class="fighter-org">{profile.org.name}</span>
               </a>
             </li>

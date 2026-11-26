@@ -51,7 +51,8 @@ export function bareRecord(profile: FeedAthlete): string {
  */
 export function athleteLede(profile: FeedAthlete): string {
   const palmares = profile.recordScope === 'amateur' ? 'palmarès amateur' : profile.recordScope === 'pro' ? 'palmarès pro' : 'palmarès';
-  return `${profile.discipline}, ${profile.weightClass.toLowerCase()}, ${profile.team} : ${profile.name} combat pour ${profile.org.name}, avec un ${palmares} de ${bareRecord(profile)}.`;
+  const club = profile.team ? `, ${profile.team}` : '';
+  return `${profile.discipline}, ${profile.weightClass.toLowerCase()}${club} : ${profile.name} combat pour ${profile.org.name}, avec un ${palmares} de ${bareRecord(profile)}.`;
 }
 
 export function plural(n: number, word: string): string {

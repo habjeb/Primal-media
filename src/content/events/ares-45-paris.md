@@ -12,6 +12,8 @@ fights:
   - weightClass: "Poids welters (−77 kg) · titre ARES"
     red: Baysangur Chamsoudinov
     blue: Jordan Zébo
+    redAthlete: baysangur-chamsoudinov
+    blueAthlete: jordan-zebo
     winner: red
     method: Décision unanime
     main: true
