@@ -13,3 +13,9 @@ export const AD_LABELS = {
   partenariat: 'Partenariat',
 } as const;
 export type AdKind = keyof typeof AD_LABELS;
+
+/**
+ * Couleur signature de Primal Média (turquoise), pour les SVG générés et les images de partage.
+ * Même valeur que `--brand` dans src/styles/global.css : changer les deux ensemble.
+ */
+export const BRAND_COLOR = '#3cc8b4';

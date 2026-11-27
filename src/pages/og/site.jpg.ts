@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { BRAND_COLOR } from '../../lib/brand';
 import { OG_SIZE } from '../../lib/cover';
 import { logoDataUri, svgToJpeg } from '../../lib/og';
 
@@ -14,13 +15,13 @@ export const GET: APIRoute = async () => {
     </defs>
     <rect width="1600" height="900" fill="url(#glow)"/>
     <g opacity="0.25">
-      <polygon points="1180,0 1290,0 960,900 850,900" fill="#e6e6ea"/>
+      <polygon points="1180,0 1290,0 960,900 850,900" fill="${BRAND_COLOR}"/>
       <polygon points="1330,0 1374,0 1044,900 1000,900" fill="#8d8d93"/>
     </g>
     <image href="${logo}" x="130" y="170" width="420" height="560" preserveAspectRatio="xMidYMid meet"/>
     <g font-family="Barlow Condensed, sans-serif" font-weight="800">
-      <text x="620" y="430" font-size="170" letter-spacing="4" fill="#f1f1ef">PRIMAL <tspan fill="#b9b9bf">MÉDIA</tspan></text>
-      <text x="626" y="530" font-size="64" letter-spacing="8" fill="#c3c3c9">L’ACTU FIGHT AMATEUR</text>
+      <text x="620" y="430" font-size="170" letter-spacing="4" fill="#f1f1ef">PRIMAL <tspan fill="${BRAND_COLOR}">MÉDIA</tspan></text>
+      <text x="626" y="530" font-size="64" letter-spacing="8" fill="${BRAND_COLOR}">L’ACTU FIGHT AMATEUR</text>
       <text x="626" y="610" font-size="46" letter-spacing="3" fill="#909096">MMA · GRAPPLING · KICK &amp; BOXE</text>
     </g>
   </svg>`;
