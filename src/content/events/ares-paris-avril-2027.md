@@ -4,13 +4,13 @@ description: "Soirée ARES annoncée à Paris pour avril 2027. Carte pas encore 
 date: 2027-04-02T12:00:00+02:00
 timeKnown: false
 city: Paris
-venue: Salle à confirmer
+venue: Adidas Arena
 organisation: ares-fighting
 discipline: MMA
 example: false
 tickets: https://www.ticketmaster.fr/fr/manifestation/ares-avril-paris-mma-billet/idmanif/660490
 ---
 
-Date annoncée par ARES sur son site officiel, sous le nom « ARES Paris avril 2027 ». La ligue n’a pas encore précisé la salle ni l’heure ; la billetterie est déjà ouverte. Nous ajouterons la carte dès sa publication.
+Date annoncée par ARES sur son site officiel, sous le nom « ARES Paris avril 2027 ». La salle est indiquée par la programmation de l’Adidas Arena, pas encore par la ligue. L’heure n’est pas encore fixée : le site de la ligue affiche 20 h, celui de la salle 19 h 30. Nous ajouterons la carte dès sa publication.
 
-Sources : [aresfighting.com](https://www.aresfighting.com/events/), consultés le 27 novembre 2026.
+Sources : [aresfighting.com](https://www.aresfighting.com/events/) et [programmation de l’Adidas Arena](https://www.adidasarena.com/programmation), consultés le 27 novembre 2026.
