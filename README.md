@@ -210,6 +210,13 @@ L’événement apparaît dans le **Calendrier** (`/calendrier/`), groupé par m
 
 « À venir », le compte à rebours affiché au chargement et le point rouge du menu sont calculés **au build**. Le site n’est reconstruit qu’au push sur `main` : sans push, ces éléments restent figés. Le compte à rebours se met à jour dans le navigateur, mais la liste ne change qu’au build suivant. Voir « Reconstruction quotidienne » plus bas.
 
+### Périmètre du calendrier
+
+- **Tout ce qui se passe en France, sauf l’UFC** : galas, opens et championnats, amateurs et pros, en MMA, grappling, kick et boxe. Les ligues étrangères y entrent quand elles organisent une soirée en France (ex. PFL Lyon).
+- **Sources, par ordre de préférence** : site ou communiqué de l’organisateur, puis salle, puis billetterie officielle, puis agenda (JDS…). Le corps de la fiche cite la source et la date de consultation. Si la date ne vient pas de l’organisateur, la fiche le dit.
+- **Heure inconnue** : `timeKnown: false` et midi comme heure technique. En cas de désaccord entre sources, la fiche retient celle de l’organisateur et signale l’écart.
+- **Veille** : la liste des sources suivies est dans [`docs/veille-calendrier.md`](docs/veille-calendrier.md). Une tâche planifiée la parcourt chaque jour et ouvre une pull request avec les nouvelles dates ; rien n’est publié sans relecture.
+
 ## Ajouter une organisation
 
 `src/content/organisations/mon-org.md`
