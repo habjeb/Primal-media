@@ -116,6 +116,15 @@ npm run brand
 
 Le script `scripts/brand-assets.mjs` recadre le logo et produit `src/assets/brand/logo.png` (en-tête, pied de page, images de partage), `public/favicon-32.png`, `public/favicon-192.png`, `public/apple-touch-icon.png` (fond sombre, iOS ne gère pas la transparence) et `public/logo-512.png` (logo éditeur des données structurées). L’image de partage par défaut (`/og/site.jpg`) est générée au build.
 
+## Couleurs
+
+La base reprend l’identité Primal : noir, blanc, argent. Le média y ajoute une seule couleur signature, le turquoise `#3cc8b4`, repris des fleurs du rashguard « The Beast in Me ».
+
+- Où : « MÉDIA » du logo, surtitres, onglet actif du menu, pastille de filtre active, losanges devant les titres de section, en-têtes de rubrique, anneaux des stories, barre « // » des visuels générés, soulignement des liens d’article, encarts mis en avant, lueur du fond, contour de focus clavier. Les images de partage reprennent le logo et les surtitres en turquoise.
+- Où jamais : le turquoise ne porte aucune information. Victoire (vert), défaite et direct (rouge), coins rouge et bleu, nul (argent) et contenus d’exemple (ambre) gardent leurs couleurs.
+- Le logo gorille et les icônes restent ceux de la marque, sans turquoise.
+- Valeur : `--brand` dans `src/styles/global.css` et `BRAND_COLOR` dans `src/lib/brand.ts` (SVG et images de partage). Changer les deux ensemble.
+
 ## Photos
 
 Les photos d’illustration sont des photos **sous licence libre** de Wikimedia Commons (domaine public, CC BY, CC BY-SA), stockées dans `src/assets/photos/` et décrites dans `src/lib/photos.ts` (texte alternatif, disciplines, auteur, licence, source). Le site les optimise en WebP (640 et 1280 px) au build.

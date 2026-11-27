@@ -1,6 +1,9 @@
 :root {
-  /* Identité Primal : noir, blanc, argent. Les couleurs ne servent qu'à porter une information
-     (victoire / défaite, coins rouge et bleu, direct, contenu d'exemple). */
+  /* Identité Primal : noir, blanc, argent, plus une couleur signature pour le média : le turquoise
+     (repris des fleurs du rashguard « The Beast in Me »). Le turquoise ne porte aucune information
+     et reste aux mêmes endroits (logo, surtitres, onglet et pastille actifs, losanges de section).
+     Les autres couleurs ne servent qu'à porter une information
+     (victoire / défaite / nul, coins rouge et bleu, direct, contenu d'exemple). */
   --bg: #111113;
   --card: #1a1a1d;
   --card-2: #242428;
@@ -12,8 +15,10 @@
   --accent-fill: #e6e6ea;     /* fonds actifs (pastilles, étiquettes) */
   --on-accent: #111113;       /* texte posé sur --accent-fill */
   --accent-rgb: 210 210 218;
-  --gold: #c3c3c9;            /* surtitres : argent (le nom est historique) */
-  --gold-rgb: 195 195 201;
+  --brand: #3cc8b4;           /* couleur signature (même valeur que BRAND_COLOR dans src/lib/brand.ts) */
+  --brand-rgb: 60 200 180;
+  --on-brand: #111113;        /* texte posé sur --brand */
+  --draw: #c3c3c9;            /* match nul : argent */
   --metal: linear-gradient(180deg, #ffffff 0%, #c9c9ce 45%, #8d8d93 55%, #e9e9ec 100%);
   --pill: linear-gradient(180deg, #3b3b40 0%, #1d1d20 100%);
   --warn: #d9b26a;            /* contenus d'exemple */
@@ -45,7 +50,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(1200px 500px at 100% -10%, rgb(var(--accent-rgb) / 0.08), transparent 55%),
+    radial-gradient(1200px 500px at 100% -10%, rgb(var(--brand-rgb) / 0.09), transparent 55%),
     var(--bg);
   color: var(--text);
   font-family: var(--sans);
@@ -134,7 +139,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   line-height: 0.85;
 }
 
-.logo-text span { background: var(--metal); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.logo-text span { color: var(--brand); }
 
 .header-tools { display: flex; align-items: center; gap: 0.6rem; }
 
@@ -187,7 +192,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   bottom: 0;
   height: 3px;
   border-radius: 3px;
-  background: var(--accent-fill);
+  background: var(--brand);
 }
 
 .live-dot {
@@ -269,7 +274,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   padding: 3px;
   border-radius: 50%;
   flex: none;
-  background: conic-gradient(from 200deg, #f5f5f5, #6b6b70, #f5f5f5, #6b6b70, #f5f5f5);
+  background: conic-gradient(from 200deg, var(--brand), #6b6b70, var(--brand), #6b6b70, var(--brand));
 }
 
 .story-ring .avatar {
@@ -314,9 +319,9 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
 }
 
 .chip[aria-current="page"] {
-  background: var(--accent-fill);
+  background: var(--brand);
   border-color: transparent;
-  color: var(--on-accent);
+  color: var(--on-brand);
 }
 
 .next-event {
@@ -335,7 +340,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   font-family: var(--display);
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold);
+  color: var(--brand);
 }
 
 .next-event-info { display: grid; gap: 0.15rem; }
@@ -373,7 +378,7 @@ h1, h2, h3, p { overflow-wrap: anywhere; }
   width: 0.5rem;
   height: 0.5rem;
   margin-right: 0.45rem;
-  background: var(--accent-fill);
+  background: var(--brand);
   transform: translateY(-0.12rem) rotate(45deg);
 }
 
@@ -713,15 +718,17 @@ html:not(.js) [data-more] { display: none; }
   margin: 0.8rem 0 1rem;
 }
 
-.broadcast { border: 1px solid rgb(var(--gold-rgb) / 0.35); }
+.broadcast { border: 1px solid rgb(var(--brand-rgb) / 0.35); }
 
-.callout { border-left: 3px solid var(--gold); }
+.callout { border-left: 3px solid var(--brand); }
 
 .broadcast h2, .callout-title { margin: 0 0 0.35rem; font-family: var(--display); letter-spacing: 0.04em; text-transform: uppercase; }
 
 .prose { font-size: 1.05rem; line-height: 1.65; max-width: 72ch; }
 
 .prose p, .prose ul, .prose ol { margin: 0 0 0.9rem; }
+
+.prose a { text-decoration-color: var(--brand); text-underline-offset: 0.15em; }
 
 .prose h2 { font-family: var(--display); text-transform: uppercase; letter-spacing: 0.03em; font-size: 1.7rem; line-height: 0.95; margin: 1.4rem 0 0.5rem; }
 
@@ -747,7 +754,7 @@ html:not(.js) [data-more] { display: none; }
 
 .result-w { color: var(--win); font-weight: 800; }
 .result-l { color: var(--loss); font-weight: 800; }
-.result-d { color: var(--gold); font-weight: 800; }
+.result-d { color: var(--draw); font-weight: 800; }
 
 .related h2 { font-size: 1.35rem; margin-bottom: 0.7rem; }
 
@@ -799,7 +806,7 @@ html:not(.js) [data-more] { display: none; }
 
 .channel-id h1 { text-shadow: 0 2px 16px rgba(0, 0, 0, 0.8); }
 
-.kicker, .ex-inline { color: var(--gold); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.78rem; margin: 0; }
+.kicker, .ex-inline { color: var(--brand); font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; font-size: 0.78rem; margin: 0; }
 
 .ex-inline { color: var(--warn); }
 
@@ -864,7 +871,7 @@ html:not(.js) [data-more] { display: none; }
 
 .bout::after { right: 0; background: var(--blue); }
 
-.bout.main { border-color: rgb(var(--gold-rgb) / 0.45); padding-block: 1.2rem; }
+.bout.main { border-color: rgb(var(--brand-rgb) / 0.45); padding-block: 1.2rem; }
 
 .bout.main .corner strong { font-size: clamp(1.6rem, 3.2vw, 2.4rem); }
 
@@ -960,7 +967,7 @@ a.corner:hover strong { color: var(--accent); }
 .footer-title {
   margin: 0 0 0.5rem;
   padding-left: 0.5rem;
-  border-left: 3px solid var(--accent-fill);
+  border-left: 3px solid var(--brand);
   font-family: var(--display);
   font-weight: 700;
   letter-spacing: 0.05em;
@@ -974,9 +981,9 @@ a.corner:hover strong { color: var(--accent); }
 
 .footer-links a:hover { color: var(--text); }
 
-:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
 
-::selection { background: var(--accent-fill); color: var(--on-accent); }
+::selection { background: var(--brand); color: var(--on-brand); }
 
 @media (min-width: 640px) {
   .mosaic { grid-template-columns: repeat(2, minmax(0, 1fr)); }
@@ -1039,7 +1046,7 @@ a.corner:hover strong { color: var(--accent); }
   gap: 0.4rem 2rem;
   margin: 1.2rem 0 0.9rem;
   padding-bottom: 1rem;
-  border-bottom: 3px solid var(--text);
+  border-bottom: 3px solid var(--brand);
 }
 
 .rubric-head h1 {
@@ -1052,7 +1059,7 @@ a.corner:hover strong { color: var(--accent); }
   text-transform: uppercase;
 }
 
-.rubric-head h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--text); }
+.rubric-head h1 .outline { color: transparent; -webkit-text-stroke: 2px var(--brand); }
 
 .rubric-head .lede { max-width: 60ch; }
 
@@ -1068,7 +1075,7 @@ a.corner:hover strong { color: var(--accent); }
 
 button.chip { font: inherit; font-weight: 700; font-size: 0.95rem; cursor: pointer; }
 
-.chip[aria-pressed="true"] { background: var(--accent-fill); border-color: transparent; color: var(--on-accent); }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: transparent; color: var(--on-brand); }
 
 html:not(.js) [data-cal-chips] { display: none; }
 
@@ -1092,7 +1099,7 @@ html:not(.js) [data-cal-chips] { display: none; }
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.22), 0 6px 18px rgb(0 0 0 / 0.35);
 }
 
-.btn-light:hover { color: white; border-color: rgb(255 255 255 / 0.6); }
+.btn-light:hover { color: white; border-color: var(--brand); }
 
 .btn-ghost { border: 1px solid var(--line); color: var(--text); }
 
@@ -1158,7 +1165,7 @@ html:not(.js) [data-cal-chips] { display: none; }
 
 .cd-unit span { color: var(--faint); font-size: 0.68rem; letter-spacing: 0.08em; text-transform: uppercase; }
 
-.cd-done { grid-column: 1 / -1; margin: 0; color: var(--gold); font-weight: 700; }
+.cd-done { grid-column: 1 / -1; margin: 0; color: var(--brand); font-weight: 700; }
 
 .cal-month { margin-bottom: 1.4rem; }
 
@@ -1239,7 +1246,7 @@ html:not(.js) [data-cal-chips] { display: none; }
   padding: 0.12rem 0.5rem;
 }
 
-.cal-main { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.1rem; text-transform: uppercase; color: var(--gold); }
+.cal-main { margin: 0; font-family: var(--display); font-weight: 700; font-size: 1.1rem; text-transform: uppercase; color: var(--brand); }
 
 .cal-actions { display: flex; flex-wrap: wrap; gap: 0.45rem; list-style: none; padding: 0; margin: 0.35rem 0 0; }
 
@@ -1452,7 +1459,7 @@ html:not(.js) [data-roster-tools] { display: none; }
 
 .fighter-name strong { font-weight: 800; }
 
-.fighter-nick { color: var(--gold); font-size: 0.85rem; font-weight: 700; }
+.fighter-nick { color: var(--brand); font-size: 0.85rem; font-weight: 700; }
 
 .fighter-meta, .fighter-org { color: var(--muted); font-size: 0.85rem; line-height: 1.3; }
 

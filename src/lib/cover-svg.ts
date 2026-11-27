@@ -1,3 +1,4 @@
+import { BRAND_COLOR } from './brand';
 import { octagon, seeded, surname, type Cover } from './cover';
 import { palette } from './text';
 
@@ -150,7 +151,7 @@ export function coverSvg(options: CoverSvgOptions): string {
   const caption =
     text === 'full'
       ? `<g font-family="${FONT}" font-weight="800">
-          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="6" fill="#c3c3c9">${esc(cover.kicker.toUpperCase())}</text>` : ''}
+          ${cover?.kicker ? `<text x="70" y="640" font-size="64" letter-spacing="6" fill="${BRAND_COLOR}">${esc(cover.kicker.toUpperCase())}</text>` : ''}
           <text x="66" y="770" font-size="${nameSize}" fill="${colors.ink}">${esc(name.toUpperCase())}${
             cover?.record ? `<tspan dx="28" fill="#ffffff" opacity="0.85">${esc(cover.record)}</tspan>` : ''
           }</text>
@@ -169,7 +170,7 @@ export function coverSvg(options: CoverSvgOptions): string {
           <path d="M16 29 L24 9 H28 L20 29 Z" fill="#d8b46e"/>
         </g>`
         }
-        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#f1f1ef">PRIMAL <tspan fill="#b9b9bf">MÉDIA</tspan></text>
+        <text x="174" y="148" font-size="78" letter-spacing="3" fill="#f1f1ef">PRIMAL <tspan fill="${BRAND_COLOR}">MÉDIA</tspan></text>
         ${
           share.example
             ? `<g transform="translate(1534 74)">
@@ -219,7 +220,7 @@ export function coverSvg(options: CoverSvgOptions): string {
     <rect width="1600" height="900" fill="url(#${id}-dots)" mask="url(#${id}-mask)" opacity="0.16"/>`
     }
     <g opacity="${photo ? '0.35' : '0.6'}">
-      <polygon points="${slash(slashX, 110)}" fill="#e6e6ea" opacity="0.22"/>
+      <polygon points="${slash(slashX, 110)}" fill="${BRAND_COLOR}" opacity="0.55"/>
       <polygon points="${slash(slashX + 150, 44)}" fill="#9a9aa0" opacity="0.3"/>
     </g>
     ${texture}
