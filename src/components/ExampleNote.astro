@@ -1,7 +1,11 @@
 ---
+import { getSite } from '../lib/content';
+
 /**
+ * Le site ne publie plus de contenus d’exemple. Ce bandeau reste prêt au cas où un contenu
+ * `example: true` serait de nouveau ajouté :
  * - `entry` : sur un contenu fictif (article, fiche, carte marqués `example: true`).
- * - `list`  : en tête des listes, qui mélangent contenus réels et contenus d’exemple.
+ * - `list`  : en tête des listes, seulement s’il existe au moins un contenu d’exemple sur le site.
  * - `org`   : sur une organisation réelle à laquelle des contenus d’exemple sont rattachés.
  */
 interface Props {
@@ -9,10 +13,17 @@ interface Props {
 }
 
 const { kind = 'entry' } = Astro.props;
+const site = kind === 'list' ? await getSite() : undefined;
+const hasExamples =
+  !site ||
+  site.items.some((item) => item.example) ||
+  site.events.some(({ event }) => event.example) ||
+  site.athletes.some(({ profile }) => profile.example) ||
+  site.organisations.some(({ org }) => org.example);
 ---
 
 {
-  kind === 'org' ? (
+  !hasExamples ? null : kind === 'org' ? (
     <p class="disclaimer" role="note">
       Organisation réelle. Les combattants, cartes et articles liés marqués « Contenu d’exemple » sont fictifs ; les
       autres sont réels et sourcés.

@@ -1,5 +1,5 @@
 ---
-import { getSite } from '../lib/content';
+import { emptyRubricHrefs, getSite } from '../lib/content';
 import { isCurrent, withBase } from '../lib/paths';
 import LogoMark from './LogoMark.astro';
 
@@ -15,6 +15,7 @@ const soon = site.events.some(({ event }) => {
   return delta >= -6 * 3600 * 1000 && delta <= week;
 });
 
+const hidden = emptyRubricHrefs(site.items);
 const links = [
   { href: '/', label: 'Accueil' },
   { href: '/calendrier/', label: 'Calendrier', also: ['/evenements/'], dot: soon },
@@ -26,7 +27,7 @@ const links = [
   { href: '/athletes/', label: 'Combattants' },
   { href: '/guides/', label: 'Guides' },
   { href: '/videos/', label: 'Vidéos' },
-];
+].filter((link) => !hidden.has(link.href));
 ---
 
 <header class="site-header">
