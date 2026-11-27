@@ -12,18 +12,15 @@
 
 **Format.** Un fil d’actualité façon réseau social : mosaïque type Instagram / YouTube, pastilles de filtre, avatars façon stories, pages athlète et organisation façon chaîne.
 
-**Rubriques.** Accueil · Calendrier (point rouge quand un événement a lieu dans les 7 jours) · MMA · Grappling · Kick/Boxe · Portraits · Combattants · Guides · Vidéos. La structure s’inspire des rubriques d’un média fight généraliste, appliquée aux circuits amateurs et aux petites organisations.
+**Rubriques.** Accueil · Calendrier (point rouge quand un événement a lieu dans les 7 jours) · Amateur · MMA · Grappling · Kick/Boxe · Portraits · Combattants · Guides · Vidéos. Les rubriques de contenu sans aucun article (Portraits, Vidéos, Horaires…) sont masquées du menu, du pied de page et des pastilles du fil, et réapparaissent dès leur premier article. La structure s’inspire des rubriques d’un média fight généraliste, appliquée aux circuits amateurs et aux petites organisations.
 
-**Suite.** Remplacer les contenus d’exemple par de vrais sujets, alimenter les articles par une veille média quotidienne, ajouter des organisations, et développer la vidéo.
+**Suite.** Alimenter les articles par une veille média quotidienne, ajouter des organisations, des portraits, des guides et de la vidéo.
 
 Fil d’actualité en français pour le MMA, le grappling, le kick et la boxe des organisations francophones — circuits amateurs et promotions professionnelles modestes. Le site est statique (Astro), sans base de données, et se publie gratuitement sur GitHub Pages.
 
-Le site mélange **contenus réels** et **contenus d’exemple** :
+Tout ce qui est publié est **réel et sourcé** (`example: false`) : chaque article, fiche et date cite ses sources et la date de consultation. Les contenus d’exemple qui servaient à montrer la mise en page ont été retirés en novembre 2026.
 
-- Réel et sourcé (`example: false`) : les fiches **DUEL Fighting** et **Hexagone MMA**, les événements **DUEL Fighting 7** (résultats) et **DUEL Fighting 8**, les **10 prochaines dates d’Hexagone MMA** (Rennes, Paris, Montpellier… jusqu’à Lyon en juin 2027), la fiche de **Mehmet Borhan** et la brève associée. Chaque contenu réel cite ses sources et la date de consultation.
-- Fiction (`example: true`, badge **Contenu d’exemple**) : le reste, pour voir la mise en page. Les contenus fictifs sont tous rattachés à des organisations fictives (Ligue Exemple Pro, Club Exemple Savoie, Ring des Alpes).
-
-Règle : ne jamais rattacher un événement ou un résultat inventé à une organisation réelle qui publie déjà de vrais événements sur le site.
+Le champ `example: true` existe toujours, pour une maquette ou un test : il affiche le badge « Contenu d’exemple » et le bandeau d’avertissement en tête des listes (le bandeau n’apparaît que s’il existe au moins un contenu d’exemple). Règle : ne jamais rattacher un événement ou un résultat inventé à une organisation réelle qui publie déjà de vrais événements sur le site.
 
 Adresse prévue : <https://habjeb.github.io/Primal-media/>
 

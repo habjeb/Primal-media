@@ -1,6 +1,6 @@
 import { getCollection, getEntries, getEntry, type CollectionEntry } from 'astro:content';
 import { formatDay, formatFull } from './dates';
-import { matchFilter } from './filters';
+import { FILTERS, matchFilter } from './filters';
 import { withBase } from './paths';
 import { assignPhotos } from './photos';
 import { formatRecord } from './text';
@@ -222,7 +222,8 @@ async function toEvent(
     broadcast: entry.data.broadcast,
     tickets: entry.data.tickets,
     bouts,
-    upcoming: entry.data.date.getTime() >= Date.now(),
+    // Heure inconnue : la date porte midi comme heure technique ; la soirée reste « à venir » jusqu'à minuit.
+    upcoming: entry.data.date.getTime() + (entry.data.timeKnown ? 0 : 12 * 3600 * 1000) >= Date.now(),
   };
 }
 
@@ -316,6 +317,21 @@ export function athletesForOrg(id: string, athletes: AthleteRecord[]): AthleteRe
 
 export function filterItems(items: FeedItem[], filter: string): FeedItem[] {
   return items.filter((item) => matchFilter(item, filter));
+}
+
+/**
+ * Rubriques de contenu (vidéos, portraits, guides…) qui n'ont encore aucun article : masquées du menu,
+ * du pied de page et des pastilles du fil. Elles réapparaissent dès leur premier article.
+ * Les rubriques de discipline et le calendrier restent toujours visibles.
+ */
+const CONTENT_RUBRICS = new Set(['resultats', 'videos', 'horaires', 'portraits', 'guides', 'une']);
+
+export function emptyRubricHrefs(items: FeedItem[]): Set<string> {
+  return new Set(
+    FILTERS.filter((filter) => CONTENT_RUBRICS.has(filter.id) && filterItems(items, filter.id).length === 0).map(
+      (filter) => filter.href,
+    ),
+  );
 }
 
 export function eventWhen(event: FeedEvent): string {

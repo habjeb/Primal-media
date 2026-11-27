@@ -1,4 +1,5 @@
 ---
+import { emptyRubricHrefs, getSite } from '../lib/content';
 import { FILTERS, PAGE_SIZE } from '../lib/filters';
 import { withBase } from '../lib/paths';
 import type { FeedItem, NextEvent, Story } from '../lib/types';
@@ -20,6 +21,7 @@ const fight = items.filter((item) => item.section !== 'une');
 // Le bloc d’ouverture : l’article marqué `spotlight`, sinon le plus récent de l’une.
 const uneLead = une.find((item) => item.spotlight) ?? une[0];
 const uneSide = une.filter((item) => item !== uneLead);
+const hidden = emptyRubricHrefs((await getSite()).items);
 const archiveOverflow = items.length > PAGE_SIZE;
 const fightOverflow = fight.length > PAGE_SIZE;
 ---
@@ -43,7 +45,7 @@ const fightOverflow = fight.length > PAGE_SIZE;
   <div class="chips-wrap">
     <div class="chips" role="navigation" aria-label="Filtrer le fil">
       {
-        FILTERS.map((filter) => (
+        FILTERS.filter((filter) => !hidden.has(filter.href)).map((filter) => (
           <a
             class="chip"
             href={withBase(filter.href)}

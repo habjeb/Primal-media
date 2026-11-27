@@ -1,8 +1,10 @@
 ---
 import { PUBLISHER, PUBLISHER_ACTIVITY, SHOP_URL } from '../lib/brand';
+import { emptyRubricHrefs, getSite } from '../lib/content';
 import { withBase } from '../lib/paths';
 import LogoMark from './LogoMark.astro';
 
+const hidden = emptyRubricHrefs((await getSite()).items);
 const groups = [
   {
     title: 'Rubriques',
@@ -48,7 +50,7 @@ const groups = [
       </p>
       <p>
         L’actu fight des circuits amateurs et des petites organisations francophones : MMA, grappling,
-        kick et boxe, côté combattants. Les entrées marquées « Contenu d’exemple » sont fictives.
+        kick et boxe, côté combattants.
       </p>
       <p class="footer-publisher">
         Primal Média est édité par {PUBLISHER}, {PUBLISHER_ACTIVITY}.
@@ -62,7 +64,7 @@ const groups = [
           <div>
             <p class="footer-title">{group.title}</p>
             <ul class="footer-links">
-              {group.links.map((link) => (
+              {group.links.filter((link) => !hidden.has(link.href)).map((link) => (
                 <li>
                   <a href={withBase(link.href)}>{link.label}</a>
                 </li>
