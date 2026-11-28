@@ -1,18 +1,53 @@
 ---
 title: "ARES 46 — Paris"
-description: "Dernière soirée ARES de 2026 à l’Adidas Arena : Jade Jorand en combat de titre, retour d’Alexis « Barboza », débuts du vainqueur et du finaliste de L’ARÈNE."
+description: "Dernière soirée ARES de 2026 à l’Adidas Arena : Alexis « Barboza » Nicolas contre Bilal Bakhouche-Chareuf, Jade Jorand vs Kinga Jendrasik pour le titre des −52 kg et les débuts pros d’Assita Ouattara et Jean Magny."
 date: 2026-12-11T19:30:00+01:00
-headline: "Jade Jorand en combat de titre"
+headline: "Alexis Nicolas vs Bilal Bakhouche-Chareuf · Jade Jorand pour le titre"
 city: Paris
 venue: Adidas Arena
 organisation: ares-fighting
 discipline: MMA
 example: false
 tickets: https://www.ticketmaster.fr/fr/manifestation/ares-46-paris-mma-billet/idmanif/675917
+broadcast:
+  when: "vendredi 11 décembre à 19 h 30 (heure de Paris)"
+  channel: "Canal+ Sport et UFC Fight Pass"
+fights:
+  - weightClass: "Poids welters (−77 kg)"
+    red: Alexis Nicolas
+    redRecord: "2-0"
+    blue: Bilal Bakhouche-Chareuf
+    main: true
+  - weightClass: "Poids pailles (−52 kg) · titre ARES"
+    red: Jade Jorand
+    blue: Kinga Jendrasik
+  - weightClass: "Poids welters (−77 kg)"
+    red: Jean Magny
+    blue: Kevin Cadoni
+  - weightClass: "Poids légers (−70 kg)"
+    red: Bogdan Ozdoev
+    blue: Axel Djarallah
+  - weightClass: "Poids pailles (−52 kg)"
+    red: Assita Ouattara
+    blue: Ghita Chafik
+  - weightClass: "Poids légers (−70 kg)"
+    red: Andrii Misiuk
+    blue: Giresse Tsague
+  - weightClass: "Poids moyens (−84 kg)"
+    red: Donatello
+    redRecord: "2-1"
+    blue: Akhmadov
+    blueRecord: "2-1"
+  - weightClass: "Poids plumes (−66 kg)"
+    red: Djihad Hireche-Baghdad
+    blue: Viktor Janković
+  - weightClass: "Poids pailles (−52 kg)"
+    red: Maria Guedez Jr.
+    blue: Natasha Pazarioti
 ---
 
-ARES boucle son année 2026 à l’Adidas Arena, trois semaines après ARES 45. Selon la présentation de la salle, la carte met en avant la nouvelle génération : le vainqueur et le finaliste de L’ARÈNE feront leurs débuts chez ARES, Jade Jorand partira à la conquête d’une ceinture et Alexis « Barboza » fera son retour dans la cage. La carte complète n’est pas encore publiée.
+ARES boucle son année 2026 à l’Adidas Arena, trois semaines après ARES 45. Le 27 novembre, l’organisation a publié la carte principale officielle de six combats menée par **Alexis « Barboza » Nicolas** contre **Bilal Bakhouche-Chareuf**, avec également la ceinture vacante des poids pailles féminins (**Jade Jorand vs Kinga Jendrasik**) et les débuts professionnels de **Jean Magny**, **Bogdan Ozdoev** et **Assita Ouattara**, issus de *L’Arène*.
 
-L’horaire (19 h 30) est celui affiché par le site officiel de la ligue.
+Trois autres combats complètent le programme selon les annonces d’ARES et la fiche Tapology de l’événement. L’horaire (19 h 30) est celui affiché par le site officiel de la ligue.
 
-Sources : [aresfighting.com](https://www.aresfighting.com/events/) et [programmation de l’Adidas Arena](https://www.adidasarena.com/programmation/ares-46--1589), consultés le 27 novembre 2026.
+Sources : publications officielles de [@ares_fighting](https://x.com/ares_fighting) sur X (26–27 novembre 2026), [aresfighting.com](https://www.aresfighting.com/fr/events/), programmation de l’[Adidas Arena](https://www.adidasarena.com/programmation/ares-46--1589) et [Tapology](https://www.tapology.com/fightcenter/promotions/3121-ares-fighting-championship-afc), consultés les 27 et 28 novembre 2026.
